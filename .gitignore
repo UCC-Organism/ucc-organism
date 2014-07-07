@@ -1,0 +1,7 @@
+pathFollowing2d/node_modules
+pathFollowing2d/svg-to-json/node_modules
+pathFollowing2d/.tmp
+pathFollowing2d/.sass-cache
+pathFollowing2d/app/scripts/bower_components
+pathFollowing2d/scripts/bower_components
+npm-debug.log
