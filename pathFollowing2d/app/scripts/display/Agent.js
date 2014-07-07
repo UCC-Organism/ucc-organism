@@ -10,6 +10,10 @@ var Agent = function(texture) {
     this.r = 50 * this.scale.x;
     this.maxspeed = 2;
     this.maxforce = 0.15;
+
+    var radius = MathUtils.randomFloat(5, 15);
+    var angle = Math.random() * Math.PI * 2;
+    this.distanceToPath = new Vector2(Math.cos(angle) * radius, Math.sin(angle) * radius);
 }
 
 // constructor

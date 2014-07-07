@@ -33,7 +33,7 @@ var agentRadius = 30;
 var settings = {
     message: 'test',
     time: 0,
-    separation: agentRadius / 2,
+    separation: agentRadius,
     alignDistance: agentRadius / 4
 };
 var gui;
@@ -153,6 +153,8 @@ function update(timestamp) {
         if (t > 1) t = 1;
 
         var target = agent.path.getPointAt(t);
+        target.x += agent.distanceToPath.x;
+        target.y += agent.distanceToPath.y;
         debugGraphics.beginFill(agent.path.color);
         debugGraphics.drawCircle(target.x, target.y, 2);
         debugGraphics.endFill();
