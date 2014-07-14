@@ -7,7 +7,8 @@
 
      this.dirtyLength = true;
      this.loop = false;
-     this.samplesCount = 200;
+     this.samplesCount = 20;
+     this.boidsArrived = 0;
  }
 
 
@@ -29,6 +30,9 @@
      return vec;
  };
 
+
+
+
  Path.prototype.getPointAt = function(d) {
      var i, k, _i, _ref;
 
@@ -41,6 +45,25 @@
      k = 0;
      for (i = _i = 0, _ref = this.accumulatedLengthRatios.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
          if (this.accumulatedLengthRatios[i] >= d) {
+             k = this.accumulatedRatios[i];
+             break;
+         }
+     }
+     return this.getPoint(k, true);
+ };
+
+ Path.prototype.getPointAtLength = function(d) {
+     var i, k, _i, _ref;
+
+     if (!this.loop) {
+         d = Math.max(0, Math.min(d, 1));
+     }
+     if (this.dirtyLength) {
+         this.precalculateLength();
+     }
+     k = 0;
+     for (i = _i = 0, _ref = this.accumulatedLengths.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+         if (this.accumulatedLengths[i] >= d) {
              k = this.accumulatedRatios[i];
              break;
          }

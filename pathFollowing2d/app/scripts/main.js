@@ -1,5 +1,11 @@
 var w, h;
 
+var agentCount = 200;
+var agents = [];
+var classPaths = [];
+var agentRadius = 30;
+
+
 var worldWidth = 800;
 var worldHeight = 600;
 
@@ -9,9 +15,7 @@ var topBoundary = new Vector2(0, 60);
 var bottomBoundary = new Vector2(0, worldHeight - 60);
 var minBoundaryDist = 20;
 
-var agentCount = 100;
-var agents = [];
-var paths = [];
+
 
 var renderer;
 var stage;
@@ -27,14 +31,16 @@ var quadtree = new QuadTree({
 }, true);
 
 
-//globals
-var agentRadius = 30;
 
 var settings = {
     message: 'test',
     time: 0,
+    maxSpeed: 2,
+    maxForce: 0.8,
+    maxSeparationForce: 0.3,
     separation: agentRadius,
-    alignDistance: agentRadius / 4
+    showPaths: true,
+    // showTargets: true
 };
 var gui;
 
@@ -45,9 +51,14 @@ window.onload = function() {
     gui = new dat.GUI({
         autoPlace: false
     });
-    gui.add(settings, 'separation', 0, agentRadius);
-    gui.add(settings, 'alignDistance', 0, agentRadius);
+    gui.add(settings, 'separation', 0, agentRadius * 4);
+    gui.add(settings, 'maxSpeed', 0, 10);
+    gui.add(settings, 'maxForce', 0, 1);
+    gui.add(settings, 'maxSeparationForce', 0, 1);
     gui.add(settings, 'time', 0.0, 2, 0.01);
+    gui.add(settings, 'showPaths');
+    // gui.add(settings, 'showTargets')
+
     gui.domElement.style.position = 'absolute';
     gui.domElement.style.top = '0';
     gui.domElement.style.left = '0';
@@ -62,7 +73,7 @@ function init() {
     worldHeight = h;
 
     renderer = PIXI.autoDetectRenderer(w, h);
-    stage = new PIXI.Stage(0xffffff);
+    stage = new PIXI.Stage(0);
 
     leftBoundary = new Vector2(60, 0);
     rightBoundary = new Vector2(worldWidth - 60, 0);
@@ -82,11 +93,33 @@ function loadPaths() {
 }
 
 function createPaths(data) {
-    data[0]["paths"]["layer_0"].forEach(function(a) {
-        var path = new Path(a.points);
-        path.color = parseInt(a.color.slice(1), 16);
-        paths.push(path);
+
+
+    data.forEach(function(d) {
+
+        switch (d.name) {
+            case "classPaths":
+                d.paths.forEach(function(a) {
+                    if (a.points) {
+                        var path = new Path(a.points);
+                        path.color = parseInt(a.color.slice(1), 16);
+                        classPaths.push(path);
+                    }
+                });
+
+                break;
+            case "wander":
+                break;
+
+
+        }
+
+
     });
+
+    console.log(classPaths)
+
+
     drawPaths();
 
     start();
@@ -98,8 +131,10 @@ function createAgents() {
         // var t = new Agent(texture, (Math.random() > .5 ? Math.random() * w + w : -Math.random() * w), (Math.random() > .5 ? Math.random() * h + h : -Math.random() * h));
         var t = new Agent(texture);
         t.id = i;
-        t.delay = MathUtils.randomFloat(-0.25, 0);
-        t.path = paths[MathUtils.randomInt(0, paths.length)];
+        t.delay = MathUtils.randomFloat(-1, 0);
+        t.path = classPaths[MathUtils.randomInt(0, classPaths.length)];
+
+        classPaths[0].precalculateLength();
 
         var startPoint = t.path.getPointAt(0);
         t.setPosition(startPoint.x + MathUtils.randomFloat(0, 100), startPoint.y + MathUtils.randomFloat(0, 100));
@@ -112,7 +147,7 @@ function createAgents() {
 }
 
 function drawPaths() {
-    paths.forEach(function(path) {
+    classPaths.forEach(function(path) {
         debugGraphics.lineStyle(1, path.color);
         debugGraphics.moveTo(path.points[0].x, path.points[0].y);
         for (var i = 1; i < path.points.length; i++) {
@@ -120,6 +155,7 @@ function drawPaths() {
             debugGraphics.lineTo(p.x, p.y);
         };
     });
+    debugGraphics.cacheAsBitmap = true;
 }
 
 function start() {
@@ -132,45 +168,45 @@ function start() {
 
 
 function update(timestamp) {
-    var delta = timestamp - (lastTimestamp || timestamp);
 
     quadtree.clear();
 
-
-
-    debugGraphics.clear();
+    // debugGraphics.clear();
 
     quadtree.insert(agents);
-    var seconds = timestamp / 1000;
+
     var agent;
-
     for (var i = 0; i < agentCount; i++) {
-        agent = agents[i]
-        agent.update();
-        // var t = (seconds + agent.delay) * 2 / agent.path.length
-        t = settings.time + agent.delay;
-        if (t < 0) t = 0;
-        if (t > 1) t = 1;
 
-        var target = agent.path.getPointAt(t);
-        target.x += agent.distanceToPath.x;
-        target.y += agent.distanceToPath.y;
-        debugGraphics.beginFill(agent.path.color);
-        debugGraphics.drawCircle(target.x, target.y, 2);
-        debugGraphics.endFill();
+        agent = agents[i]
+
+        // if (!agent.arrived) {
+        agent.follow(agent.path);
+        // }
         var neighbors = quadtree.retrieve(agent.position);
-        agent.align(neighbors);
         agent.separate(neighbors);
-        agent.seek(target);
-        // agent.boundaries();
-        // console.log();
+        agent.update();
 
     }
 
-    drawPaths();
 
+    var location = agent.location;
+    var velocity = agent.velocity;
+    var predictLoc = agent.predictLoc;
+    var normal = agent.normal;
+    var target = agent.target;
 
-    // drawNode(quadtree.root);
+    // for (var i = 0; i < classPaths.length; i++) {
+    //     with(debugGraphics) {
+    //         var path = classPaths[i];
+    //         var lastPoint = path.getPointAt(1)
+    //         beginFill(path.color);
+    //         drawCircle(lastPoint.x, lastPoint.y, path.boidsArrived)
+    //         endFill();
+    //     }
+    // }
+
+    // if (settings.showPaths) drawPaths();
 
 
     renderer.render(stage);

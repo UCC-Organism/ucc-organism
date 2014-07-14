@@ -50,22 +50,24 @@ var parse = function() {
                 done: function(errors, window) {
                     var $ = window.$;
 
-                    var f_parsed = [];
                     // each top level group
                     var $g = $("svg").children("g");
 
                     $g.each(function(i, e) {
                         var callback = function(paths) {
-                            f_parsed.push({
-                                name: $(e).parent().attr("id"),
+
+                            parsed.push({
+                                name: $(e).attr("id"),
                                 paths: paths
                             });
+
                             if (i == $g.length - 1) {
-                                parsed.push({
-                                    name: f.name,
-                                    paths: f_parsed
-                                });
-                                if (parsed.length == len) write();
+                                write();
+                                // parsed.push({
+                                //     name: f.name,
+                                //     paths: f_parsed
+                                // });
+                                // if (parsed.length == len) 
                             }
                         };
                         grind($, $(e), callback);
@@ -101,7 +103,8 @@ var parse = function() {
 
                         data.push({
                             "type": "path",
-                            "color": $e.attr("stroke"),
+                            "fill": $e.attr("fill"),
+                            "stroke": $e.attr("stroke"),
                             "points": pointsData
                         });
                         break;
@@ -177,36 +180,9 @@ var parse = function() {
 
         // Check layers
 
-        var l = parsed[0].paths.length,
-            valid = true;
-        parsed.forEach(function(e, i) {
-            if (e.paths.length != l) valid = false;
-        });
-        if (!valid) {
-            console.error("\r\nERROR: All files must have the same number of group layers.");
-            process.exit(1);
-        }
-        console.log("\r\nLayers OK; attempting to write file...");
-
-        // AHHHHHHHHHHHHHHHHHHHHHHH
-        var out = [];
-
-        parsed[0].paths.forEach(function(e, j) {
-            var item = {
-                name: e.name,
-                paths: {}
-            };
-            for (var i = 0; i < parsed.length; i++) {
-                var p = parsed[i].paths[j].paths;
-                item.paths["layer_" + i] = p;
-            }
-            out.push(item);
-        });
-
-
         var filename = names.join("-") + ".json";
 
-        fs.writeFile("app/assets/" + filename, JSON.stringify(out), function(err) {
+        fs.writeFile("app/assets/" + filename, JSON.stringify(parsed), function(err) {
             if (err) {
                 console.log(err);
             } else {
