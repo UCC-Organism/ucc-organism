@@ -87,10 +87,10 @@ function update(timestamp) {
         addOuterPoint(0);
 
         for (var i = 1; i < indices.length; i++) {
-            // g.lineTo(points[indices[i]].x, points[indices[i]].y);
-            addOuterPoint(i)
+            g.lineTo(points[indices[i]].x, points[indices[i]].y);
+            // addOuterPoint(i)
         }
-        // g.lineTo(points[indices[0]].x, points[indices[0]].y);
+        g.lineTo(points[indices[0]].x, points[indices[0]].y);
 
         g.lineStyle(2, 0xffff00);
         g.moveTo(outerPoints[0].x, outerPoints[0].y);
