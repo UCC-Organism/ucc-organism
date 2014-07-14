@@ -44,7 +44,7 @@ function createAgents() {
     for (var i = 0; i < agentCount; i++) {
         var t = new Agent(texture);
         t.id = i;
-        var r = MathUtils.randomFloat(10, 200);
+        var r = MathUtils.randomFloat(10, 300);
         var angle = MathUtils.randomFloat(0, Math.PI * 2);
         t.startX = Math.cos(angle) * r + w / 2;
         t.startY = Math.sin(angle) * r + h / 2;
@@ -79,7 +79,7 @@ function update(timestamp) {
     var indices = hull.getIndices();
     var outerPoints = [];
     g.clear();
-    g.lineStyle(2, 0xff0000);
+    g.lineStyle(2, 0xff0000, 0.4);
 
     if (indices && indices.length > 0) {
         g.moveTo(points[indices[0]].x, points[indices[0]].y);
@@ -88,15 +88,18 @@ function update(timestamp) {
 
         for (var i = 1; i < indices.length; i++) {
             g.lineTo(points[indices[i]].x, points[indices[i]].y);
-            // addOuterPoint(i)
+            addOuterPoint(i);
         }
         g.lineTo(points[indices[0]].x, points[indices[0]].y);
 
         g.lineStyle(2, 0xffff00);
+
+
         g.moveTo(outerPoints[0].x, outerPoints[0].y);
         for (var i = 1; i < outerPoints.length; i++) {
             g.lineTo(outerPoints[i].x, outerPoints[i].y);
         }
+
         g.lineTo(outerPoints[0].x, outerPoints[0].y);
 
     }
@@ -104,42 +107,32 @@ function update(timestamp) {
 
     function addOuterPoint(index) {
 
-        var a;
+
+        var a = points[indices[(index == 0) ? indices.length - 1 : (index - 1)]];
         var b = points[indices[index]];
-        var c;
-
-        a = index - 1 % points
-        if (index == 0) {
-            a = points[indices[indices.length - 1]];
-        } else {}
-
-        if (index == points.length - 1) {
-            c = points[indices[0]];
-        } else {
-            c = points[indices[index + 1]];
-        }
-
-        var segA = new Vector2(a.x, a.y);
-        segA.subSelf(b);
-
-        var segB = new Vector2(b.x, b.y);
-        segB.subSelf(c);
-
-        segA.addSelf(segB);
+        var c = points[indices[(index + 1) % indices.length]];
+        console.log(a, b, c)
 
 
-        var x = segA.x;
-        var y = segA.y;
+        var vA = new Vector2(a.x, a.y);
+        vA.subSelf(b).normalize();
 
-        var outerPoint = new Vector2();
+        var vB = new Vector2(c.x, c.y);
+        vB.subSelf(b).normalize();
 
-        outerPoint.x = y;
-        outerPoint.y = -x;
-        outerPoint.limit(segA.length() / 2);
-        outerPoint.x += a.x;
-        outerPoint.y += a.y;
+        var p = new Vector2();
+        p.add(vA, vB);
+        p.normalize();
 
-        outerPoints.push(outerPoint);
+        p.mult(-50);
+
+
+
+        // p.addSelf(vB);
+        p.addSelf(b);
+
+        p.origin = b;
+        outerPoints.push(p);
     }
 
     renderer.render(stage);
