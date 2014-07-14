@@ -73,7 +73,7 @@ function init() {
     worldHeight = h;
 
     renderer = PIXI.autoDetectRenderer(w, h);
-    stage = new PIXI.Stage(0);
+    stage = new PIXI.Stage(0xff0000);
 
     leftBoundary = new Vector2(60, 0);
     rightBoundary = new Vector2(worldWidth - 60, 0);
@@ -92,32 +92,30 @@ function loadPaths() {
     });
 }
 
+
 function createPaths(data) {
-
-
     data.forEach(function(d) {
-
         switch (d.name) {
             case "classPaths":
                 d.paths.forEach(function(a) {
                     if (a.points) {
                         var path = new Path(a.points);
-                        path.color = parseInt(a.color.slice(1), 16);
+                        if (a.fill != "none") path.fill = parseInt(a.fill.slice(1), 16);
+                        if (a.stroke != "none") path.stroke = parseInt(a.stroke.slice(1), 16);
                         classPaths.push(path);
                     }
                 });
-
                 break;
-            case "wander":
+            case "wandering":
+                wanderingPath = new Path(d.paths[0].points);
+                if (d.paths[0].fill != "none") wanderingPath.fill = parseInt(d.paths[0].fill.slice(1), 16);
+                if (d.paths[0].stroke != "none") wanderingPath.stroke = parseInt(d.paths[0].stroke.slice(1), 16);
                 break;
-
 
         }
 
 
     });
-
-    console.log(classPaths)
 
 
     drawPaths();
