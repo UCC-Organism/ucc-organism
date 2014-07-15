@@ -1,114 +1,129 @@
- var Path = function(points) {
-     this.points = [];
-     for (var i = 0; i < points.length; i++) {
-         var p = points[i];
-         this.points.push(new Vector2(p.x * worldWidth, p.y * worldHeight));
-     };
+function Path(points, closed) {
+    this.points = points || [];
+    this.dirtyLength = true;
+    this.closed = closed || false;
+    this.samplesCount = 1000;
+}
 
-     this.dirtyLength = true;
-     this.loop = false;
-     this.samplesCount = 20;
-     this.boidsArrived = 0;
- }
+Path.prototype.addPoint = function(p) {
+    return this.points.push(p);
+};
 
+Path.prototype.getPoint = function(t, debug) {
+    var point = t * (this.points.length - 1);
+    var intPoint = Math.floor(point);
+    var weight = point - intPoint;
+    var c0 = intPoint;
+    var c1 = intPoint + 1;
+    if (intPoint === this.points.length - 1) {
+        c0 = intPoint;
+        c1 = intPoint;
+    }
+    var vec = new Vector2();
+    vec.x = this.points[c0].x + (this.points[c1].x - this.points[c0].x) * weight;
+    vec.y = this.points[c0].y + (this.points[c1].y - this.points[c0].y) * weight;
+    return vec;
+};
 
- Path.prototype.getPoint = function(t, debug) {
-     var c0, c1, intPoint, point, vec, weight;
+Path.prototype.getPointAt = function(d) {
+    if (!this.closed) {
+        d = Math.max(0, Math.min(d, 1));
+    }
+    if (this.dirtyLength) {
+        this.precalculateLength();
+    }
+    var k = 0;
+    for (var i = 0; i < this.accumulatedLengthRatios.length; i++) {
+        if (this.accumulatedLengthRatios[i] > d - 1 / this.samplesCount) {
+            k = this.accumulatedRatios[i];
+            break;
+        }
+    }
+    return this.getPoint(k, true);
+};
 
-     point = t * (this.points.length - 1);
-     intPoint = Math.floor(point);
-     weight = point - intPoint;
-     c0 = intPoint;
-     c1 = intPoint + 1;
-     if (intPoint === this.points.length - 1) {
-         c0 = intPoint;
-         c1 = intPoint;
-     }
-     vec = new Vector2();
-     vec.x = this.points[c0].x + (this.points[c1].x - this.points[c0].x) * weight;
-     vec.y = this.points[c0].y + (this.points[c1].y - this.points[c0].y) * weight;
-     return vec;
- };
+//naive implementation
+Path.prototype.getClosestPoint = function(point) {
+    if (this.dirtyLength) {
+        this.precalculateLength();
+    }
+    var closesPoint = this.precalculatedPoints.reduce(function(best, p) {
+        var dist = new Vector2().sub(point, p).lengthSq();
+        if (dist < best.dist) {
+            return {
+                dist: dist,
+                point: p
+            };
+        } else return best;
+    }, {
+        dist: Infinity,
+        point: null
+    });
+    return closesPoint.point;
+}
 
+Path.prototype.getClosestPointRatio = function(point) {
+    if (this.dirtyLength) {
+        this.precalculateLength();
+    }
+    var closesPoint = this.precalculatedPoints.reduce(function(best, p, pIndex) {
+        var dist = new Vector2().sub(point, p).length();
+        if (dist < best.dist) {
+            return {
+                dist: dist,
+                point: p,
+                index: pIndex
+            };
+        } else return best;
+    }, {
+        dist: Infinity,
+        point: null,
+        index: -1
+    });
+    return this.accumulatedLengthRatios[closesPoint.index];
+}
 
+Path.prototype.close = function() {
+    return this.closed = true;
+};
 
+Path.prototype.isClosed = function() {
+    return this.closed;
+};
 
- Path.prototype.getPointAt = function(d) {
-     var i, k, _i, _ref;
+Path.prototype.reverse = function() {
+    this.points = this.points.reverse();
+    return this.dirtyLength = true;
+};
 
-     if (!this.loop) {
-         d = Math.max(0, Math.min(d, 1));
-     }
-     if (this.dirtyLength) {
-         this.precalculateLength();
-     }
-     k = 0;
-     for (i = _i = 0, _ref = this.accumulatedLengthRatios.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-         if (this.accumulatedLengthRatios[i] >= d) {
-             k = this.accumulatedRatios[i];
-             break;
-         }
-     }
-     return this.getPoint(k, true);
- };
+Path.prototype.precalculateLength = function() {
 
- Path.prototype.getPointAtLength = function(d) {
-     var i, k, _i, _ref;
+    this.accumulatedRatios = [];
+    this.accumulatedLengthRatios = [];
+    this.accumulatedLengths = [];
+    this.precalculatedPoints = [];
 
-     if (!this.loop) {
-         d = Math.max(0, Math.min(d, 1));
-     }
-     if (this.dirtyLength) {
-         this.precalculateLength();
-     }
-     k = 0;
-     for (i = _i = 0, _ref = this.accumulatedLengths.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-         if (this.accumulatedLengths[i] >= d) {
-             k = this.accumulatedRatios[i];
-             break;
-         }
-     }
-     return this.getPoint(k, true);
- };
+    var step = 1 / this.samplesCount;
+    var k = 0;
+    var totalLength = 0;
+    var point = null;
+    var prevPoint = null;
 
- Path.prototype.close = function() {
-     return this.loop = true;
- };
-
- Path.prototype.isClosed = function() {
-     return this.loop;
- };
-
- Path.prototype.reverse = function() {
-     this.points = this.points.reverse();
-     return this.dirtyLength = true;
- };
-
- Path.prototype.precalculateLength = function() {
-     var i, k, len, point, prevPoint, step, totalLength, _i, _j, _ref, _ref1;
-
-     step = 1 / this.samplesCount;
-     k = 0;
-     totalLength = 0;
-     this.accumulatedRatios = [];
-     this.accumulatedLengthRatios = [];
-     this.accumulatedLengths = [];
-     point = null;
-     prevPoint = null;
-     for (i = _i = 0, _ref = this.samplesCount; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-         prevPoint = point;
-         point = this.getPoint(k);
-         if (i > 0) {
-             len = point.subSelf(prevPoint).length();
-             totalLength += len;
-         }
-         this.accumulatedRatios.push(k);
-         this.accumulatedLengths.push(totalLength);
-         k += step;
-     }
-     for (i = _j = 0, _ref1 = this.accumulatedLengths.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
-         this.accumulatedLengthRatios.push(this.accumulatedLengths[i] / totalLength);
-     }
-     this.length = totalLength;
-     return this.dirtyLength = false;
- };
+    for (var i = 0; i < this.samplesCount; i++) {
+        prevPoint = point;
+        point = this.getPoint(k);
+        if (i > 0) {
+            var p = point.clone();
+            totalLength += p.subSelf(prevPoint).length();
+        }
+        this.accumulatedRatios.push(k);
+        this.accumulatedLengths.push(totalLength);
+        this.precalculatedPoints.push(point);
+        k += step;
+    }
+    for (var i = 0; i < this.accumulatedLengths.length - 1; i++) {
+        this.accumulatedLengthRatios.push(this.accumulatedLengths[i] / totalLength);
+    }
+    this.length = totalLength;
+    return this.dirtyLength = false;
+};

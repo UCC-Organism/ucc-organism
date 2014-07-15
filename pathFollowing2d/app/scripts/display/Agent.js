@@ -80,7 +80,7 @@ Agent.prototype.follow = function(p) {
         this.target = this.path.getPoint(this.currentProgress).addSelf(this.distanceToPath);
     }
 
-    // if (!this.id) console.log(this.currentProgress)
+    if (!this.id) console.log(this.currentProgress)
 
     if (this.currentProgress >= 1) {
         this.arrived = true;
@@ -102,9 +102,7 @@ Agent.prototype.follow = function(p) {
 
 }
 
-Agent.prototype.wonderOnPath = function(p) {
 
-}
 
 Agent.prototype.update = function() {
     if (this.arrived) return;

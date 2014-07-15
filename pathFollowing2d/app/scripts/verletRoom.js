@@ -31,25 +31,16 @@ var Engine = Matter.Engine,
     Composite = Matter.Composite,
     Composites = Matter.Composites,
     Common = Matter.Common,
-    Constraint = Matter.Constraint,
     RenderPixi = Matter.RenderPixi,
     Events = Matter.Events,
-    Bounds = Matter.Bounds,
-    Vector = Matter.Vector,
-    Vertices = Matter.Vertices;
+    Vector = Matter.Vector;
 
 
 var wanderingPath;
 
-
 var _engine,
     _gui,
-    _inspector,
-    _mouseConstraint;
-
-var Gui = MatterTools.Gui,
-    Inspector = MatterTools.Inspector;
-
+    _inspector;
 
 var agents = [];
 var classPaths = [];
@@ -72,6 +63,11 @@ function createPaths(data) {
             case "classPaths":
                 d.paths.forEach(function(a) {
                     if (a.points) {
+                        a.points.forEach(function(p) {
+                            p.x *= worldWidth;
+                            p.y *= worldHeight;
+                        });
+
                         var path = new Path(a.points);
                         if (a.fill != "none") path.fill = parseInt(a.fill.slice(1), 16);
                         if (a.stroke != "none") path.stroke = parseInt(a.stroke.slice(1), 16);
@@ -80,8 +76,10 @@ function createPaths(data) {
                 });
                 break;
             case "wandering":
-                console.log(d)
-                pathGraphics.beginFill()
+                d.paths[0].points.forEach(function(p) {
+                    p.x *= worldWidth;
+                    p.y *= worldHeight;
+                });
                 wanderingPath = new Path(d.paths[0].points);
                 if (d.paths[0].fill != "none") wanderingPath.fill = parseInt(d.paths[0].fill.slice(1), 16);
                 if (d.paths[0].stroke != "none") wanderingPath.stroke = parseInt(d.paths[0].stroke.slice(1), 16);
@@ -152,10 +150,10 @@ function initWorld() {
 
     Events.on(_engine, 'tick', function(event) {
         agents.forEach(function(a) {
-            a.followPath(wanderingPath);
+            a.follow();
+            // a.followPath(wanderingPath);
             // a.separate(agents)
         });
-
     });
 
     if (wanderingPath.fill) pathGraphics.beginFill(wanderingPath.fill);
@@ -198,7 +196,7 @@ function initWorld() {
     renderOptions.background = "#000b26";
 
     createAgents();
-    // createObstacles();
+    createObstacles();
 
 }
 
@@ -246,20 +244,4 @@ function createAgents() {
 
 
     if (agents.length < agentCount) setTimeout(createAgents, 100);
-}
-
-
-function getPolygonTexture(ctx, x, y, radius, sides, startAngle, anticlockwise) {
-    if (sides < 3) return;
-    var a = (Math.PI * 2) / sides;
-    a = anticlockwise ? -a : a;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(startAngle);
-    ctx.moveTo(radius, 0);
-    for (var i = 1; i < sides; i++) {
-        ctx.lineTo(radius * Math.cos(a * i), radius * Math.sin(a * i));
-    }
-    ctx.closePath();
-    ctx.restore();
 }

@@ -1,6 +1,6 @@
 var w, h;
 
-var agentCount = 200;
+var agentCount = 100;
 var agents = [];
 var classPaths = [];
 var agentRadius = 30;
@@ -99,6 +99,11 @@ function createPaths(data) {
             case "classPaths":
                 d.paths.forEach(function(a) {
                     if (a.points) {
+                        a.points.forEach(function(p) {
+                            p.x *= w;
+                            p.y *= h;
+                        });
+
                         var path = new Path(a.points);
                         if (a.fill != "none") path.fill = parseInt(a.fill.slice(1), 16);
                         if (a.stroke != "none") path.stroke = parseInt(a.stroke.slice(1), 16);
@@ -132,7 +137,6 @@ function createAgents() {
         t.delay = MathUtils.randomFloat(-1, 0);
         t.path = classPaths[MathUtils.randomInt(0, classPaths.length)];
 
-        classPaths[0].precalculateLength();
 
         var startPoint = t.path.getPointAt(0);
         t.setPosition(startPoint.x + MathUtils.randomFloat(0, 100), startPoint.y + MathUtils.randomFloat(0, 100));
@@ -157,11 +161,11 @@ function drawPaths() {
 }
 
 function start() {
+    stage.addChild(debugGraphics);
     createAgents();
     resize();
     update();
 
-    stage.addChild(debugGraphics);
 }
 
 
@@ -193,19 +197,6 @@ function update(timestamp) {
     var predictLoc = agent.predictLoc;
     var normal = agent.normal;
     var target = agent.target;
-
-    // for (var i = 0; i < classPaths.length; i++) {
-    //     with(debugGraphics) {
-    //         var path = classPaths[i];
-    //         var lastPoint = path.getPointAt(1)
-    //         beginFill(path.color);
-    //         drawCircle(lastPoint.x, lastPoint.y, path.boidsArrived)
-    //         endFill();
-    //     }
-    // }
-
-    // if (settings.showPaths) drawPaths();
-
 
     renderer.render(stage);
     requestAnimFrame(update);

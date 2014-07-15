@@ -2920,10 +2920,10 @@
             _delta = 1000 / _fps;
 
         var _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
-                window.setTimeout(function() {
-                    callback(Common.now());
-                }, _delta);
-            };
+            window.setTimeout(function() {
+                callback(Common.now());
+            }, _delta);
+        };
 
         /**
          * Description
@@ -4176,8 +4176,8 @@
          */
         Composites.stack = function(xx, yy, columns, rows, columnGap, rowGap, callback) {
             var stack = Composite.create({
-                label: 'Stack'
-            }),
+                    label: 'Stack'
+                }),
                 x = xx,
                 y = yy,
                 lastBody,
@@ -4425,8 +4425,8 @@
                 wheelYOffset = 0;
 
             var car = Composite.create({
-                label: 'Car'
-            }),
+                    label: 'Car'
+                }),
                 body = Bodies.trapezoid(xx, yy, width, height, 0.3, {
                     groupId: groupId,
                     friction: 0.01,

@@ -4,10 +4,6 @@ if (process.argv.length < 3) {
     process.exit(1);
 }
 
-//size of illustrator canvas 
-var CANVASWIDTH = 1000;
-var CANVASHEIGHT = 1000;
-
 var fs = require('fs');
 var jsdom = require("jsdom");
 var jquery = fs.readFileSync("node_modules/jquery/dist/jquery.min.js").toString();
@@ -96,8 +92,8 @@ var parse = function() {
                         for (var i = 0; i < points.length; i++) {
                             var a = points[i].split(",");
                             pointsData.push({
-                                x: a[0] / CANVASWIDTH,
-                                y: a[1] / CANVASHEIGHT
+                                x: Math.round(a[0]),
+                                y: Math.round(a[1])
                             });
                         }
 
@@ -112,12 +108,12 @@ var parse = function() {
                     case "line":
                         var pointsData = [];
                         pointsData.push({
-                            x: $e.attr("x1") / CANVASWIDTH,
-                            y: $e.attr("y1") / CANVASHEIGHT
+                            x: $e.attr("x1"),
+                            y: $e.attr("y1")
                         });
                         pointsData.push({
-                            x: $e.attr("x2") / CANVASWIDTH,
-                            y: $e.attr("y2") / CANVASHEIGHT
+                            x: $e.attr("x2"),
+                            y: $e.attr("y2")
                         });
                         data.push({
                             "type": "path",
@@ -181,7 +177,6 @@ var parse = function() {
         // Check layers
 
         var filename = names.join("-") + ".json";
-
         fs.writeFile("app/assets/" + filename, JSON.stringify(parsed), function(err) {
             if (err) {
                 console.log(err);

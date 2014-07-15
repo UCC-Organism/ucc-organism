@@ -1,3 +1,6 @@
+"use strict";
+
+
 var Agent = function() {
     var radius = Common.random(5, 6);
     var angle = Math.random() * Math.PI * 2;
@@ -11,7 +14,9 @@ var Agent = function() {
 
 
     this.r = 20;
+    this.offset = MathUtils.randomFloat(200, -200);
     this.currentProgress = 0;
+    this.t = 0;
 }
 
 // constructor
@@ -61,44 +66,69 @@ Agent.prototype.separate = function(agents) {
 
 Agent.prototype.follow = function() {
 
-    if (this.arrived) return;
+    if (this.arrived) {
+        debugGraphics.clear();
+        this.attendClass();
+        return;
+    }
+
     this.predictLoc = new Vector2(this.body.velocity.x, this.body.velocity.y);
     this.predictLoc.setLength(10).addSelf(this.body.position);
 
     if (!this.target) {
-        this.target = this.path.getPoint(0);
+        //find closest point
+        this.target = this.path.getClosestPoint(this.body.position);
+        this.currentProgress = this.path.getClosestPointRatio(this.body.position);
     }
+
+
 
     var distance = new Vector2().sub(this.predictLoc, this.target).length();
-    if (distance < this.r && this.currentProgress < 1) {
+
+    if (distance < 50 && this.currentProgress < 1) {
         this.currentProgress += 0.01;
-        this.target = this.path.getPoint(this.currentProgress).addSelf(this.distanceToPath);
+        this.target = this.path.getPoint(this.currentProgress);
     }
 
-    if (this.currentProgress >= 1) {
+    if (this.currentProgress >= 0.99) {
         this.arrived = true;
-        this.path.boidsArrived++;
-    } else {
-        var desired = new Vector2().sub(this.target, this.body.position);
-        var mag = desired.length();
-        if (mag < 10) {
-            desired.setLength(mag / 10 + 1);
-        } else {
-            desired.setLength(settings.maxSpeed);
-        }
-
-        var steer = new Vector2().sub(desired, this.body.velocity);
-        steer.limit(settings.maxForce);
-        this.applyForce(steer);
+        this.endPosition = new Vector2().addSelf(this.body.position);
     }
 
+    // console.log(this.currentProgress)
+    debugGraphics.clear();
+    debugGraphics.lineStyle(1, 0xffffff)
+    debugGraphics.drawCircle(this.target.x, this.target.y, 10);
+
+
+    var desired = new Vector2().sub(this.target, this.body.position);
+    var mag = desired.length();
+    // if (mag < 10) {
+    //     desired.setLength(mag / 10 + 1);
+    // } else {
+    desired.setLength(settings.maxSpeed);
+    // }
+
+    var steer = new Vector2().sub(desired, this.body.velocity);
+    steer.limit(settings.maxForce);
+    this.applyForce(steer);
 }
 
-Agent.prototype.goToClass = function() {
 
-    //get closest point to your path
+Agent.prototype.attendClass = function() {
 
-    //follow it until progress is 1
+    var n = noise.perlin2(this.t, 100) + 1 / 2;
+    var angle = Math.PI * 2 * n;
+
+    this.t += 0.5;
+    var force = {};
+
+    // classroom fight
+    force.x = (roomCenter.x - this.body.position.x + Math.cos(angle) * this.offset) * 0.002;
+    force.y = (roomCenter.y - this.body.position.y + Math.sin(angle) * this.offset) * 0.002;
+
+
+    this.applyForce(force)
 }
 
 Agent.prototype.followPath = function(path) {
@@ -110,7 +140,7 @@ Agent.prototype.followPath = function(path) {
 
     // Now we must find the normal to the path from the predicted position
     // We look at the normal for each line segment and pick out the closest one
-    var worldRecord = 1000000;
+    var worldRecord = Infinity;
     // Loop through all points of the path
     for (var i = 0; i < path.points.length; i++) {
 
@@ -150,13 +180,11 @@ Agent.prototype.followPath = function(path) {
 
 
     }
-    // console.log(worldRecord)
     // debugGraphics.clear();
     // debugGraphics.lineStyle(1, 0xff0000);
     // debugGraphics.moveTo(this.body.position.x, this.body.position.y);
     // debugGraphics.lineTo(normal.x, normal.y);
     // debugGraphics.drawCircle(target.x, target.y, 10);
-
     // if (d > 50) {
     var desired = new Vector2().sub(target, this.body.position);
     desired.limit(5); //settings.maxSpeed)
