@@ -231,7 +231,7 @@ function createAgents() {
 
     agent.id = agents.length;
 
-    var agentColor = colors[MathUtils.randomInt(0, colors.length)];
+    var agentColor = colors[0]; //MathUtils.randomInt(0, colors.length)];
     agent.body.render.fillStyle = agentColor;
     agent.body.render.strokeStyle = chroma(agentColor).brighter(Math.random() * 100).hex();
 

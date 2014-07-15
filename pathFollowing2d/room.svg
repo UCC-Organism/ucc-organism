@@ -7,6 +7,10 @@
 	<polyline fill="none" stroke="#000000" stroke-miterlimit="10" points="1023.557,776.193 1097.138,648.799 1023.681,521.5 
 		876.642,521.5 803.12,648.982 876.637,776.464 	"/>
 </g>
+<g id="Layer_4">
+	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="877.156" cy="1090.842" r="13.211"/>
+	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="1022.156" cy="1090.842" r="13.211"/>
+</g>
 <g id="center">
 </g>
 <g id="paths">

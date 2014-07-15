@@ -124,11 +124,23 @@ Agent.prototype.attendClass = function() {
     var force = {};
 
     // classroom fight
-    force.x = (roomCenter.x - this.body.position.x + Math.cos(angle) * this.offset) * 0.002;
-    force.y = (roomCenter.y - this.body.position.y + Math.sin(angle) * this.offset) * 0.002;
+    // force.x = (roomCenter.x - this.body.position.x + Math.cos(angle) * this.offset) * 0.002;
+    // force.y = (roomCenter.y - this.body.position.y + Math.sin(angle) * this.offset) * 0.002;
+
+    if (!this.classTarget || (Math.pow(this.classTarget.x - this.body.position.x, 2) < 100 && Math.pow(this.classTarget.y - this.body.position.y, 2) < 100)) {
+        //find closest point
+        var angle = MathUtils.randomFloat(0, Math.PI * 2);
+        var radius = MathUtils.randomFloat(50, 100);
+        this.classTarget = {};
+        this.classTarget.x = Math.cos(angle) * radius + roomCenter.x;
+        this.classTarget.y = Math.sin(angle) * radius + roomCenter.y;
+    }
+
+    this.body.position.x += (this.classTarget.x - this.body.position.x) * 0.002;
+    this.body.position.y += (this.classTarget.y - this.body.position.y) * 0.002;
 
 
-    this.applyForce(force)
+    // this.applyForce(force)
 }
 
 Agent.prototype.followPath = function(path) {
