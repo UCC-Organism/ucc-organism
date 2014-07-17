@@ -4,16 +4,20 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="1920px" height="1280px" viewBox="0 0 1920 1280" enable-background="new 0 0 1920 1280" xml:space="preserve">
 <g id="room">
-	<polyline fill="none" stroke="#000000" stroke-miterlimit="10" points="1023.557,776.193 1097.138,648.799 1023.681,521.5 
-		876.642,521.5 803.12,648.982 876.637,776.464 	"/>
+	<g>
+		<g>
+			<polyline fill="none" stroke="#000000" stroke-miterlimit="10" points="1035.367,755.746 1097.138,648.799 1023.681,521.5 
+				876.642,521.5 803.12,648.982 873.622,771.236 			"/>
+			<g>
+				<path d="M876.637,776.464c-2.331-1.934-5.649-4.088-8.39-5.028l4.979-0.886l3.26-3.866
+					C875.927,769.528,876.13,773.478,876.637,776.464z"/>
+			</g>
+		</g>
+	</g>
 </g>
 <g id="pillars">
 	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="877.156" cy="924.034" r="13.211"/>
 	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="1022.156" cy="924.034" r="13.211"/>
-	<g id="pillars_1_">
-		<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="877.156" cy="1091.289" r="13.211"/>
-		<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="1022.156" cy="1091.289" r="13.211"/>
-	</g>
 </g>
 <g id="center">
 </g>

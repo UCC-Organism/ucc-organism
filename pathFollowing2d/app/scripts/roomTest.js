@@ -22,7 +22,7 @@ var pathGraphics = new PIXI.Graphics();
 var roomGraphics = new PIXI.Graphics();
 var debugGraphics = new PIXI.Graphics();
 
-
+var pillarsBase;
 //Matter
 var _engine;
 
@@ -98,7 +98,6 @@ function createPaths(data) {
                     roomPoints.push(p);
                     p.x /= 2;
                     p.y /= 2;
-                    pathGraphics.drawCircle(p.x, p.y, 2);
                 });
 
                 if (roomPoints.length < 3) {
@@ -127,8 +126,12 @@ function createPaths(data) {
 
             case "pillars":
                 d.paths.forEach(function(a) {
+                    a.x /= 2;
+                    a.y /= 2;
                     pillars.push(a);
                 });
+
+                pillarsBase = pillars[0].y;
                 break;
             case "paths":
                 d.paths.forEach(function(a) {
@@ -210,10 +213,9 @@ function initWorld() {
         // debugGraphics.lineStyle(1, 0xffffff)
         // debugGraphics.drawCircle(target.x, target.y, 10);
         agents.forEach(function(a) {
-
             a.follow();
             // a.followPath(wanderingPath);
-            a.separate(agents)
+            // a.separate(agents)
         });
     });
 
@@ -221,6 +223,7 @@ function initWorld() {
 
     console.log(pillars)
 }
+
 
 
 function createAgents() {
@@ -250,6 +253,7 @@ function createAgents() {
 
     if (agents.length < agentCount) setTimeout(createAgents, 100);
 }
+
 
 
 
@@ -302,42 +306,104 @@ function drawRoom() {
         points.push(p);
     });
 
-
-    agents.forEach(function(a) {
-        if (a.arrived) points.push(a.body.position)
+    pillars.forEach(function(p) {
+        points.push(p);
     });
 
 
-    hull.compute(points);
+
+    agents.forEach(function(a) {
+
+        var d = new Vector2().sub(a.body.position, roomCenter).length();
+        if (a.arrived) {
+            // if (d <= roomRadius && a.arrived) {
+            points.push(a.body.position)
+        }
+    });
+
+
+
+
+
+    hull.compute(points, 0);
+    debugGraphics.clear();
+    debugGraphics.lineStyle(1, 0xffffff)
+
+
+
+
 
     var indices = hull.getIndices();
     var outerPoints = [];
 
+    // debugGraphics.drawCircle(hull.minPoint.x, hull.minPoint.y, 100);
+    // debugGraphics.drawCircle(points[indices[0]].x, points[indices[0]].y, 100);
+    // debugGraphics.drawCircle(points[indices[indices.length - 1]].x, points[indices[indices.length - 1]].y, 100);
+
+
+
     roomGraphics.clear();
     roomGraphics.lineStyle(2, 0xff0000, 0.4);
+
+    roomGraphics.drawCircle(pillars[0].x, pillars[0].y, 10, 10);
+    roomGraphics.drawCircle(pillars[pillars.length - 1].x, pillars[pillars.length - 1].y, 10, 10);
+
 
     if (indices && indices.length > 0) {
         roomGraphics.moveTo(points[indices[0]].x, points[indices[0]].y);
 
         addOuterPoint(0);
 
+        var pillarInHull;
         for (var i = 1; i < indices.length; i++) {
             roomGraphics.lineTo(points[indices[i]].x, points[indices[i]].y);
+            if (!pillarInHull && points[indices[i]].y == pillarsBase) {
+                //the first one will do as we're going clockwise
+                pillarInHull = i;
+            }
             addOuterPoint(i);
         }
+
+        var newOuterPoints = [];
+        var tempArr = outerPoints.splice(0, pillarInHull + 1);
+        newOuterPoints = outerPoints.concat(tempArr);
+        outerPoints = newOuterPoints;
+
+
+
         roomGraphics.lineTo(points[indices[0]].x, points[indices[0]].y);
 
         roomGraphics.lineStyle(2, 0xffff00);
 
+        // roomGraphics.moveTo(pillars[0].x, pillars[0].y);
 
         roomGraphics.moveTo(outerPoints[0].x, outerPoints[0].y);
+
         for (var i = 1; i < outerPoints.length; i++) {
             roomGraphics.lineTo(outerPoints[i].x, outerPoints[i].y);
+
         }
 
-        roomGraphics.lineTo(outerPoints[0].x, outerPoints[0].y);
+        // roomGraphics.lineTo(outerPoints[0].x, outerPoints[0].y);
+
+        // roomGraphics.lineTo(pillars[pillars.length - 1].x, pillars[pillars.length - 1].y);
 
     }
+
+
+    function getNormalPoint(p, a, b) {
+        // Vector from a to p
+        var ap = new Vector2().sub(p, a);
+        // Vector from a to b
+        var ab = new Vector2().sub(b, a);
+        ab.normalize(); // Normalize the line
+        // Project vector "diff" onto line by using the dot product
+        ab.mult(ap.dot(ab));
+        var normalPoint = ab.addSelf(a);
+        return normalPoint;
+    }
+
+
 
 
     function addOuterPoint(index) {
