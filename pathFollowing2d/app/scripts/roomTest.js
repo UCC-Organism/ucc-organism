@@ -39,6 +39,7 @@ var Bodies = Matter.Bodies;
 
 
 var agents = [];
+var pillars = [];
 var classPaths = [];
 
 //room
@@ -124,6 +125,11 @@ function createPaths(data) {
 
                 break;
 
+            case "pillars":
+                d.paths.forEach(function(a) {
+                    pillars.push(a);
+                });
+                break;
             case "paths":
                 d.paths.forEach(function(a) {
                     if (a.points) {
@@ -207,13 +213,13 @@ function initWorld() {
 
             a.follow();
             // a.followPath(wanderingPath);
-            // a.separate(agents)
+            a.separate(agents)
         });
     });
 
     Engine.run(_engine);
 
-
+    console.log(pillars)
 }
 
 

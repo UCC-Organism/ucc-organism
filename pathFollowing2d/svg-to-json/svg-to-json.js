@@ -135,8 +135,8 @@ var parse = function() {
                         data.push({
                             "type": "circle",
                             "fill": $e.attr("fill"),
-                            "cx": $e.attr("cx"),
-                            "cy": $e.attr("cy"),
+                            "x": Math.round($e.attr("cx")),
+                            "y": Math.round($e.attr("cy")),
                             "r": $e.attr("r"),
                             "stroke": $e.attr("stroke"),
                             "stroke-width": typeof $e.attr("stroke-width") == "undefined" ? "0" : $e.attr("stroke-width")

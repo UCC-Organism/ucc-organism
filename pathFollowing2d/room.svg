@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
-<svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
-	 y="0px" width="1920px" height="1280px" viewBox="0 0 1920 1280" xml:space="preserve">
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1920px" height="1280px" viewBox="0 0 1920 1280" enable-background="new 0 0 1920 1280" xml:space="preserve">
 <g id="room">
 	<polyline fill="none" stroke="#000000" stroke-miterlimit="10" points="1023.557,776.193 1097.138,648.799 1023.681,521.5 
 		876.642,521.5 803.12,648.982 876.637,776.464 	"/>
 </g>
-<g id="Layer_4">
-	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="877.156" cy="1090.842" r="13.211"/>
-	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="1022.156" cy="1090.842" r="13.211"/>
+<g id="pillars">
+	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="877.156" cy="924.034" r="13.211"/>
+	<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="1022.156" cy="924.034" r="13.211"/>
+	<g id="pillars_1_">
+		<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="877.156" cy="1091.289" r="13.211"/>
+		<circle fill="none" stroke="#000000" stroke-miterlimit="10" cx="1022.156" cy="1091.289" r="13.211"/>
+	</g>
 </g>
 <g id="center">
 </g>

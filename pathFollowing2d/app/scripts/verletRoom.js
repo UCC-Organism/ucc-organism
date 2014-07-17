@@ -75,6 +75,9 @@ function createPaths(data) {
                     }
                 });
                 break;
+
+
+
             case "wandering":
                 d.paths[0].points.forEach(function(p) {
                     p.x *= worldWidth;

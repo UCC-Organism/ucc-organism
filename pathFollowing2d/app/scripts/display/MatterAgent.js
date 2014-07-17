@@ -67,7 +67,7 @@ Agent.prototype.separate = function(agents) {
 Agent.prototype.follow = function() {
 
     if (this.arrived) {
-        debugGraphics.clear();
+        // debugGraphics.clear();
         this.attendClass();
         return;
     }
@@ -96,9 +96,9 @@ Agent.prototype.follow = function() {
     }
 
     // console.log(this.currentProgress)
-    debugGraphics.clear();
-    debugGraphics.lineStyle(1, 0xffffff)
-    debugGraphics.drawCircle(this.target.x, this.target.y, 10);
+    // debugGraphics.clear();
+    // debugGraphics.lineStyle(1, 0xffffff)
+    // debugGraphics.drawCircle(this.target.x, this.target.y, 10);
 
 
     var desired = new Vector2().sub(this.target, this.body.position);
@@ -117,30 +117,36 @@ Agent.prototype.follow = function() {
 
 Agent.prototype.attendClass = function() {
 
-    var n = noise.perlin2(this.t, 100) + 1 / 2;
-    var angle = Math.PI * 2 * n;
 
-    this.t += 0.5;
-    var force = {};
+    this.t += 0.005;
 
     // classroom fight
     // force.x = (roomCenter.x - this.body.position.x + Math.cos(angle) * this.offset) * 0.002;
     // force.y = (roomCenter.y - this.body.position.y + Math.sin(angle) * this.offset) * 0.002;
 
-    if (!this.classTarget || (Math.pow(this.classTarget.x - this.body.position.x, 2) < 100 && Math.pow(this.classTarget.y - this.body.position.y, 2) < 100)) {
+    if (!this.classTarget) {
+        this.getNewClassTarget();
+    }
+    var force = new Vector2().sub(this.classTarget, this.body.position);
+
+    if (force.length() < 100) {
         //find closest point
-        var angle = MathUtils.randomFloat(0, Math.PI * 2);
-        var radius = MathUtils.randomFloat(50, 100);
-        this.classTarget = {};
-        this.classTarget.x = Math.cos(angle) * radius + roomCenter.x;
-        this.classTarget.y = Math.sin(angle) * radius + roomCenter.y;
+        // var angle = MathUtils.randomFloat(0, Math.PI * 2);
+        this.getNewClassTarget();
     }
 
-    this.body.position.x += (this.classTarget.x - this.body.position.x) * 0.002;
-    this.body.position.y += (this.classTarget.y - this.body.position.y) * 0.002;
+    force.limit(0.01);
 
+    this.applyForce(force)
+}
 
-    // this.applyForce(force)
+Agent.prototype.getNewClassTarget = function(path) {
+    var radius = MathUtils.randomFloat(0, 100);
+    var n = noise.perlin2(this.t, 100) + 1 / 2;
+    var angle = Math.PI * 2 * n;
+    this.classTarget = {};
+    this.classTarget.x = Math.cos(angle) * radius + roomCenter.x;
+    this.classTarget.y = Math.sin(angle) * radius + roomCenter.y;
 }
 
 Agent.prototype.followPath = function(path) {
