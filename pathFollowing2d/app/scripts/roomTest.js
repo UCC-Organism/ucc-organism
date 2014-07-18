@@ -249,8 +249,6 @@ function createAgents() {
     World.add(_engine.world, agent.body);
 
 
-
-
     if (agents.length < agentCount) setTimeout(createAgents, 100);
 }
 
@@ -311,13 +309,17 @@ function drawRoom() {
     });
 
 
+    debugGraphics.clear();
+    debugGraphics.lineStyle(1, 0xffffff)
 
     agents.forEach(function(a) {
 
         var d = new Vector2().sub(a.body.position, roomCenter).length();
         if (a.arrived) {
             // if (d <= roomRadius && a.arrived) {
-            points.push(a.body.position)
+            points.push(a.body.position);
+            if (a.classTarget) debugGraphics.drawCircle(a.classTarget.x, a.classTarget.y, 10);
+
         }
     });
 
@@ -326,8 +328,6 @@ function drawRoom() {
 
 
     hull.compute(points, 0);
-    debugGraphics.clear();
-    debugGraphics.lineStyle(1, 0xffffff)
 
 
 

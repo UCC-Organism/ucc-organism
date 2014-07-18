@@ -14,7 +14,7 @@ var Agent = function() {
 
 
     this.r = 20;
-    this.offset = MathUtils.randomFloat(200, -200);
+    this.offset = MathUtils.randomFloat(100, -100);
     this.currentProgress = 0;
     this.t = 0;
 }
@@ -132,7 +132,7 @@ Agent.prototype.attendClass = function() {
     if (force.length() < 100) {
         //find closest point
         // var angle = MathUtils.randomFloat(0, Math.PI * 2);
-        this.getNewClassTarget();
+        // this.getNewClassTarget();
     }
 
     force.limit(0.01);
@@ -141,12 +141,11 @@ Agent.prototype.attendClass = function() {
 }
 
 Agent.prototype.getNewClassTarget = function(path) {
-    var radius = MathUtils.randomFloat(0, 100);
-    var n = noise.perlin2(this.t, 100) + 1 / 2;
-    var angle = Math.PI * 2 * n;
+
+    console.log(this.id)
     this.classTarget = {};
-    this.classTarget.x = Math.cos(angle) * radius + roomCenter.x;
-    this.classTarget.y = Math.sin(angle) * radius + roomCenter.y;
+    this.classTarget.x = this.id % 5 * 50 + roomCenter.x - 250 / 2;
+    this.classTarget.y = Math.floor(this.id / 5) * 50 + roomCenter.y - 200 / 2;
 }
 
 Agent.prototype.followPath = function(path) {
