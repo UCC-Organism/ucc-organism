@@ -4,4 +4,6 @@ pathFollowing2d/.tmp
 pathFollowing2d/.sass-cache
 pathFollowing2d/app/scripts/bower_components
 pathFollowing2d/scripts/bower_components
+data/static/
 npm-debug.log
+.DS_Store
