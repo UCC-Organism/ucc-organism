@@ -93,19 +93,19 @@ function createPaths(data) {
     data.forEach(function(d) {
         switch (d.name) {
             case "room":
-                pathGraphics.lineStyle(1, 0xff0000);
-                d.paths[0].points.forEach(function(p) {
-                    roomPoints.push(p);
-                    p.x /= 2;
-                    p.y /= 2;
-                });
+            pathGraphics.lineStyle(1, 0xff0000);
+            d.paths[0].points.forEach(function(p) {
+                roomPoints.push(p);
+                p.x /= 2;
+                p.y /= 2;
+            });
 
-                if (roomPoints.length < 3) {
-                    window.alert("room doesn't have enought points!");
-                } else {
-                    var pa = roomPoints[0];
-                    var pb = roomPoints[1];
-                    var pc = roomPoints[2];
+            if (roomPoints.length < 3) {
+                window.alert("room doesn't have enought points!");
+            } else {
+                var pa = roomPoints[0];
+                var pb = roomPoints[1];
+                var pc = roomPoints[2];
                     //calculate room center and radius
                     var ma = (pb.y - pa.y) / (pb.x - pa.x);
                     var mb = (pc.y - pb.y) / (pc.x - pb.x);
@@ -124,7 +124,7 @@ function createPaths(data) {
 
                 break;
 
-            case "pillars":
+                case "pillars":
                 d.paths.forEach(function(a) {
                     a.x /= 2;
                     a.y /= 2;
@@ -133,7 +133,7 @@ function createPaths(data) {
 
                 pillarsBase = pillars[0].y;
                 break;
-            case "paths":
+                case "paths":
                 d.paths.forEach(function(a) {
                     if (a.points) {
                         a.points.forEach(function(p) {
@@ -151,10 +151,10 @@ function createPaths(data) {
                 drawPaths();
                 break;
 
-        }
+            }
 
 
-    });
+        });
 
 
 }
@@ -300,6 +300,9 @@ function drawRoom() {
         points.push(mouse);
     }
 
+
+
+
     roomPoints.forEach(function(p) {
         points.push(p);
     });
@@ -312,15 +315,17 @@ function drawRoom() {
     debugGraphics.clear();
     debugGraphics.lineStyle(1, 0xffffff)
 
+    debugGraphics.drawCircle(mouse.x,mouse.y, 100);
+
+
     agents.forEach(function(a) {
 
         var d = new Vector2().sub(a.body.position, roomCenter).length();
         if (a.arrived) {
-            // if (d <= roomRadius && a.arrived) {
             points.push(a.body.position);
-            if (a.classTarget) debugGraphics.drawCircle(a.classTarget.x, a.classTarget.y, 10);
-
+            if (a.classTarget) debugGraphics.drawCircle(a.classTarget.x, a.classTarget.y, 10);            
         }
+
     });
 
 
@@ -381,7 +386,7 @@ function drawRoom() {
 
         for (var i = 1; i < outerPoints.length; i++) {
             roomGraphics.lineTo(outerPoints[i].x, outerPoints[i].y);
-
+            debugGraphics.drawCircle(outerPoints[i].x, outerPoints[i].y, 10);
         }
 
         // roomGraphics.lineTo(outerPoints[0].x, outerPoints[0].y);
@@ -413,18 +418,36 @@ function drawRoom() {
         var b = points[indices[index]];
         var c = points[indices[(index + 1) % indices.length]];
 
-        var vA = new Vector2(a.x, a.y);
-        vA.subSelf(b).normalize();
+        a = new Vector2(a.x, a.y);
+        b = new Vector2(b.x, b.y);
+        c = new Vector2(c.x, c.y);
 
-        var vB = new Vector2(c.x, c.y);
-        vB.subSelf(b).normalize();
+        var ab = b.clone().subSelf(a).normalize();
+        var bc = c.clone().subSelf(b).normalize();
+
+        var pab = new Vector2(-ab.y, ab.x);
+        var pbc = new Vector2(-bc.y, bc.x);
 
         var p = new Vector2();
-        p.add(vA, vB);
+        p.add(pab, pbc);
         p.normalize();
-
         p.mult(-50);
         p.addSelf(b);
+
+        /*
+        //a - b
+        var vA = new Vector2(a.x, a.y);
+        vA.subSelf(b).normalize();
+        //c - b
+        var vB = new Vector2(c.x, c.y);
+        vB.subSelf(b).normalize();
+        var p = new Vector2();
+        p.add(vA, vB);
+        // p.normalize();
+        p.mult(-50);
+        //p.limit(50);
+        p.addSelf(b);
+        */
 
         p.origin = b;
         outerPoints.push(p);
