@@ -1,9 +1,9 @@
-pathFollowing2d/node_modules
-pathFollowing2d/svg-to-json/node_modules
-pathFollowing2d/.tmp
-pathFollowing2d/.sass-cache
-pathFollowing2d/app/scripts/bower_components
-pathFollowing2d/scripts/bower_components
-data/static/
+experiments/node_modules
+experiments/svg-to-json/node_modules
+experiments/.tmp
+experiments/.sass-cache
+experiments/app/scripts/bower_components
+experiments/scripts/bower_components
+app/data/static/
 npm-debug.log
 .DS_Store
