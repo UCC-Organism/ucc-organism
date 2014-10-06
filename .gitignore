@@ -1,9 +1,3 @@
-experiments/node_modules
-experiments/svg-to-json/node_modules
-experiments/.tmp
-experiments/.sass-cache
-experiments/app/scripts/bower_components
-experiments/scripts/bower_components
-app/data/static/
+node_modules
 npm-debug.log
 .DS_Store
