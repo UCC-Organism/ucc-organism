@@ -15,6 +15,8 @@
     "pex-helpers": "*",
     "pex-materials": "*",
     "pex-sys": "*",
+    "q": "^1.0.1",
+    "ramda": "^0.6.0",
     "vinyl-source-stream": "0.1.1",
     "watchify": "1.0.1"
   },
