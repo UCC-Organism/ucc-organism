@@ -74,31 +74,37 @@ sys.Window.create({
     })
   },
   initMap: function(layersData, nodesData) {
-    State.graph = graph(nodesData.nodes, nodesData.connections);
-
     var pointVertices = nodesData.nodes.map(R.prop('position'))
-    var mapPointsGeometry = new Geometry({ vertices: pointVertices });
-    this.mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColor({ pointSize: 2, color: Color.Red }), { points: true });
 
-    function validEdge(edgeVert) {
-      return edgeVert[0] && edgeVert[1];
+    var validEdges = nodesData.connections.filter(function(edge) {
+      return edge[0] >= 0 && edge[1] >= 0 && edge[0] < pointVertices.length && edge[1] < pointVertices.length;
+    });
+
+    State.graph = graph(pointVertices, validEdges);
+
+    var edgesVertices = R.map(
+      R.rPartial( R.prop, pointVertices ),
+      R.flatten( validEdges )
+    );
+
+    var propChecker = function(name, value) {
+      return R.pipe(R.prop(name), R.rPartial(R.eq, value))
+    }
+    var verticesChecker = function(vertices, checker) {
+      return function(edge) {
+        return edge.map(function(i) { return vertices[i]}).filter(checker).length == edge.length;
+      }
     }
 
-    var edgesVerticesPairs = R.map(
-      R.map(
-        R.rPartial(
-          R.prop,
-          pointVertices
-        )
-      ),
-      nodesData.connections
+    var selectedFloorVertices = nodesData.nodes.filter(propChecker('layerId', 1)).map(R.prop('position'))
+    var selectedFloorEdges = validEdges.filter(verticesChecker(nodesData.nodes, propChecker('layerId', 1)));
+    var selectedFloorEdgesVertices = R.map(
+      R.rPartial( R.prop, pointVertices ),
+      R.flatten( selectedFloorEdges )
     );
 
-    var edgesVertices = R.flatten(
-      R.filter(
-        validEdge, edgesVerticesPairs
-      )
-    );
+    var mapPointsGeometry = new Geometry({ vertices: pointVertices });
+    this.mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColor({ pointSize: 5, color: Color.Red }), { points: true });
 
     var mapEdgesGeometry = new Geometry({ vertices: edgesVertices });
     this.mapEdgesMesh = new Mesh(mapEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Green }), { lines: true });
