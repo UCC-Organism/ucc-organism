@@ -159,10 +159,16 @@ sys.Window.create({
     var selectedNodes = State.selectedNodes;
     var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
     var entranceNodes = selectedNodes.filter(R.pipe(R.prop('neighbors'), R.prop('length'), R.rPartial(R.eq, 1)));
+    var stairsNodes = selectedNodes.filter(function(node) {
+      return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
+        return sameFloorSoFar && (neighborNode.floor == node.floor);
+      }, true)
+    });
 
     var pointVertices = selectedNodes.map(R.prop('position'));
     var roomVertices = selectedNodes.filter(R.where({ room: R.identity }));
     var entrancePointVertices = entranceNodes.map(R.prop('position'));
+    var stairsPointVertices = stairsNodes.map(R.prop('position'));
 
     var roomEdgeVertices = R.flatten(roomVertices.map(function(node) {
       return node.neighbors.filter(R.where({ room: R.identity })).map(function(neighborNode) {
@@ -182,11 +188,14 @@ sys.Window.create({
     var entrancePointsGeometry = new Geometry({ vertices: entrancePointVertices });
     var entrancePointsMesh = new Mesh(entrancePointsGeometry, new SolidColor({ pointSize: 10, color: Color.Yellow }), { points: true });
 
+    var starisPointsGeometry = new Geometry({ vertices: stairsPointVertices });
+    var starisPointsMesh = new Mesh(starisPointsGeometry, new SolidColor({ pointSize: 10, color: Color.Orange }), { points: true });
+
     var roomEdgesGeometry = new Geometry({ vertices: roomEdgeVertices });
     var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Green }), { lines: true });
 
     var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-    var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Orange }), { lines: true });
+    var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Grey }), { lines: true });
 
     var floorBBox = BoundingBox.fromPoints(pointVertices);
     var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
@@ -201,6 +210,7 @@ sys.Window.create({
     //add new engities
     State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
     State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
+    State.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
     State.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
     State.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
     State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
