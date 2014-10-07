@@ -96,7 +96,8 @@ sys.Window.create({
       switch(e.str) {
       }
       switch(e.keyCode) {
-        case 124: this.setNextMapFloor();
+        case 123: this.setPrevMapFloor(); break;
+        case 124: this.setNextMapFloor(); break;
       }
     }.bind(this));
   },
@@ -111,12 +112,15 @@ sys.Window.create({
     State.nodes = nodesData;
     State.selectedNodes = State.nodes;
 
+    //Transform json data to real objects
     State.nodes.forEach(function(node) {
+      //{x, y, z} to Vec3
       node.position = new Vec3(node.position.x, node.position.y, node.position.z);
+      //Neighbor index to node reference
       node.neighbors = R.map(R.rPartial(R.prop, State.nodes), node.neighbors);
     });
 
-    //find unique floor ids
+    //Find unique floor ids
     State.floors = State.nodes.map(R.prop('floor'));
     State.floors.sort();
     State.floors = State.floors.filter(function(floor, i) {
@@ -126,6 +130,11 @@ sys.Window.create({
     State.currentFloor = State.floors[0];
 
     this.setMapFloor(State.currentFloor);
+  },
+  setPrevMapFloor: function() {
+    var floorIndex = State.floors.indexOf(State.currentFloor);
+    var prevFloorIndex = (floorIndex - 1 + State.floors.length) % State.floors.length;
+    this.setMapFloor(State.floors[prevFloorIndex]);
   },
   setNextMapFloor: function() {
     var floorIndex = State.floors.indexOf(State.currentFloor);
@@ -148,10 +157,12 @@ sys.Window.create({
   rebuildMap: function() {
     var nodes = State.nodes;
     var selectedNodes = State.selectedNodes;
+    var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
+    var entranceNodes = selectedNodes.filter(R.pipe(R.prop('neighbors'), R.prop('length'), R.rPartial(R.eq, 1)));
 
     var pointVertices = selectedNodes.map(R.prop('position'));
     var roomVertices = selectedNodes.filter(R.where({ room: R.identity }));
-    var corridorVertices = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
+    var entrancePointVertices = entranceNodes.map(R.prop('position'));
 
     var roomEdgeVertices = R.flatten(roomVertices.map(function(node) {
       return node.neighbors.filter(R.where({ room: R.identity })).map(function(neighborNode) {
@@ -159,7 +170,7 @@ sys.Window.create({
       })
     }));
 
-    var corridorEdgeVertices = R.flatten(corridorVertices.map(function(node) {
+    var corridorEdgeVertices = R.flatten(corridorNodes.map(function(node) {
       return node.neighbors.map(function(neighborNode) {
         return [ node.position, neighborNode.position ];
       })
@@ -167,6 +178,9 @@ sys.Window.create({
 
     var mapPointsGeometry = new Geometry({ vertices: pointVertices });
     var mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColor({ pointSize: 5, color: Color.Red }), { points: true });
+
+    var entrancePointsGeometry = new Geometry({ vertices: entrancePointVertices });
+    var entrancePointsMesh = new Mesh(entrancePointsGeometry, new SolidColor({ pointSize: 10, color: Color.Yellow }), { points: true });
 
     var roomEdgesGeometry = new Geometry({ vertices: roomEdgeVertices });
     var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Green }), { lines: true });
@@ -184,34 +198,17 @@ sys.Window.create({
       State.entities.splice(State.entities.indexOf(entity), 1);
     });
 
-    State.entities.push({
-      map: true,
-      debug: true,
-      mesh: mapPointsMesh
-    });
+    //add new engities
+    State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
+    State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
+    State.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
+    State.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
+    State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
-    State.entities.push({
-      map: true,
-      debug: true,
-      mesh: roomEdgesMesh
-    });
-
-    State.entities.push({
-      map: true,
-      debug: true,
-      mesh: corridorEdgesMesh
-    });
-
-    State.entities.push({
-      map: true,
-      debug: true,
-      mesh: floorBBoxHelper
-    });
-
-    State.camera.setUp(new Vec3(0, 0, -1));
-
+    //center camera on the new floor
     var target = floorBBox.getCenter();
     var position = new Vec3(State.camera.target.x, State.camera.target.y + State.mapCameraPosY, State.camera.target.z);
+    State.camera.setUp(new Vec3(0, 0, -1));
     State.arcball.setPosition(position);
     State.arcball.setTarget(target);
   },
