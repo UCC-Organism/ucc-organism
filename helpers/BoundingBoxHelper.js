@@ -13,7 +13,6 @@ var Cube = gen.Cube;
 
 function BoundingBoxHelper(boundingBox, color) {
   color = color || Color.Red;
-  console.log(color);
 
   var size = boundingBox.getSize();
   var center = boundingBox.getCenter();
