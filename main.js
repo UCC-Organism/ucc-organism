@@ -63,7 +63,8 @@ var State = {
   entities: [],
   pointSpriteMeshEntity: null,
   agentDebugInfoMeshEntity: null,
-  maxNumAgents: 10
+  maxNumAgents: 1,
+  minNodeDistance: 0.01
 };
 
 sys.Window.create({
@@ -75,6 +76,8 @@ sys.Window.create({
   },
   init: function() {
     var cube = new Cube();
+
+    geom.randomSeed(0);
 
     State.camera = new PerspectiveCamera(60, this.width / this.height);
     State.arcball = new Arcball(this, State.camera);
@@ -216,6 +219,8 @@ sys.Window.create({
     State.camera.setUp(new Vec3(0, 0, -1));
     State.arcball.setPosition(position);
     State.arcball.setTarget(target);
+
+
   },
   agentSpawnSys: function(allEntities) {
     var agents = R.filter(R.where({ agent: R.identity }), allEntities);
@@ -235,22 +240,44 @@ sys.Window.create({
 
     var position = geom.randomElement(stairsPointVertices).clone();
     var color = Color.White;
-    State.entities.push({ agent: true, pointSize: 5, position: position,  color: color, target: null });
+    State.entities.push({
+      pointSize: 5,
+      agent: true,
+      position: position,
+      color: color,
+      targetNode: null,
+    });
   },
   agentTargetNodeUpdaterSys: function(allEntities) {
     var selectedNodes = State.selectedNodes;
 
     var agents = R.filter(R.where({ agent: R.identity }), allEntities);
-    var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
 
+    var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
     agentsWithNoTarget.forEach(function(agentEntity) {
-      agentEntity.targetNode = geom.randomElement(selectedNodes);
+      var targetNode = geom.randomElement(selectedNodes);
+      var closestNode = graph.findNearestNode(State.selectedNodes, agentEntity.position);
+      var path = graph.findShortestPath(closestNode, targetNode);
+      agentEntity.targetNodeList = path;
+      agentEntity.targetNode = agentEntity.targetNodeList.shift();
+    });
+
+    var agentsWithTarget = agents.filter(R.prop('targetNode'));
+    agentsWithTarget.forEach(function(agentEntity) {
+      if (agentEntity.position.distance(agentEntity.targetNode.position) < State.minNodeDistance) {
+        if (agentEntity.targetNodeList.length > 0) {
+          agentEntity.targetNode = agentEntity.targetNodeList.shift();
+        }
+        else {
+          agentEntity.targetNode = null;
+        }
+      }
     })
   },
   agentTargetNodeFollowerSys: function(allEntities) {
     var targetFollowers = R.filter(R.where({ targetNode: R.identity }), allEntities);
     targetFollowers.forEach(function(followerEntity) {
-      followerEntity.position.lerp(followerEntity.targetNode.position, 0.01);
+      followerEntity.position.lerp(followerEntity.targetNode.position, 0.1);
     })
   },
   pointSpriteUpdaterSys: function(allEntities, camera) {
@@ -298,7 +325,14 @@ sys.Window.create({
 
     var agents = R.filter(R.where({ agent: R.identity }), allEntities);
     agents.forEach(function(agent) {
-      if (agent.targetNode) lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
+      if (agent.targetNode) {
+        lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
+      }
+      if (agent.targetNodeList) {
+        agent.targetNodeList.forEach(function(node) {
+          lineBuilder.addCross(node.position, 0.01);
+        })
+      }
     })
   },
   meshRendererSys: function(allEntities, camera) {
