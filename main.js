@@ -103,6 +103,8 @@ sys.Window.create({
       switch(e.keyCode) {
         case 123: this.setPrevMapFloor(); break;
         case 124: this.setNextMapFloor(); break;
+        case 37: this.setPrevMapFloor(); break;
+        case 39: this.setNextMapFloor(); break;
       }
     }.bind(this));
   },
@@ -207,12 +209,12 @@ sys.Window.create({
     });
 
     //add new engities
-    //State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
-    //State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
-    //State.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
+    State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
+    State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
+    State.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
     State.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
     State.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-    //State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+    State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
     //center camera on the new floor
     var target = floorBBox.getCenter();
