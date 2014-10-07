@@ -63,7 +63,7 @@ var State = {
   entities: [],
   pointSpriteMeshEntity: null,
   agentDebugInfoMeshEntity: null,
-  maxNumAgents: 1,
+  maxNumAgents: 100,
   minNodeDistance: 0.01
 };
 
@@ -98,6 +98,7 @@ sys.Window.create({
   initKeys: function() {
     this.on('keyDown', function(e) {
       switch(e.str) {
+        case ' ': this.killAllAgents(); break;
       }
       switch(e.keyCode) {
         case 123: this.setPrevMapFloor(); break;
@@ -206,12 +207,12 @@ sys.Window.create({
     });
 
     //add new engities
-    State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
-    State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
-    State.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
+    //State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
+    //State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
+    //State.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
     State.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
     State.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-    State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+    //State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
     //center camera on the new floor
     var target = floorBBox.getCenter();
@@ -219,8 +220,13 @@ sys.Window.create({
     State.camera.setUp(new Vec3(0, 0, -1));
     State.arcball.setPosition(position);
     State.arcball.setTarget(target);
+  },
+  killAllAgents: function() {
+    var agents = R.filter(R.where({ agent: R.identity }), State.entities);
 
-
+    agents.forEach(function(agent) {
+      State.entities.splice(State.entities.indexOf(agent), 1);
+    })
   },
   agentSpawnSys: function(allEntities) {
     var agents = R.filter(R.where({ agent: R.identity }), allEntities);
@@ -258,8 +264,15 @@ sys.Window.create({
       var targetNode = geom.randomElement(selectedNodes);
       var closestNode = graph.findNearestNode(State.selectedNodes, agentEntity.position);
       var path = graph.findShortestPath(closestNode, targetNode);
-      agentEntity.targetNodeList = path;
-      agentEntity.targetNode = agentEntity.targetNodeList.shift();
+      if (!path) {
+        //No path found, try next time
+        agentEntity.targetNodeList = [];
+        agentEntity.targetNode = null;
+      }
+      else {
+        agentEntity.targetNodeList = path;
+        agentEntity.targetNode = agentEntity.targetNodeList.shift();
+      }
     });
 
     var agentsWithTarget = agents.filter(R.prop('targetNode'));
@@ -328,11 +341,11 @@ sys.Window.create({
       if (agent.targetNode) {
         lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
       }
-      if (agent.targetNodeList) {
-        agent.targetNodeList.forEach(function(node) {
-          lineBuilder.addCross(node.position, 0.01);
-        })
-      }
+      //if (agent.targetNodeList) {
+      //  agent.targetNodeList.forEach(function(node) {
+      //    lineBuilder.addCross(node.position, 0.01);
+      //  })
+      //}
     })
   },
   meshRendererSys: function(allEntities, camera) {
