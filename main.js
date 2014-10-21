@@ -24,6 +24,10 @@ var Vec3 = geom.Vec3;
 var LineBuilder = gen.LineBuilder;
 var BoundingBox = geom.BoundingBox;
 var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
+var Platform = sys.Platform;
+
+var VK_LEFT = Platform.isPlask ? 123 : 37;
+var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
 function loadTextFile(url) {
   var deferred = Q.defer();
@@ -94,6 +98,10 @@ sys.Window.create({
     });
 
     this.initKeys();
+
+    if (Platform.isBrowser) {
+      setInterval(this.setNextMapFloor.bind(this), 10000);
+    }
   },
   initKeys: function() {
     this.on('keyDown', function(e) {
@@ -101,10 +109,8 @@ sys.Window.create({
         case ' ': this.killAllAgents(); break;
       }
       switch(e.keyCode) {
-        case 123: this.setPrevMapFloor(); break;
-        case 124: this.setNextMapFloor(); break;
-        case 37: this.setPrevMapFloor(); break;
-        case 39: this.setNextMapFloor(); break;
+        case VK_LEFT: this.setPrevMapFloor(); break;
+        case VK_RIGHT: this.setNextMapFloor(); break;
       }
     }.bind(this));
   },
