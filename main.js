@@ -25,9 +25,114 @@ var LineBuilder = gen.LineBuilder;
 var BoundingBox = geom.BoundingBox;
 var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
 var Platform = sys.Platform;
+var Time = sys.Time;
+var Spline3D = geom.Spline3D;
 
 var VK_LEFT = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
+
+
+function smoothCurve(points, c) {
+  c = (typeof(c) == 'undefined') ? 1 : c;
+  var spline = [];
+  function deCasteljau(points, t) {
+    var newPoints = [];
+    for(var i=0; i<points.length-1; i++) {
+      newPoints.push(points[i] + (points[i+1] - points[i]) * t);
+    }
+    if (newPoints.length > 1)
+      return deCasteljau(newPoints, t);
+    else
+      return newPoints[0];
+  }
+  for(var i=0; i<points.length; i++) {
+    for(var j=0; j<10; j++) {
+      var t = j/10;
+      var p0 = points[(i-1 + points.length) % points.length];
+      var p1 = points[(i-0 + points.length) % points.length];
+      var p2 = points[(i+1 + points.length) % points.length];
+      var x = deCasteljau([(p0.x + p1.x)/2, (p0.x + p1.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2], t);
+      var y = deCasteljau([(p0.y + p1.y)/2, (p0.y + p1.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2], t);
+      var z = deCasteljau([(p0.z + p1.z)/2, (p0.z + p1.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2], t);
+      spline.push(new Vec3(x, y, z));
+    }
+  }
+  return spline;
+}
+
+// How's that for a function name?
+function NurbsGenPointsFastUnweightedUniformCurve3(cps, num, out) {
+  var np = cps.length >> 1;
+  var a = 3, b = np, step = (b - a) / num;
+
+  var p = 0;
+  for (var j = 0, u = a; j < num; ++j, u += step) {
+    var num_x = 0, num_y = 0, den = 0;
+    for (var i = (u - 3) >> 0, k = 0; k < 4 && i < np; ++k, ++i) {
+      var i1 = i+1, i2 = i1+1, i3 = i2+1, i4 = i3+1;
+      var v = ((u - (i)) /3) * (((u - (i)) /2) * (((u - (i)) ) * (i <= u && u < i1 ? 1 : 0) + ((i2 - u) ) * (i1 <= u && u < i2 ? 1 : 0)) + ((i3 - u) /2) * (((u - (i1)) ) * (i1 <= u && u < i2 ? 1 : 0) + ((i3 - u) ) * (i2 <= u && u < i3 ? 1 : 0))) + ((i4 - u) /3) * (((u - (i1)) /2) * (((u - (i1)) ) * (i1 <= u && u < i2 ? 1 : 0) + ((i3 - u) ) * (i2 <= u && u < i3 ? 1 : 0)) + ((i4 - u) /2) * (((u - (i2)) ) * (i2 <= u && u < i3 ? 1 : 0) + ((i4 - u) ) * (i3 <= u && u < i4 ? 1 : 0)));
+      num_x += v * cps[i*2];
+      num_y += v * cps[i*2+1];
+      den   += v;
+    }
+    out[p++] = num_x/den;
+    out[p++] = num_y/den;
+  }
+  return p;
+}
+
+function computeBSpline(points) {
+  var result = [];
+
+  var nurb_cps = [ ];  // Flat list of xys
+  for (var i = 0, il = points.length; i < il; ++i) nurb_cps.push(points[i].x, points[i].z);
+
+  for (var i = 0; i < 6; ++i) nurb_cps.push(nurb_cps[i]);
+
+  var nurb_tess_points = [ ];
+  NurbsGenPointsFastUnweightedUniformCurve3(nurb_cps, points.length * 5, nurb_tess_points);
+  // Close the line loop for kPolyonPointMode
+  nurb_tess_points.push(nurb_tess_points[0], nurb_tess_points[1]);
+
+  for(var i=0; i<nurb_tess_points.length; i+=2) {
+    result.push(new Vec3(nurb_tess_points[i], points[0].y, nurb_tess_points[i+1]))
+  }
+
+  return result;
+}
+
+
+var groupBy = function(list, prop) {
+  var groups = {};
+  list.forEach(function(item) {
+    var value = item[prop];
+    if (!groups[value]) groups[value] = [];
+    groups[value].push(item);
+  })
+  return groups;
+}
+
+var notNull = R.identity;
+
+function orderNodes(nodes) {
+  var sortedNodes = [];
+
+  var currNode = nodes.shift();
+  while(currNode) {
+    sortedNodes.push(currNode);
+
+    if (nodes.length == 0) break;
+
+    for(var i=0; i<nodes.length; i++) {
+      if (currNode.neighbors.indexOf(nodes[i]) != -1) {
+        currNode = nodes[i];
+        nodes.splice(i, 1);
+        break;
+      }
+    }
+  }
+  return sortedNodes;
+}
 
 function loadTextFile(url) {
   var deferred = Q.defer();
@@ -67,8 +172,10 @@ var State = {
   entities: [],
   pointSpriteMeshEntity: null,
   agentDebugInfoMeshEntity: null,
-  maxNumAgents: 100,
-  minNodeDistance: 0.01
+  agentSpeed: 0.1,
+  maxNumAgents: 0,
+  minNodeDistance: 0.01,
+  debugMode: false
 };
 
 sys.Window.create({
@@ -107,6 +214,7 @@ sys.Window.create({
     this.on('keyDown', function(e) {
       switch(e.str) {
         case ' ': this.killAllAgents(); break;
+        case 'd': State.debugMode = !State.debugMode; break;
       }
       switch(e.keyCode) {
         case VK_LEFT: this.setPrevMapFloor(); break;
@@ -137,6 +245,43 @@ sys.Window.create({
     State.currentFloor = State.floors[1]; //skip first global floor '-1'
 
     this.setMapFloor(State.currentFloor);
+
+    this.buildCells();
+  },
+  buildCells: function() {
+    var cellGroups = groupBy(State.nodes, 'room');
+    var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
+      return cellGroups[roomId];
+    });
+    var cellMaterial = new SolidColor();
+    var cellMeshes = cellNodes.map(function(nodes) {
+      nodes = orderNodes(nodes);
+      var points = nodes.map(R.prop('position'));
+      //var spline = new Spline3D(points, true);
+      var lineBuilder = new LineBuilder();
+      //var points = R.range(0, 50).map(function(i) {
+      //  var p = spline.getPointAt(i/50);
+      //  var np = spline.getPointAt(i/50 + 1/50);
+      //  lineBuilder.addLine(p, np);
+      //})
+      points.forEach(function(p) {
+        p.x += (Math.random() - 0.5) * 0.01;
+        p.y += (Math.random() - 0.5) * 0.01;
+      })
+      points = computeBSpline(points);
+      //points = smoothCurve(points, 0.5);
+      for(var i=0; i<points.length; i++) {
+        var p = points[i];
+        var np = points[(i+1)%points.length];
+        lineBuilder.addLine(p, np);
+      }
+      //nodes.forEach(function(node, nodeIndex) {
+      //  var nextNode = nodes[(nodeIndex + 1) % nodes.length];
+      //  lineBuilder.addLine(node.position, nextNode.position);
+      //})
+      var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
+      State.entities.push({ map: true, debug: false, mesh: mesh });
+    })
   },
   setPrevMapFloor: function() {
     var floorIndex = State.floors.indexOf(State.currentFloor);
@@ -297,8 +442,11 @@ sys.Window.create({
   },
   agentTargetNodeFollowerSys: function(allEntities) {
     var targetFollowers = R.filter(R.where({ targetNode: R.identity }), allEntities);
+    var tmpDir = new Vec3();
     targetFollowers.forEach(function(followerEntity) {
-      followerEntity.position.lerp(followerEntity.targetNode.position, 0.1);
+      tmpDir.copy(followerEntity.targetNode.position).sub(followerEntity.position);
+      tmpDir.normalize().scale(State.agentSpeed * Time.delta);
+      followerEntity.position.add(tmpDir);
     })
   },
   pointSpriteUpdaterSys: function(allEntities, camera) {
@@ -372,6 +520,11 @@ sys.Window.create({
     this.agentTargetNodeFollowerSys(State.entities);
     this.agentDebugInfoUpdaterSys(State.entities);
     this.pointSpriteUpdaterSys(State.entities, State.camera);
-    this.meshRendererSys(State.entities, State.camera);
+
+    var meshFilter = R.or(
+      R.where({ debug: false }),
+      R.where({ debug: State.debugMode })
+    );
+    this.meshRendererSys(R.filter(meshFilter, State.entities), State.camera);
   }
 });
