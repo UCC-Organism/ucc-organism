@@ -29,7 +29,6 @@ var LineBuilder = gen.LineBuilder;
 var BoundingBox = geom.BoundingBox;
 var Platform = sys.Platform;
 var Time = sys.Time;
-var Spline3D = geom.Spline3D;
 
 var VK_LEFT = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -163,13 +162,7 @@ sys.Window.create({
     var cellMeshes = cellNodes.map(function(nodes) {
       nodes = orderNodes(nodes);
       var points = nodes.map(R.prop('position'));
-      //var spline = new Spline3D(points, true);
       var lineBuilder = new LineBuilder();
-      //var points = R.range(0, 50).map(function(i) {
-      //  var p = spline.getPointAt(i/50);
-      //  var np = spline.getPointAt(i/50 + 1/50);
-      //  lineBuilder.addLine(p, np);
-      //})
       //add little turbulence to room corners
       points.forEach(function(p) {
         p.x += (Math.random() - 0.5) * 0.001;
@@ -181,10 +174,6 @@ sys.Window.create({
         var np = points[(i+1)%points.length];
         lineBuilder.addLine(p, np);
       }
-      //nodes.forEach(function(node, nodeIndex) {
-      //  var nextNode = nodes[(nodeIndex + 1) % nodes.length];
-      //  lineBuilder.addLine(node.position, nextNode.position);
-      //})
       var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
       State.entities.push({ map: true, mesh: mesh });
     })
@@ -405,11 +394,6 @@ sys.Window.create({
       if (agent.targetNode) {
         lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
       }
-      //if (agent.targetNodeList) {
-      //  agent.targetNodeList.forEach(function(node) {
-      //    lineBuilder.addCross(node.position, 0.01);
-      //  })
-      //}
     })
   },
   meshRendererSys: function(allEntities, camera) {
