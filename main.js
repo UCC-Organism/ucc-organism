@@ -13,6 +13,9 @@ var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
 var GeomUtils = require('./geom/GeomUtils');
 var IOUtils = require('./sys/IOUtils');
 
+//CES systems
+var meshRendererSys = require('./ucc/sys/meshRendererSys');
+
 var Cube = gen.Cube;
 var Mesh = glu.Mesh;
 var ShowNormals = materials.ShowNormals;
@@ -376,12 +379,7 @@ sys.Window.create({
       }
     })
   },
-  meshRendererSys: function(allEntities, camera) {
-    var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), allEntities);
-    entitiesWithMesh.forEach(function(entity) {
-      entity.mesh.draw(camera);
-    })
-  },
+  
   draw: function() {
     glu.clearColorAndDepth(Color.Black);
     glu.enableDepthReadAndWrite(true);
@@ -392,10 +390,6 @@ sys.Window.create({
     this.agentDebugInfoUpdaterSys(State.entities);
     this.pointSpriteUpdaterSys(State.entities, State.camera);
 
-    var debugFilter = function(o) {
-      if (typeof o.debug == 'undefined') return true;
-      else return o.debug == State.debugMode;
-    }
-    this.meshRendererSys(R.filter(debugFilter, State.entities), State.camera);
+    meshRendererSys(State.entities, State);
   }
 });
