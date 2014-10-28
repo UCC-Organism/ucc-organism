@@ -45,26 +45,6 @@ var groupBy = function(list, prop) {
 
 var notNull = R.identity;
 
-function orderNodes(nodes) {
-  var sortedNodes = [];
-
-  var currNode = nodes.shift();
-  while(currNode) {
-    sortedNodes.push(currNode);
-
-    if (nodes.length == 0) break;
-
-    for(var i=0; i<nodes.length; i++) {
-      if (currNode.neighbors.indexOf(nodes[i]) != -1) {
-        currNode = nodes[i];
-        nodes.splice(i, 1);
-        break;
-      }
-    }
-  }
-  return sortedNodes;
-}
-
 var State = {
   camera: null,
   arcball: null,
@@ -160,7 +140,7 @@ sys.Window.create({
     });
     var cellMaterial = new SolidColor();
     var cellMeshes = cellNodes.map(function(nodes) {
-      nodes = orderNodes(nodes);
+      nodes = graph.orderNodes(nodes);
       var points = nodes.map(R.prop('position'));
       var lineBuilder = new LineBuilder();
       //add little turbulence to room corners

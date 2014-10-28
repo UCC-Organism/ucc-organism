@@ -58,5 +58,26 @@ function findNearestNode(nodes, p) {
   return best.node;
 }
 
+function orderNodes(nodes) {
+  var sortedNodes = [];
+
+  var currNode = nodes.shift();
+  while(currNode) {
+    sortedNodes.push(currNode);
+
+    if (nodes.length == 0) break;
+
+    for(var i=0; i<nodes.length; i++) {
+      if (currNode.neighbors.indexOf(nodes[i]) != -1) {
+        currNode = nodes[i];
+        nodes.splice(i, 1);
+        break;
+      }
+    }
+  }
+  return sortedNodes;
+}
+
 module.exports.findShortestPath = findShortestPath;
 module.exports.findNearestNode = findNearestNode;
+module.exports.orderNodes = orderNodes;
