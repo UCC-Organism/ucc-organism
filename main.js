@@ -187,7 +187,7 @@ var State = {
   nodes: [],
   selectedNodes: [],
   floors: [],
-  currentFloor: 1,
+  currentFloor: 6,
   mapCameraPosY: 0.40,
   entities: [],
   pointSpriteMeshEntity: null,
@@ -243,7 +243,8 @@ sys.Window.create({
     }.bind(this));
   },
   initMap: function(layersData, nodesData) {
-    State.nodes = nodesData;
+    State.nodes = nodesData.nodes;
+    State.rooms = nodesData.rooms;
     State.selectedNodes = State.nodes;
 
     //Transform json data to real objects
@@ -265,11 +266,10 @@ sys.Window.create({
     State.currentFloor = State.floors[1]; //skip first global floor '-1'
 
     this.setMapFloor(State.currentFloor);
-
-    this.buildCells();
   },
   buildCells: function() {
-    var cellGroups = groupBy(State.nodes, 'room');
+    var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
+    var cellGroups = groupBy(nodesOnThisFloor, 'room');
     var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
       return cellGroups[roomId];
     });
@@ -284,12 +284,13 @@ sys.Window.create({
       //  var np = spline.getPointAt(i/50 + 1/50);
       //  lineBuilder.addLine(p, np);
       //})
+      //add little turbulence to room corners
       points.forEach(function(p) {
-        p.x += (Math.random() - 0.5) * 0.01;
-        p.y += (Math.random() - 0.5) * 0.01;
+        p.x += (Math.random() - 0.5) * 0.001;
+        p.y += (Math.random() - 0.5) * 0.001;
       })
       points = computeBSpline(points);
-      //points = smoothCurve(points, 0.5);
+      //points = smoothCurve(points, 0.95);
       for(var i=0; i<points.length; i++) {
         var p = points[i];
         var np = points[(i+1)%points.length];
@@ -300,7 +301,7 @@ sys.Window.create({
       //  lineBuilder.addLine(node.position, nextNode.position);
       //})
       var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
-      State.entities.push({ map: true, debug: false, mesh: mesh });
+      State.entities.push({ map: true, mesh: mesh });
     })
   },
   setPrevMapFloor: function() {
@@ -389,10 +390,12 @@ sys.Window.create({
 
     //center camera on the new floor
     var target = floorBBox.getCenter();
-    var position = new Vec3(State.camera.target.x, State.camera.target.y + State.mapCameraPosY, State.camera.target.z);
+    var position = new Vec3(State.camera.target.x, State.camera.target.y + State.mapCameraPosY, State.camera.target.z + 0.01);
     State.camera.setUp(new Vec3(0, 0, -1));
     State.arcball.setPosition(position);
     State.arcball.setTarget(target);
+
+    this.buildCells();
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), State.entities);
@@ -526,7 +529,7 @@ sys.Window.create({
   },
   meshRendererSys: function(allEntities, camera) {
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), allEntities);
-
+    console.log('entitiesWithMesh', entitiesWithMesh.length)
     entitiesWithMesh.forEach(function(entity) {
       entity.mesh.draw(camera);
     })
@@ -541,10 +544,10 @@ sys.Window.create({
     this.agentDebugInfoUpdaterSys(State.entities);
     this.pointSpriteUpdaterSys(State.entities, State.camera);
 
-    var meshFilter = R.or(
-      R.where({ debug: false }),
-      R.where({ debug: State.debugMode })
-    );
-    this.meshRendererSys(R.filter(meshFilter, State.entities), State.camera);
+    var debugFilter = function(o) {
+      if (typeof o.debug == 'undefined') return true;
+      else return o.debug == State.debugMode;
+    }
+    this.meshRendererSys(R.filter(debugFilter, State.entities), State.camera);
   }
 });
