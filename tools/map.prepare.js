@@ -70,4 +70,16 @@ nodes.forEach(function(node, nodeIndex) {
   node.id = nodeIndex;
 })
 
-fs.writeFileSync(outNodesFile, JSON.stringify(nodes), 'utf8');
+var rooms = nodesData.rooms.map(function(room) {
+  return {
+    id: room.id,
+    type: room.type
+  }
+})
+
+var outData = {
+  nodes: nodes,
+  rooms: rooms
+}
+
+fs.writeFileSync(outNodesFile, JSON.stringify(outData), 'utf8');
