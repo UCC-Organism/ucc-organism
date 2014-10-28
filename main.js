@@ -24,103 +24,13 @@ var Vec3 = geom.Vec3;
 var LineBuilder = gen.LineBuilder;
 var BoundingBox = geom.BoundingBox;
 var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
+var GeomUtils = require('./geom/GeomUtils');
 var Platform = sys.Platform;
 var Time = sys.Time;
 var Spline3D = geom.Spline3D;
 
 var VK_LEFT = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
-
-
-function smoothCurve(points, c) {
-  c = (typeof(c) == 'undefined') ? 1 : c;
-  var spline = [];
-  function deCasteljau(points, t) {
-    var newPoints = [];
-    for(var i=0; i<points.length-1; i++) {
-      newPoints.push(points[i] + (points[i+1] - points[i]) * t);
-    }
-    if (newPoints.length > 1)
-      return deCasteljau(newPoints, t);
-    else
-      return newPoints[0];
-  }
-  for(var i=0; i<points.length; i++) {
-    for(var j=0; j<10; j++) {
-      var t = j/10;
-      var p0 = points[(i-1 + points.length) % points.length];
-      var p1 = points[(i-0 + points.length) % points.length];
-      var p2 = points[(i+1 + points.length) % points.length];
-      var x = deCasteljau([(p0.x + p1.x)/2, (p0.x + p1.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2], t);
-      var y = deCasteljau([(p0.y + p1.y)/2, (p0.y + p1.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2], t);
-      var z = deCasteljau([(p0.z + p1.z)/2, (p0.z + p1.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2], t);
-      spline.push(new Vec3(x, y, z));
-    }
-  }
-  return spline;
-}
-
-// How's that for a function name?
-function NurbsGenPointsFastUnweightedUniformCurve3(cps, num, out) {
-  var np = cps.length >> 1;
-  var a = 3, b = np, step = (b - a) / num;
-
-  var p = 0;
-  for (var j = 0, u = a; j < num; ++j, u += step) {
-    var num_x = 0, num_y = 0, den = 0;
-    for (var i = (u - 3) >> 0, k = 0; k < 4 && i < np; ++k, ++i) {
-      var i1 = i+1, i2 = i1+1, i3 = i2+1, i4 = i3+1;
-      var v = ((u - (i)) /3) * (((u - (i)) /2) * (((u - (i)) ) * (i <= u && u < i1 ? 1 : 0) + ((i2 - u) ) * (i1 <= u && u < i2 ? 1 : 0)) + ((i3 - u) /2) * (((u - (i1)) ) * (i1 <= u && u < i2 ? 1 : 0) + ((i3 - u) ) * (i2 <= u && u < i3 ? 1 : 0))) + ((i4 - u) /3) * (((u - (i1)) /2) * (((u - (i1)) ) * (i1 <= u && u < i2 ? 1 : 0) + ((i3 - u) ) * (i2 <= u && u < i3 ? 1 : 0)) + ((i4 - u) /2) * (((u - (i2)) ) * (i2 <= u && u < i3 ? 1 : 0) + ((i4 - u) ) * (i3 <= u && u < i4 ? 1 : 0)));
-      num_x += v * cps[i*2];
-      num_y += v * cps[i*2+1];
-      den   += v;
-    }
-    out[p++] = num_x/den;
-    out[p++] = num_y/den;
-  }
-  return p;
-}
-
-function NurbsGenPointsFastUnweightedUniformCurve2(cps, num, out) {
-  var np = cps.length >> 1;
-  var a = 2, b = np, step = (b - a) / num;
-
-  var p = 0;
-  for (var j = 0, u = a; j < num; ++j, u += step) {
-    var num_x = 0, num_y = 0, den = 0;
-    for (var i = (u - 2) >> 0, k = 0; k < 3 && i < np; ++k, ++i) {
-      var i1 = i+1, i2 = i1+1, i3 = i2+1;
-      var v = ((u - (i)) /2) * (((u - (i)) ) * (i <= u && u < i1 ? 1 : 0) + ((i2 - u) ) * (i1 <= u && u < i2 ? 1 : 0)) + ((i3 - u) /2) * (((u - (i1)) ) * (i1 <= u && u < i2 ? 1 : 0) + ((i3 - u) ) * (i2 <= u && u < i3 ? 1 : 0));
-      num_x += v * cps[i*2];
-      num_y += v * cps[i*2+1];
-      den   += v;
-    }
-    out[p++] = num_x/den;
-    out[p++] = num_y/den;
-  }
-  return p;
-}
-
-function computeBSpline(points) {
-  var result = [];
-
-  var nurb_cps = [ ];  // Flat list of xys
-  for (var i = 0, il = points.length; i < il; ++i) nurb_cps.push(points[i].x, points[i].z);
-
-  for (var i = 0; i < 4; ++i) nurb_cps.push(nurb_cps[i]);
-
-  var nurb_tess_points = [ ];
-  NurbsGenPointsFastUnweightedUniformCurve2(nurb_cps, points.length * 5, nurb_tess_points);
-  // Close the line loop for kPolyonPointMode
-  nurb_tess_points.push(nurb_tess_points[0], nurb_tess_points[1]);
-
-  for(var i=0; i<nurb_tess_points.length; i+=2) {
-    result.push(new Vec3(nurb_tess_points[i], points[0].y, nurb_tess_points[i+1]))
-  }
-
-  return result;
-}
-
 
 var groupBy = function(list, prop) {
   var groups = {};
@@ -289,8 +199,7 @@ sys.Window.create({
         p.x += (Math.random() - 0.5) * 0.001;
         p.y += (Math.random() - 0.5) * 0.001;
       })
-      points = computeBSpline(points);
-      //points = smoothCurve(points, 0.95);
+      points = GeomUtils.computeBSpline(points);
       for(var i=0; i<points.length; i++) {
         var p = points[i];
         var np = points[(i+1)%points.length];
