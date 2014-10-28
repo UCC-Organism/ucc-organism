@@ -5,9 +5,13 @@ var color = require('pex-color');
 var gen = require('pex-gen');
 var geom = require('pex-geom');
 var gen = require('pex-gen');
-var Q = require('q');
 var graph = require('./graph');
 var R = require('ramda');
+var Promise = require('bluebird');
+
+var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
+var GeomUtils = require('./geom/GeomUtils');
+var IOUtils = require('./sys/IOUtils');
 
 var Cube = gen.Cube;
 var Mesh = glu.Mesh;
@@ -23,8 +27,6 @@ var Geometry = geom.Geometry;
 var Vec3 = geom.Vec3;
 var LineBuilder = gen.LineBuilder;
 var BoundingBox = geom.BoundingBox;
-var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
-var GeomUtils = require('./geom/GeomUtils');
 var Platform = sys.Platform;
 var Time = sys.Time;
 var Spline3D = geom.Spline3D;
@@ -64,32 +66,6 @@ function orderNodes(nodes) {
   return sortedNodes;
 }
 
-function loadTextFile(url) {
-  var deferred = Q.defer();
-
-  IO.loadTextFile(url, function(data) {
-    if (data) deferred.resolve(data);
-    else deferred.reject(new Error('Failed to load : ' + url));
-  });
-
-  return deferred.promise;
-}
-
-function loadJSON(url) {
-  var deferred = Q.defer();
-  loadTextFile(url)
-  .then(function(data) {
-    try {
-      var json = JSON.parse(data);
-      deferred.resolve(json);
-    }
-    catch(e) {
-      deferred.reject(e);
-    }
-  })
-  return deferred.promise;
-}
-
 var State = {
   camera: null,
   arcball: null,
@@ -125,9 +101,9 @@ sys.Window.create({
 
     var self = this;
 
-    Q.all([
-      loadJSON('data/map/layers.json'),
-      loadJSON('data/map/nodes.client.json')
+    Promise.all([
+      IOUtils.loadJSON('data/map/layers.json'),
+      IOUtils.loadJSON('data/map/nodes.client.json')
     ])
     .spread(this.initMap.bind(this))
     .done(function(e) {

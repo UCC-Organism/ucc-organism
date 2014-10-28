@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "bluebird": "^2.3.10",
     "brfs": "1.2.0",
     "browser-sync": "1.3.2",
     "browserify": "5.9.1",
@@ -15,7 +16,6 @@
     "pex-helpers": "*",
     "pex-materials": "*",
     "pex-sys": "*",
-    "q": "^1.0.1",
     "ramda": "^0.6.0",
     "vinyl-source-stream": "0.1.1",
     "watchify": "1.0.1"
