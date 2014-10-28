@@ -529,7 +529,6 @@ sys.Window.create({
   },
   meshRendererSys: function(allEntities, camera) {
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), allEntities);
-    console.log('entitiesWithMesh', entitiesWithMesh.length)
     entitiesWithMesh.forEach(function(entity) {
       entity.mesh.draw(camera);
     })
