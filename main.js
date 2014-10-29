@@ -36,6 +36,7 @@ var Platform = sys.Platform;
 var Time = sys.Time;
 var ScreenImage = glu.ScreenImage;
 var Texture2D = glu.Texture2D;
+var PointSpriteTextured = require('./materials/PointSpriteTextured')
 
 var VK_LEFT = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -123,8 +124,6 @@ sys.Window.create({
     State.arcball = new Arcball(this, State.camera);
 
     var self = this;
-
-    
 
     Promise.all([
       IOUtils.loadJSON('data/map/layers.json'),
@@ -407,13 +406,14 @@ sys.Window.create({
             right.scale(0.003);
             var subPoints = GeomUtils.resampleLine(node.position, neighborNode.position, { distance: 0.01 })
             subPoints.forEach(function(p) {
-              lineBuilder.addLine(p.dup().sub(right), p.dup().add(right));
+              //lineBuilder.addLine(p.dup().sub(right), p.dup().add(right));
             });
+            lineBuilder.addLine(node.position, neighborNode.position);
           }
         }
       })
     })
-    var mesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Blue }), { lines: true });
+    var mesh = new Mesh(lineBuilder, new SolidColor({ color: Color.White }), { lines: true });
     State.entities.push({ map: true, mesh: mesh });
   },
   killAllAgents: function() {
@@ -439,12 +439,19 @@ sys.Window.create({
 
     if (stairsPointVertices.length == 0) return;
 
+    var colors = [
+      new Color(181/255,  77/255, 243/255),
+      new Color(206/255, 244/255,  62/255),
+      new Color(0/255,  150/255, 250/255)
+    ]
+
     var position = geom.randomElement(stairsPointVertices).clone();
-    var color = Color.White;
+    var color = geom.randomElement(colors);
     State.entities.push({
       pointSize: 5,
       agent: true,
       position: position,
+      prevPosition: position.dup(),
       color: color,
       targetNode: null,
     });
@@ -488,13 +495,14 @@ sys.Window.create({
     targetFollowers.forEach(function(followerEntity) {
       tmpDir.copy(followerEntity.targetNode.position).sub(followerEntity.position);
       tmpDir.normalize().scale(State.agentSpeed * Time.delta);
+      followerEntity.prevPosition.copy(followerEntity.position);
       followerEntity.position.add(tmpDir);
     })
   },
   pointSpriteUpdaterSys: function(allEntities, camera) {
     if (!State.pointSpriteMeshEntity) {
-      var pointSpriteGeometry = new Geometry({ vertices: true, colors: true });
-      var pointSpriteMaterial = new ShowColors({ pointSize: 10, color: Color.White });
+      var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true });
+      var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 20 * DPI, texture: Texture2D.load('assets/U2.png') });
       State.pointSpriteMeshEntity = {
         mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
       }
@@ -504,18 +512,27 @@ sys.Window.create({
 
     var vertices = State.pointSpriteMeshEntity.mesh.geometry.vertices;
     var colors = State.pointSpriteMeshEntity.mesh.geometry.colors;
+    var normals = State.pointSpriteMeshEntity.mesh.geometry.normals;
     vertices.length = entitiesWithPointSprite.length;
     colors.length = entitiesWithPointSprite.length;
+    normals.length = entitiesWithPointSprite.length;
 
+    var dir = new Vec3();
     entitiesWithPointSprite.forEach(function(entity, entityIndex) {
       if (vertices[entityIndex]) vertices[entityIndex].copy(entity.position);
       else vertices[entityIndex] = entity.position.clone();
       if (colors[entityIndex]) colors[entityIndex].copy(entity.color || Color.White);
       else colors[entityIndex] = entity.color ? entity.color.clone() : Color.White;
+      if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
+
+      dir.copy(entity.prevPosition).sub(entity.position).normalize();
+      var agentRotation = Math.atan2(-dir.z, dir.x);
+      normals[entityIndex].x = (normals[entityIndex].x * 5 + agentRotation) / 6;
     });
 
     vertices.dirty = true;
     colors.dirty = true;
+    normals.dirty = true;
   },
   agentDebugInfoUpdaterSys: function(allEntities) {
     if (!State.agentDebugInfoMeshEntity) {
@@ -566,6 +583,9 @@ sys.Window.create({
     this.agentTargetNodeFollowerSys(State.entities);
     this.agentDebugInfoUpdaterSys(State.entities);
     this.pointSpriteUpdaterSys(State.entities, State.camera);
+
+    //glu.enableDepthReadAndWrite(false);
+    glu.enableAlphaBlending(true);
 
     meshRendererSys(State.entities, State);
 
