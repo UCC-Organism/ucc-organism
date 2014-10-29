@@ -14,6 +14,9 @@ function meshRendererSys(entities, state) {
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
   entitiesWithMesh.forEach(function(entity) {
+    if (entity.mesh.geometry.vertices.length == 0) {
+      return;
+    }
     entity.mesh.draw(camera);
   })
 }

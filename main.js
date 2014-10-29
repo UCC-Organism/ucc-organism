@@ -8,10 +8,12 @@ var gen = require('pex-gen');
 var graph = require('./graph');
 var R = require('ramda');
 var Promise = require('bluebird');
+var remap = require('re-map');
 
 var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
 var GeomUtils = require('./geom/GeomUtils');
 var IOUtils = require('./sys/IOUtils');
+var Crayon = require('./lib/crayons');
 
 //CES systems
 var meshRendererSys = require('./ucc/sys/meshRendererSys');
@@ -32,6 +34,8 @@ var LineBuilder = gen.LineBuilder;
 var BoundingBox = geom.BoundingBox;
 var Platform = sys.Platform;
 var Time = sys.Time;
+var ScreenImage = glu.ScreenImage;
+var Texture2D = glu.Texture2D;
 
 var VK_LEFT = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -47,6 +51,18 @@ var groupBy = function(list, prop) {
 }
 
 var notNull = R.identity;
+
+var Style = {
+  groupColors: {
+    'default': new Color(1,1,1,1),
+    'spl'    : new Color(1,1,1,1),
+    'pmu'    : new Color(1,1,1,1),
+    'fys'    : new Color(1,1,1,1),
+    'nor'    : new Color(1,1,1,1),
+    'PE1'    : new Color(1,1,1,1),
+    'PNE'    : new Color(1,1,1,1)
+  }
+}
 
 var State = {
   camera: null,
@@ -64,15 +80,39 @@ var State = {
   maxNumAgents: 100,
   minNodeDistance: 0.01,
   debugMode: false,
-  bgColor: new Color(0.1, 0.1, 0.12, 1.0)
+  bgColor: new Color(0.1, 0.1, 0.12, 1.0),
+
+  currentTime: 0
 };
+
+function makeCanvas(w, h) {
+  if (Platform.isPlask) {
+    var plask = require('plask');
+    return plask.SkCanvas.create(w, h);
+  }
+  else if (Platform.isBrowser) {
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    return canvas;
+  }
+}
+
+var DPI = 1;
+if (Platform.isPlask) {
+  DPI = 2;
+}
+else if (Platform.isBrowser) {
+  DPI = window.devicePixelRatio;
+}
 
 sys.Window.create({
   settings: {
-    width: 1280,
-    height: 720,
+    width: 1280 * DPI,
+    height: 720 * DPI,
     type: '3d',
-    fullscreen: Platform.isBrowser ? true : false
+    fullscreen: Platform.isBrowser ? true : false,
+    highdpi: DPI,
   },
   init: function() {
     var cube = new Cube();
@@ -84,7 +124,7 @@ sys.Window.create({
 
     var self = this;
 
-    this.initGroups();
+    this.initGroupsActivities();
 
     Promise.all([
       IOUtils.loadJSON('data/map/layers.json'),
@@ -97,13 +137,24 @@ sys.Window.create({
 
     this.initKeys();
 
-    if (Platform.isBrowser) {
-      setInterval(this.setNextMapFloor.bind(this), 10000);
-    }
+    //if (Platform.isBrowser) {
+    //  setInterval(this.setNextMapFloor.bind(this), 10000);
+    //}
+
+    State.canvas = makeCanvas(this.width, 250);
+    State.crayon = new Crayon(State.canvas);
+
+    State.uiTexture = Texture2D.create(State.canvas.width, State.canvas.height);
+    State.uiTexture.update(State.canvas);
+    State.ui = new ScreenImage(State.uiTexture, 0, 0, State.canvas.width, State.canvas.height, this.width, this.height);
   },
-  initGroups: function() {
-    IOUtils.loadJSON('data/static/groups_bundle.json')
-    .then(function(groups) {
+  initGroupsActivities: function() {
+    Promise.all([
+      IOUtils.loadJSON('data/static/groups_bundle.json'),
+      IOUtils.loadJSON('data/static/activities_bundle.json')
+    ])
+    .spread(function(groups, activities) {
+      this.initActivities(activities);
       var students = R.flatten(groups.map(R.prop('students')));
       var uniqueStudents = R.uniq(students.map(R.prop('id')));
       var programmes = R.uniq(R.flatten(groups.map(R.prop('programme'))));
@@ -111,8 +162,49 @@ sys.Window.create({
       groupNames = R.uniq(groupNames.map(function(name) {
         return name.slice(0, 3);
       }))
+
+      console.log('uniqueStudents.length', uniqueStudents.length)
+    }.bind(this))
+    .catch(function(e) {
+      console.log(e.stack)
     })
-    .catch(console.log)
+  },
+  initActivities: function(activities) {
+    State.activities = activities;
+    State.activtiesStart = new Date(activities[0].start);
+    State.activtiesEnd = new Date(activities[activities.length-1].end);
+    State.activtiesStartTime = State.activtiesStart.getTime();
+    State.activtiesEndTime = State.activtiesEnd.getTime();
+    State.activtiesLocations = [];
+    var start = State.activtiesStart.getTime();
+    var end = State.activtiesEnd.getTime();
+
+    var c = State.crayon.canvas;
+    State.crayon.clear(true);
+    State.crayon.fill([255, 0, 0, 255]);
+    for(var i=0; i<activities.length; i++) {
+      var activity = activities[i];
+      activity.startTime = new Date(activities[i].start).getTime();
+      activity.endTime = new Date(activities[i].end).getTime();
+      var location = activity.locations[0];
+      var locationIndex = State.activtiesLocations.indexOf(location);
+      if (locationIndex == -1) {
+        locationIndex = State.activtiesLocations.length;
+        State.activtiesLocations.push(location);
+      }
+      var s = remap(activity.startTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
+      var e = remap(activity.endTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
+      var y = 10 * DPI + locationIndex * 3 * DPI;
+      State.crayon.rect(s, y, e - s - 2, 2 * DPI);
+    }
+
+    State.currentTime = State.activtiesStartTime;
+
+    console.log('State.activtiesLocations', State.activtiesLocations);
+    console.log('activities.length', activities.length)
+    console.log('activities', State.activtiesStart + ' - ' + State.activtiesEnd)
+
+    State.uiTexture.update(State.crayon.canvas);
   },
   initKeys: function() {
     this.on('keyDown', function(e) {
@@ -303,7 +395,6 @@ sys.Window.create({
         }
       })
     })
-    console.log('lineBuilder.points', lineBuilder.vertices.length);
     var mesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Blue }), { lines: true });
     State.entities.push({ map: true, mesh: mesh });
   },
@@ -434,7 +525,21 @@ sys.Window.create({
       })
     }
   },
+  updateUI: function() {
+    if (Time.frameNumber % 2 == 0) {
+      var x = remap(State.currentTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
+      State.crayon.fill([255, 255, 255, 255]).rect(x, 0, 2, 5 * DPI);
+      State.uiTexture.update(State.canvas);
+    }
+  },
+  update: function() {
+    State.currentTime += Time.delta * 100000;
+
+    this.updateUI();
+  },
   draw: function() {
+    this.update();
+
     glu.clearColorAndDepth(State.bgColor);
     glu.enableDepthReadAndWrite(true);
 
@@ -445,5 +550,8 @@ sys.Window.create({
     this.pointSpriteUpdaterSys(State.entities, State.camera);
 
     meshRendererSys(State.entities, State);
+
+    glu.enableAlphaBlending();
+    State.ui.draw();
   }
 });
