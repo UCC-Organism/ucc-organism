@@ -14,7 +14,7 @@
     "pex-glu": "*",
     "pex-gui": "*",
     "pex-helpers": "*",
-    "pex-materials": "*",
+    "pex-materials": "^0.1.0",
     "pex-sys": "*",
     "ramda": "^0.6.0",
     "vinyl-source-stream": "0.1.1",
