@@ -135,7 +135,7 @@ sys.Window.create({
 
     this.setMapFloor(State.currentFloor);
   },
-  buildCells: function() {
+  rebuildCells: function() {
     var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
     var cellGroups = groupBy(nodesOnThisFloor, 'room');
     var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
@@ -252,7 +252,7 @@ sys.Window.create({
     State.arcball.setPosition(position);
     State.arcball.setTarget(target);
 
-    this.buildCells();
+    this.rebuildCells();
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), State.entities);
