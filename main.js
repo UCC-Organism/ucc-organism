@@ -372,14 +372,15 @@ sys.Window.create({
     var lineBuilder = State.agentDebugInfoMeshEntity.mesh.geometry;
     lineBuilder.reset();
 
-    var agents = R.filter(R.where({ agent: R.identity }), allEntities);
-    agents.forEach(function(agent) {
-      if (agent.targetNode) {
-        lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
-      }
-    })
+    if (State.debugMode) {
+      var agents = R.filter(R.where({ agent: R.identity }), allEntities);
+      agents.forEach(function(agent) {
+        if (agent.targetNode) {
+          lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
+        }
+      })
+    }
   },
-  
   draw: function() {
     glu.clearColorAndDepth(Color.Black);
     glu.enableDepthReadAndWrite(true);
