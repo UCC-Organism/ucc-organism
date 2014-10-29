@@ -83,6 +83,8 @@ sys.Window.create({
 
     var self = this;
 
+    this.initGroups();
+
     Promise.all([
       IOUtils.loadJSON('data/map/layers.json'),
       IOUtils.loadJSON('data/map/nodes.client.json')
@@ -97,6 +99,19 @@ sys.Window.create({
     if (Platform.isBrowser) {
       setInterval(this.setNextMapFloor.bind(this), 10000);
     }
+  },
+  initGroups: function() {
+    IOUtils.loadJSON('data/static/groups_bundle.json')
+    .then(function(groups) {
+      var students = R.flatten(groups.map(R.prop('students')));
+      var uniqueStudents = R.uniq(students.map(R.prop('id')));
+      var programmes = R.uniq(R.flatten(groups.map(R.prop('programme'))));
+      var groupNames = R.uniq(R.flatten(groups.map(R.prop('name'))));
+      groupNames = R.uniq(groupNames.map(function(name) {
+        return name.slice(0, 3);
+      }))
+    })
+    .catch(console.log)
   },
   initKeys: function() {
     this.on('keyDown', function(e) {
