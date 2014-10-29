@@ -60,7 +60,7 @@ var State = {
   entities: [],
   pointSpriteMeshEntity: null,
   agentDebugInfoMeshEntity: null,
-  agentSpeed: 0.1,
+  agentSpeed: 0.02,
   maxNumAgents: 100,
   minNodeDistance: 0.01,
   debugMode: true
