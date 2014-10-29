@@ -124,7 +124,7 @@ sys.Window.create({
 
     var self = this;
 
-    this.initGroupsActivities();
+    
 
     Promise.all([
       IOUtils.loadJSON('data/map/layers.json'),
@@ -132,8 +132,9 @@ sys.Window.create({
     ])
     .spread(this.initMap.bind(this))
     .done(function(e) {
+      this.initGroupsActivities();
       if (e) console.log(e);
-    });
+    }.bind(this));
 
     this.initKeys();
 
@@ -203,6 +204,20 @@ sys.Window.create({
     console.log('State.activtiesLocations', State.activtiesLocations);
     console.log('activities.length', activities.length)
     console.log('activities', State.activtiesStart + ' - ' + State.activtiesEnd)
+
+    var usedRooms = [];
+    var missingRooms = [];
+    State.activtiesLocations.forEach(function(location) {
+      var activityRoom = State.rooms.filter(R.where({ id : location}))
+      if (activityRoom.length > 0) {
+        usedRooms.push(location)
+      }
+      else {
+        missingRooms.push(location);
+      }
+    })
+    console.log('Used rooms', usedRooms)
+    console.log('Missing rooms', missingRooms)
 
     State.uiTexture.update(State.crayon.canvas);
   },
@@ -339,6 +354,9 @@ sys.Window.create({
   },
   rebuildCells: function() {
     var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
+    if (State.currentFloor == -1) {
+      nodesOnThisFloor = State.nodes;
+    }
     var cellGroups = groupBy(nodesOnThisFloor, 'room');
     var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
       return cellGroups[roomId];
