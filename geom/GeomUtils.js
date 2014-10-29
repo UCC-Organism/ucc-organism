@@ -93,4 +93,28 @@ GeomUtils.smoothCurve = function(points, c) {
   return spline;
 }
 
+GeomUtils.resampleLine = function(a, b, options) {
+  var diff = b.dup().sub(a);
+  if (options.numPoints) {
+    throw new Error('GeomUtils.resampleLine not implemented for numPoints');
+  }
+  else if (options.distance) {
+    var len = diff.length();
+    var points = [];
+    if (len > 0) {
+      var dist = 0;
+      var diffN = diff.dup().scale(1/len);
+      while(dist < len) {
+        points.push(diffN.dup().scale(dist).add(a));
+        dist += options.distance;
+      }
+      points.push(b);
+    }
+    return points;
+  }
+  else {
+    throw new Error('GeomUtils.resampleLine needs options with numPoints or distance');
+  }
+}
+
 module.exports = GeomUtils;

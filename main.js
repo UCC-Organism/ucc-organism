@@ -63,7 +63,8 @@ var State = {
   agentSpeed: 0.02,
   maxNumAgents: 100,
   minNodeDistance: 0.01,
-  debugMode: true
+  debugMode: false,
+  bgColor: new Color(0.1, 0.1, 0.12, 1.0)
 };
 
 sys.Window.create({
@@ -149,32 +150,6 @@ sys.Window.create({
     State.currentFloor = State.floors[1]; //skip first global floor '-1'
 
     this.setMapFloor(State.currentFloor);
-  },
-  rebuildCells: function() {
-    var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
-    var cellGroups = groupBy(nodesOnThisFloor, 'room');
-    var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
-      return cellGroups[roomId];
-    });
-    var cellMaterial = new SolidColor();
-    var cellMeshes = cellNodes.map(function(nodes) {
-      nodes = graph.orderNodes(nodes);
-      var points = nodes.map(R.prop('position'));
-      var lineBuilder = new LineBuilder();
-      //add little turbulence to room corners
-      points.forEach(function(p) {
-        p.x += (Math.random() - 0.5) * 0.001;
-        p.y += (Math.random() - 0.5) * 0.001;
-      })
-      points = GeomUtils.computeBSpline(points);
-      for(var i=0; i<points.length; i++) {
-        var p = points[i];
-        var np = points[(i+1)%points.length];
-        lineBuilder.addLine(p, np);
-      }
-      var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
-      State.entities.push({ map: true, mesh: mesh });
-    })
   },
   setPrevMapFloor: function() {
     var floorIndex = State.floors.indexOf(State.currentFloor);
@@ -268,6 +243,69 @@ sys.Window.create({
     State.arcball.setTarget(target);
 
     this.rebuildCells();
+    this.rebuildCorridors();
+  },
+  rebuildCells: function() {
+    var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
+    var cellGroups = groupBy(nodesOnThisFloor, 'room');
+    var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
+      return cellGroups[roomId];
+    });
+    var cellMaterial = new SolidColor();
+    var cellMeshes = cellNodes.map(function(nodes) {
+      nodes = graph.orderNodes(nodes);
+      var points = nodes.map(R.prop('position'));
+      var lineBuilder = new LineBuilder();
+      //add little turbulence to room corners
+      points.forEach(function(p) {
+        p.x += (Math.random() - 0.5) * 0.001;
+        p.y += (Math.random() - 0.5) * 0.001;
+      })
+      points = GeomUtils.computeBSpline(points);
+      for(var i=0; i<points.length; i++) {
+        var p = points[i];
+        var np = points[(i+1)%points.length];
+        lineBuilder.addLine(p, np);
+      }
+      var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
+      State.entities.push({ map: true, mesh: mesh });
+    })
+  },
+  rebuildCorridors: function() {
+    var selectedNodes = State.selectedNodes;
+    var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
+
+    var lineBuilder = new LineBuilder();
+
+    var addedConnections = {};
+    function connectionHash(nodeA, nodeB) {
+      if (nodeA.id <= nodeB.id) return nodeA.id + '-' + nodeB.id;
+      else return nodeB.id + '-' + nodeA.id;
+    }
+
+    var up = new Vec3(0, 1, 0);
+    var right = new Vec3(0, 0, 0);
+
+    corridorNodes.forEach(function(node) {
+      node.neighbors.forEach(function(neighborNode) {
+        if (neighborNode.floor == node.floor) {
+          var hash = connectionHash(node, neighborNode);
+          if (!addedConnections[hash]) {
+            addedConnections[hash] = true;
+            var forward = neighborNode.position.dup().sub(node.position).normalize();
+            right.asCross(forward, up);
+            right.scale(0.003);
+            var subPoints = GeomUtils.resampleLine(node.position, neighborNode.position, { distance: 0.01 })
+            subPoints.forEach(function(p) {
+              lineBuilder.addLine(p.dup().sub(right), p.dup().add(right));
+            });
+          }
+        }
+      })
+    })
+    console.log('lineBuilder.points', lineBuilder.vertices.length);
+    var mesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Blue }), { lines: true });
+    State.entities.push({ map: true, mesh: mesh });
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), State.entities);
@@ -397,7 +435,7 @@ sys.Window.create({
     }
   },
   draw: function() {
-    glu.clearColorAndDepth(Color.Black);
+    glu.clearColorAndDepth(State.bgColor);
     glu.enableDepthReadAndWrite(true);
 
     this.agentSpawnSys(State.entities);
