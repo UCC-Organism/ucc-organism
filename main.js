@@ -37,6 +37,10 @@ var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball           = glu.Arcball;
 var Color             = color.Color;
 
+var VK_LEFT  = Platform.isPlask ? 123 : 37;
+var VK_RIGHT = Platform.isPlask ? 124 : 39;
+
+
 //var Cube = gen.Cube;
 //var Mesh = glu.Mesh;
 //var ShowNormals = materials.ShowNormals;
@@ -55,8 +59,6 @@ var Color             = color.Color;
 //var Texture2D = glu.Texture2D;
 //var PointSpriteTextured = require('./materials/PointSpriteTextured')
 
-//var VK_LEFT = Platform.isPlask ? 123 : 37;
-//var VK_RIGHT = Platform.isPlask ? 124 : 39;
 //
 //var notNull = R.identity;
 
@@ -101,7 +103,7 @@ var State = {
   //agentSpeed: 0.02,
   //maxNumAgents: 100,
   //minNodeDistance: 0.01,
-  //debugMode: false,
+  //debug: false,
   //
 
   
@@ -122,6 +124,7 @@ sys.Window.create({
     this.initLibs();
     this.initScene();
     this.initStores();
+    this.initKeys();
   },
   initLibs: function() {
     Promise.longStackTraces();
@@ -142,49 +145,19 @@ sys.Window.create({
       console.log(e.stack)
     })
   },
-  /*
   initKeys: function() {
     this.on('keyDown', function(e) {
       switch(e.str) {
-        case ' ': this.killAllAgents(); break;
-        case 'd': State.debugMode = !State.debugMode; break;
+        //case ' ': this.killAllAgents(); break;
+        case 'd': State.debug = !State.debug; break;
       }
       switch(e.keyCode) {
-        case VK_LEFT: this.setPrevMapFloor(); break;
-        case VK_RIGHT: this.setNextMapFloor(); break;
+        case VK_LEFT: State.map.setPrevFloor(); break;
+        case VK_RIGHT: State.map.setNextFloor(); break;
       }
     }.bind(this));
   },
-  */
-  setPrevMapFloor: function() {
-    /*
-    var floorIndex = State.floors.indexOf(State.currentFloor);
-    var prevFloorIndex = (floorIndex - 1 + State.floors.length) % State.floors.length;
-    this.setMapFloor(State.floors[prevFloorIndex]);
-    */
-  },
-  setNextMapFloor: function() {
-    /*
-    var floorIndex = State.floors.indexOf(State.currentFloor);
-    var nextFloorIndex = (floorIndex + 1) % State.floors.length;
-    this.setMapFloor(State.floors[nextFloorIndex]);
-    */
-  },
-  setMapFloor: function(floorId) {
-    /*
-    State.currentFloor = floorId;
-
-    if (floorId != -1) {
-      State.selectedNodes = State.nodes.filter(function(node) {
-        return node.floor == State.currentFloor;
-      });
-    }
-    else {
-      State.selectedNodes = State.nodes;
-    }
-    this.rebuildMap();
-    */
-  },
+  
   rebuildCells: function() {
     /*
     var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
@@ -400,7 +373,7 @@ sys.Window.create({
     var lineBuilder = State.agentDebugInfoMeshEntity.mesh.geometry;
     lineBuilder.reset();
 
-    if (State.debugMode) {
+    if (State.debug) {
       var agents = R.filter(R.where({ agent: R.identity }), allEntities);
       agents.forEach(function(agent) {
         if (agent.targetNode) {

@@ -43,13 +43,14 @@ var MapStore = {
 
       //skip first global floor '-1'
       this.currentFloor = this.floors[1];
-      this.setCurrentFloor(this.currentFloor);
+      this.setFloor(this.currentFloor);
 
       return this;
     }.bind(this));
   },
-  setCurrentFloor: function(floor) {
-    if (this.floorId != -1) {
+  setFloor: function(floorId) {
+    this.currentFloor = floorId;
+    if (this.currentFloor != -1) {
       this.selectedNodes = this.nodes.filter(function(node) {
         return node.floor == this.currentFloor;
       }.bind(this));
@@ -57,7 +58,19 @@ var MapStore = {
     else {
       this.selectedNodes = this.nodes;
     }
-  }
+    console.log('MapStore.setFloor', this.currentFloor)
+    this.dirty = true;
+  },
+  setPrevFloor: function() {
+    var floorIndex = this.floors.indexOf(this.currentFloor);
+    var prevFloorIndex = (floorIndex - 1 + this.floors.length) % this.floors.length;
+    this.setFloor(this.floors[prevFloorIndex]);
+  },
+  setNextFloor: function() {
+    var floorIndex = this.floors.indexOf(this.currentFloor);
+    var nextFloorIndex = (floorIndex + 1) % this.floors.length;
+    this.setFloor(this.floors[nextFloorIndex]);
+  },
 }
 
 module.exports = MapStore;
