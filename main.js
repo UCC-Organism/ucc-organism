@@ -86,26 +86,7 @@ var State = {
   currentTime: 0
 };
 
-function makeCanvas(w, h) {
-  if (Platform.isPlask) {
-    var plask = require('plask');
-    return plask.SkCanvas.create(w, h);
-  }
-  else if (Platform.isBrowser) {
-    var canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    return canvas;
-  }
-}
-
-var DPI = 1;
-if (Platform.isPlask) {
-  DPI = 2;
-}
-else if (Platform.isBrowser) {
-  DPI = window.devicePixelRatio;
-}
+var DPI = Platform.isPlask ? 2 : 1;
 
 sys.Window.create({
   settings: {
@@ -141,7 +122,7 @@ sys.Window.create({
     //  setInterval(this.setNextMapFloor.bind(this), 10000);
     //}
 
-    State.canvas = makeCanvas(this.width, 250);
+    State.canvas = Crayon.createCanvas(this.width, 250);
     State.crayon = new Crayon(State.canvas);
 
     State.uiTexture = Texture2D.create(State.canvas.width, State.canvas.height);
