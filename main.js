@@ -1,92 +1,114 @@
-var sys = require('pex-sys');
-var glu = require('pex-glu');
-var materials = require('pex-materials');
-var color = require('pex-color');
-var gen = require('pex-gen');
-var geom = require('pex-geom');
-var gen = require('pex-gen');
-var graph = require('./graph');
-var R = require('ramda');
-var Promise = require('bluebird');
-var remap = require('re-map');
+//var glu = require('pex-glu');
+//var materials = require('pex-materials');
+//var color = require('pex-color');
+//var gen = require('pex-gen');
+//var geom = require('pex-geom');
+//var gen = require('pex-gen');
+//var graph = require('./graph');
+//var R = require('ramda');
+//var Promise = require('bluebird');
+//var remap = require('re-map');
+//
+//var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
+//var GeomUtils = require('./geom/GeomUtils');
+//var IOUtils = require('./sys/IOUtils');
+//var Crayon = require('./lib/crayons');
+//var fn = require('./utils/fn');
 
-var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
-var GeomUtils = require('./geom/GeomUtils');
-var IOUtils = require('./sys/IOUtils');
-var Crayon = require('./lib/crayons');
 
-//CES systems
-var meshRendererSys = require('./ucc/sys/meshRendererSys');
+var Promise           = require('bluebird');
+var sys               = require('pex-sys');
+var glu               = require('pex-glu');
+var random            = require('pex-random');
+var color             = require('pex-color');
 
-var Cube = gen.Cube;
-var Mesh = glu.Mesh;
-var ShowNormals = materials.ShowNormals;
-var SolidColor = materials.SolidColor;
-var ShowColors = materials.ShowColors;
+//CES
+var meshRendererSys   = require('./ucc/sys/meshRendererSys');
+var mapBuilderSys     = require('./ucc/sys/mapBuilderSys');
+
+//Stores
+var MapStore          = require('./ucc/stores/MapStore');
+var ActivityStore     = require('./ucc/stores/ActivityStore');
+var GroupsStore       = require('./ucc/stores/GroupStore');
+
+var Platform          = sys.Platform;
+var Time              = sys.Time;
 var PerspectiveCamera = glu.PerspectiveCamera;
-var Arcball = glu.Arcball;
-var Color = color.Color;
-var Platform = sys.Platform;
-var IO = sys.IO;
-var Geometry = geom.Geometry;
-var Vec3 = geom.Vec3;
-var LineBuilder = gen.LineBuilder;
-var BoundingBox = geom.BoundingBox;
-var Platform = sys.Platform;
-var Time = sys.Time;
-var ScreenImage = glu.ScreenImage;
-var Texture2D = glu.Texture2D;
-var PointSpriteTextured = require('./materials/PointSpriteTextured')
+var Arcball           = glu.Arcball;
+var Color             = color.Color;
 
-var VK_LEFT = Platform.isPlask ? 123 : 37;
-var VK_RIGHT = Platform.isPlask ? 124 : 39;
+//var Cube = gen.Cube;
+//var Mesh = glu.Mesh;
+//var ShowNormals = materials.ShowNormals;
+//var SolidColor = materials.SolidColor;
+//var ShowColors = materials.ShowColors;
+//var Color = color.Color;
+//var Platform = sys.Platform;
+//var IO = sys.IO;
+//var Geometry = geom.Geometry;
+//var Vec3 = geom.Vec3;
+//var LineBuilder = gen.LineBuilder;
+//var BoundingBox = geom.BoundingBox;
+//
+//
+//var ScreenImage = glu.ScreenImage;
+//var Texture2D = glu.Texture2D;
+//var PointSpriteTextured = require('./materials/PointSpriteTextured')
 
-var groupBy = function(list, prop) {
-  var groups = {};
-  list.forEach(function(item) {
-    var value = item[prop];
-    if (!groups[value]) groups[value] = [];
-    groups[value].push(item);
-  })
-  return groups;
-}
+//var VK_LEFT = Platform.isPlask ? 123 : 37;
+//var VK_RIGHT = Platform.isPlask ? 124 : 39;
+//
+//var notNull = R.identity;
 
-var notNull = R.identity;
-
-var Style = {
-  groupColors: {
-    'default': new Color(1,1,1,1),
-    'spl'    : new Color(1,1,1,1),
-    'pmu'    : new Color(1,1,1,1),
-    'fys'    : new Color(1,1,1,1),
-    'nor'    : new Color(1,1,1,1),
-    'PE1'    : new Color(1,1,1,1),
-    'PNE'    : new Color(1,1,1,1)
-  }
-}
+//var Style = {
+//  groupColors: {
+//    'default': new Color(1,1,1,1),
+//    'spl'    : new Color(1,1,1,1),
+//    'pmu'    : new Color(1,1,1,1),
+//    'fys'    : new Color(1,1,1,1),
+//    'nor'    : new Color(1,1,1,1),
+//    'PE1'    : new Color(1,1,1,1),
+//    'PNE'    : new Color(1,1,1,1)
+//  }
+//}
 
 var State = {
-  camera: null,
-  arcball: null,
-  graph: null,
-  nodes: [],
-  selectedNodes: [],
-  floors: [],
-  currentFloor: 6,
-  mapCameraPosY: 0.40,
-  entities: [],
-  pointSpriteMeshEntity: null,
-  agentDebugInfoMeshEntity: null,
-  agentSpeed: 0.02,
-  maxNumAgents: 100,
-  minNodeDistance: 0.01,
-  debugMode: false,
+  //scene
   bgColor: new Color(0.1, 0.1, 0.12, 1.0),
+  camera: null,
+  cameraPosY: 0.40,
+  arcball: null,
 
-  currentTime: 0
+  //entities
+  entities: [],
+
+  //stores
+  map: null,
+
+  //state
+  currentTime: 0,
+  debug: true
+
+  //graph: null,
+  //nodes: [],
+  //selectedNodes: [],
+  //floors: [],
+  //currentFloor: 6,
+  //
+  
+  //pointSpriteMeshEntity: null,
+  //agentDebugInfoMeshEntity: null,
+  //agentSpeed: 0.02,
+  //maxNumAgents: 100,
+  //minNodeDistance: 0.01,
+  //debugMode: false,
+  //
+
+  
 };
 
 var DPI = Platform.isPlask ? 2 : 1;
+
 
 sys.Window.create({
   settings: {
@@ -97,110 +119,30 @@ sys.Window.create({
     highdpi: DPI,
   },
   init: function() {
-    var cube = new Cube();
-
-    geom.randomSeed(0);
-
+    this.initLibs();
+    this.initScene();
+    this.initStores();
+  },
+  initLibs: function() {
+    Promise.longStackTraces();
+    random.seed(0);
+  },
+  initScene: function() {
     State.camera = new PerspectiveCamera(60, this.width / this.height);
     State.arcball = new Arcball(this, State.camera);
-
-    var self = this;
-
-    Promise.all([
-      IOUtils.loadJSON('data/map/layers.json'),
-      IOUtils.loadJSON('data/map/nodes.client.json')
-    ])
-    .spread(this.initMap.bind(this))
-    .done(function(e) {
-      this.initGroupsActivities();
-      if (e) console.log(e);
-    }.bind(this));
-
-    this.initKeys();
-
-    //if (Platform.isBrowser) {
-    //  setInterval(this.setNextMapFloor.bind(this), 10000);
-    //}
-
-    State.canvas = Crayon.createCanvas(this.width, 250);
-    State.crayon = new Crayon(State.canvas);
-
-    State.uiTexture = Texture2D.create(State.canvas.width, State.canvas.height);
-    State.uiTexture.update(State.canvas);
-    State.ui = new ScreenImage(State.uiTexture, 0, 0, State.canvas.width, State.canvas.height, this.width, this.height);
   },
-  initGroupsActivities: function() {
+  initStores: function() {
     Promise.all([
-      IOUtils.loadJSON('data/static/groups_bundle.json'),
-      IOUtils.loadJSON('data/static/activities_bundle.json')
+      MapStore.init()
     ])
-    .spread(function(groups, activities) {
-      this.initActivities(activities);
-      var students = R.flatten(groups.map(R.prop('students')));
-      var uniqueStudents = R.uniq(students.map(R.prop('id')));
-      var programmes = R.uniq(R.flatten(groups.map(R.prop('programme'))));
-      var groupNames = R.uniq(R.flatten(groups.map(R.prop('name'))));
-      groupNames = R.uniq(groupNames.map(function(name) {
-        return name.slice(0, 3);
-      }))
-
-      console.log('uniqueStudents.length', uniqueStudents.length)
-    }.bind(this))
+    .spread(function(map) {
+      State.map = map;
+    })
     .catch(function(e) {
       console.log(e.stack)
     })
   },
-  initActivities: function(activities) {
-    State.activities = activities;
-    State.activtiesStart = new Date(activities[0].start);
-    State.activtiesEnd = new Date(activities[activities.length-1].end);
-    State.activtiesStartTime = State.activtiesStart.getTime();
-    State.activtiesEndTime = State.activtiesEnd.getTime();
-    State.activtiesLocations = [];
-    var start = State.activtiesStart.getTime();
-    var end = State.activtiesEnd.getTime();
-
-    var c = State.crayon.canvas;
-    State.crayon.clear(true);
-    State.crayon.fill([255, 0, 0, 255]);
-    for(var i=0; i<activities.length; i++) {
-      var activity = activities[i];
-      activity.startTime = new Date(activities[i].start).getTime();
-      activity.endTime = new Date(activities[i].end).getTime();
-      var location = activity.locations[0];
-      var locationIndex = State.activtiesLocations.indexOf(location);
-      if (locationIndex == -1) {
-        locationIndex = State.activtiesLocations.length;
-        State.activtiesLocations.push(location);
-      }
-      var s = remap(activity.startTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
-      var e = remap(activity.endTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
-      var y = 10 * DPI + locationIndex * 3 * DPI;
-      State.crayon.rect(s, y, e - s - 2, 2 * DPI);
-    }
-
-    State.currentTime = State.activtiesStartTime;
-
-    console.log('State.activtiesLocations', State.activtiesLocations);
-    console.log('activities.length', activities.length)
-    console.log('activities', State.activtiesStart + ' - ' + State.activtiesEnd)
-
-    var usedRooms = [];
-    var missingRooms = [];
-    State.activtiesLocations.forEach(function(location) {
-      var activityRoom = State.rooms.filter(R.where({ id : location}))
-      if (activityRoom.length > 0) {
-        usedRooms.push(location)
-      }
-      else {
-        missingRooms.push(location);
-      }
-    })
-    console.log('Used rooms', usedRooms)
-    console.log('Missing rooms', missingRooms)
-
-    State.uiTexture.update(State.crayon.canvas);
-  },
+  /*
   initKeys: function() {
     this.on('keyDown', function(e) {
       switch(e.str) {
@@ -213,42 +155,23 @@ sys.Window.create({
       }
     }.bind(this));
   },
-  initMap: function(layersData, nodesData) {
-    State.nodes = nodesData.nodes;
-    State.rooms = nodesData.rooms;
-    State.selectedNodes = State.nodes;
-
-    //Transform json data to real objects
-    State.nodes.forEach(function(node) {
-      //{x, y, z} to Vec3
-      node.position = new Vec3(node.position.x, node.position.y, node.position.z);
-      //Neighbor index to node reference
-      node.neighbors = R.map(R.rPartial(R.prop, State.nodes), node.neighbors);
-    });
-
-    //Find unique floor ids
-    State.floors = State.nodes.map(R.prop('floor'));
-    State.floors.sort();
-    State.floors = State.floors.filter(function(floor, i) {
-      return floor != State.floors[i - 1];
-    });
-    State.floors.unshift('-1');
-
-    State.currentFloor = State.floors[1]; //skip first global floor '-1'
-
-    this.setMapFloor(State.currentFloor);
-  },
+  */
   setPrevMapFloor: function() {
+    /*
     var floorIndex = State.floors.indexOf(State.currentFloor);
     var prevFloorIndex = (floorIndex - 1 + State.floors.length) % State.floors.length;
     this.setMapFloor(State.floors[prevFloorIndex]);
+    */
   },
   setNextMapFloor: function() {
+    /*
     var floorIndex = State.floors.indexOf(State.currentFloor);
     var nextFloorIndex = (floorIndex + 1) % State.floors.length;
     this.setMapFloor(State.floors[nextFloorIndex]);
+    */
   },
   setMapFloor: function(floorId) {
+    /*
     State.currentFloor = floorId;
 
     if (floorId != -1) {
@@ -260,84 +183,15 @@ sys.Window.create({
       State.selectedNodes = State.nodes;
     }
     this.rebuildMap();
-  },
-  rebuildMap: function() {
-    var nodes = State.nodes;
-    var selectedNodes = State.selectedNodes;
-    var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
-    var entranceNodes = selectedNodes.filter(R.pipe(R.prop('neighbors'), R.prop('length'), R.rPartial(R.eq, 1)));
-    var stairsNodes = selectedNodes.filter(function(node) {
-      return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
-        return sameFloorSoFar && (neighborNode.floor == node.floor);
-      }, true)
-    });
-
-    var pointVertices = selectedNodes.map(R.prop('position'));
-    var roomVertices = selectedNodes.filter(R.where({ room: R.identity }));
-    var entrancePointVertices = entranceNodes.map(R.prop('position'));
-    var stairsPointVertices = stairsNodes.map(R.prop('position'));
-
-    var roomEdgeVertices = R.flatten(roomVertices.map(function(node) {
-      return node.neighbors.filter(R.where({ room: R.identity })).map(function(neighborNode) {
-        return [ node.position, neighborNode.position ];
-      })
-    }));
-
-    var corridorEdgeVertices = R.flatten(corridorNodes.map(function(node) {
-      return node.neighbors.map(function(neighborNode) {
-        return [ node.position, neighborNode.position ];
-      })
-    }));
-
-    var mapPointsGeometry = new Geometry({ vertices: pointVertices });
-    var mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColor({ pointSize: 5, color: Color.Red }), { points: true });
-
-    var entrancePointsGeometry = new Geometry({ vertices: entrancePointVertices });
-    var entrancePointsMesh = new Mesh(entrancePointsGeometry, new SolidColor({ pointSize: 10, color: Color.Yellow }), { points: true });
-
-    var starisPointsGeometry = new Geometry({ vertices: stairsPointVertices });
-    var starisPointsMesh = new Mesh(starisPointsGeometry, new SolidColor({ pointSize: 10, color: Color.Orange }), { points: true });
-
-    var roomEdgesGeometry = new Geometry({ vertices: roomEdgeVertices });
-    var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
-
-    var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-    var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Grey }), { lines: true });
-
-    var floorBBox = BoundingBox.fromPoints(pointVertices);
-    var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
-
-    //remove existing map meshes
-    State.entities.filter(R.where({ map: true})).forEach(function(entity) {
-      entity.mesh.material.program.dispose();
-      entity.mesh.dispose();
-      State.entities.splice(State.entities.indexOf(entity), 1);
-    });
-
-    //add new engities
-    State.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
-    State.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
-    State.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
-    State.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
-    State.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-    State.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
-
-    //center camera on the new floor
-    var target = floorBBox.getCenter();
-    var position = new Vec3(State.camera.target.x, State.camera.target.y + State.mapCameraPosY, State.camera.target.z + 0.01);
-    State.camera.setUp(new Vec3(0, 0, -1));
-    State.arcball.setPosition(position);
-    State.arcball.setTarget(target);
-
-    this.rebuildCells();
-    this.rebuildCorridors();
+    */
   },
   rebuildCells: function() {
+    /*
     var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
     if (State.currentFloor == -1) {
       nodesOnThisFloor = State.nodes;
     }
-    var cellGroups = groupBy(nodesOnThisFloor, 'room');
+    var cellGroups = fn.groupBy(nodesOnThisFloor, 'room');
     var cellNodes = Object.keys(cellGroups).filter(notNull).map(function(roomId) {
       return cellGroups[roomId];
     });
@@ -360,8 +214,10 @@ sys.Window.create({
       var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
       State.entities.push({ map: true, mesh: mesh });
     })
+    */
   },
   rebuildCorridors: function() {
+    /*
     var selectedNodes = State.selectedNodes;
     var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
 
@@ -396,15 +252,19 @@ sys.Window.create({
     })
     var mesh = new Mesh(lineBuilder, new SolidColor({ color: Color.White }), { lines: true });
     State.entities.push({ map: true, mesh: mesh });
+    */
   },
   killAllAgents: function() {
+    /*/
     var agents = R.filter(R.where({ agent: R.identity }), State.entities);
 
     agents.forEach(function(agent) {
       State.entities.splice(State.entities.indexOf(agent), 1);
     })
+    */
   },
   agentSpawnSys: function(allEntities) {
+    /*
     var agents = R.filter(R.where({ agent: R.identity }), allEntities);
 
     if (!State.selectedNodes) return;
@@ -436,8 +296,10 @@ sys.Window.create({
       color: color,
       targetNode: null,
     });
+    */
   },
   agentTargetNodeUpdaterSys: function(allEntities) {
+    /*
     var selectedNodes = State.selectedNodes;
 
     var agents = R.filter(R.where({ agent: R.identity }), allEntities);
@@ -469,8 +331,10 @@ sys.Window.create({
         }
       }
     })
+    */
   },
   agentTargetNodeFollowerSys: function(allEntities) {
+    /*
     var targetFollowers = R.filter(R.where({ targetNode: R.identity }), allEntities);
     var tmpDir = new Vec3();
     targetFollowers.forEach(function(followerEntity) {
@@ -479,8 +343,10 @@ sys.Window.create({
       followerEntity.prevPosition.copy(followerEntity.position);
       followerEntity.position.add(tmpDir);
     })
+    */
   },
   pointSpriteUpdaterSys: function(allEntities, camera) {
+    /*
     if (!State.pointSpriteMeshEntity) {
       var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true });
       var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 20 * DPI, texture: Texture2D.load('assets/U2.png') });
@@ -514,8 +380,10 @@ sys.Window.create({
     vertices.dirty = true;
     colors.dirty = true;
     normals.dirty = true;
+    */
   },
   agentDebugInfoUpdaterSys: function(allEntities) {
+    /*
     if (!State.agentDebugInfoMeshEntity) {
       var lineBuilder = new LineBuilder();
       lineBuilder.addLine(new Vec3(0, 0, 0), geom.randomVec3());
@@ -540,18 +408,19 @@ sys.Window.create({
         }
       })
     }
+    */
   },
-  updateUI: function() {
-    if (Time.frameNumber % 2 == 0) {
-      var x = remap(State.currentTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
-      State.crayon.fill([255, 255, 255, 255]).rect(x, 0, 2, 5 * DPI);
-      State.uiTexture.update(State.canvas);
-    }
-  },
+  //updateUI: function() {
+  //  if (Time.frameNumber % 2 == 0) {
+  //    var x = remap(State.currentTime, State.activtiesStartTime, State.activtiesEndTime, 0, State.crayon.canvas.width);
+  //    State.crayon.fill([255, 255, 255, 255]).rect(x, 0, 2, 5 * DPI);
+  //    State.uiTexture.update(State.canvas);
+  //  }
+  //},
   update: function() {
     State.currentTime += Time.delta * 100000;
 
-    this.updateUI();
+    //this.updateUI();
   },
   draw: function() {
     this.update();
@@ -559,18 +428,19 @@ sys.Window.create({
     glu.clearColorAndDepth(State.bgColor);
     glu.enableDepthReadAndWrite(true);
 
-    this.agentSpawnSys(State.entities);
-    this.agentTargetNodeUpdaterSys(State.entities);
-    this.agentTargetNodeFollowerSys(State.entities);
-    this.agentDebugInfoUpdaterSys(State.entities);
-    this.pointSpriteUpdaterSys(State.entities, State.camera);
+    //this.agentSpawnSys(State.entities);
+    //this.agentTargetNodeUpdaterSys(State.entities);
+    //this.agentTargetNodeFollowerSys(State.entities);
+    //this.agentDebugInfoUpdaterSys(State.entities);
+    //this.pointSpriteUpdaterSys(State.entities, State.camera);
 
     //glu.enableDepthReadAndWrite(false);
-    glu.enableAlphaBlending(true);
+    //glu.enableAlphaBlending(true);
 
-    meshRendererSys(State.entities, State);
+    mapBuilderSys(State);
+    meshRendererSys(State);
 
-    glu.enableAlphaBlending();
-    State.ui.draw();
+    //glu.enableAlphaBlending();
+    //State.ui.draw();
   }
 });

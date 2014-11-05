@@ -7,11 +7,13 @@ var debugFilter = function(debugMode) {
   }
 }
 
-function meshRendererSys(entities, state) {
+function meshRendererSys(state) {
   var camera = state.camera;
 
-  var visibleEntities = entities.filter(debugFilter(state.debugMode));
+  var visibleEntities = state.entities.filter(debugFilter(state.debugMode));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
+
+  entitiesWithMesh = state.entities;
 
   entitiesWithMesh.forEach(function(entity) {
     if (entity.mesh.geometry.vertices.length == 0) {
