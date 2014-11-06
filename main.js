@@ -121,10 +121,19 @@ sys.Window.create({
     highdpi: DPI,
   },
   init: function() {
+    this.initWatchdog();
     this.initLibs();
     this.initScene();
     this.initStores();
     this.initKeys();
+  },
+  initWatchdog: function() {
+    if (typeof(uccextension) != 'undefined') {
+      window.setInterval(function() {
+        uccextension.aliveSync();
+      }, 5000);
+    }
+    console.log('WARN', 'uccextension not found');
   },
   initLibs: function() {
     Promise.longStackTraces();
@@ -157,7 +166,6 @@ sys.Window.create({
       }
     }.bind(this));
   },
-  
   rebuildCells: function() {
     /*
     var nodesOnThisFloor = State.nodes.filter(R.where({ floor: State.currentFloor }));
