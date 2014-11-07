@@ -43,7 +43,7 @@ var MapStore = {
       this.floors.unshift('-1');
 
       //skip first global floor '-1'
-      this.currentFloor = this.floors[1];
+      this.currentFloor = this.floors[7];
       this.setFloor(this.currentFloor);
 
       return this;

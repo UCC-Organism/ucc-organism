@@ -109,11 +109,16 @@ function mapBuilderSys(state) {
 function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   var cellGroups = fn.groupBy(selectedNodes, 'room');
-  var cellNodes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
-    return cellGroups[roomId];
-  });
-  var cellMaterial = new SolidColor();
-  var cellMeshes = cellNodes.map(function(nodes, index) {
+  var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
+    var nodes = cellGroups[roomId];
+    var roomColor = Color.Grey;
+
+    if (state.activities.locations.indexOf(roomId) != -1) {
+      roomColor = Color.fromHSV(0.5, 1.0, 0.5);
+    }
+
+    var cellMaterial = new SolidColor({ color: roomColor });
+
     //if (index > 0) return;
     nodes = graph.orderNodes(nodes);
     var points = nodes.map(R.prop('position'));
