@@ -40,7 +40,6 @@ var Color             = color.Color;
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
-
 //var Cube = gen.Cube;
 //var Mesh = glu.Mesh;
 //var ShowNormals = materials.ShowNormals;
@@ -145,10 +144,12 @@ sys.Window.create({
   },
   initStores: function() {
     Promise.all([
-      MapStore.init()
+      MapStore.init(),
+      ActivityStore.init()
     ])
-    .spread(function(map) {
+    .spread(function(map, activities) {
       State.map = map;
+      State.activities = activities;
     })
     .catch(function(e) {
       console.log(e.stack)
