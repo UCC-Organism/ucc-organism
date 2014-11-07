@@ -167,8 +167,6 @@ function rebuildCells(state) {
     });
   });
 
-  points = [];
-
   var added = {};
 
   connections.forEach(function(connection) {
@@ -179,7 +177,7 @@ function rebuildCells(state) {
     dir.normalize();
     var d = 0.01;
     if (len > 0) {
-      for(var i=d; i<len; i += d) {
+      for(var i=0.5; i<0.6; i += 0.5) {
         points.push(dir.dup().scale(i).add(a));
         //if (Math.random() > 0.9) console.log(a)
       }
