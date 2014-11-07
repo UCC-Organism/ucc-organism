@@ -4,6 +4,7 @@ var glu               = require('pex-glu');
 var materials         = require('pex-materials');
 var color             = require('pex-color');
 var gen               = require('pex-gen');
+var random            = require('pex-random');
 
 var delaunay          = require('../../geom/delaunay');
 var voronoi           = require('../../geom/voronoi');
@@ -111,7 +112,7 @@ function mapBuilderSys(state) {
 function pointsToMesh(points) {
   var lineBuilder = new LineBuilder();
   points.forEach(function(p) {
-    lineBuilder.addCross(p, 0.005);
+    lineBuilder.addCross(p, 0.003);
   })
   var mesh = new Mesh(lineBuilder, new SolidColor(), { lines: true })
   return mesh;
@@ -154,8 +155,8 @@ function rebuildCells(state) {
   var right = new Vec3(0, 0, 0);
 
   var connections = [];
-
-  selectedNodes.forEach(function(node) {
+  var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
+  corridorNodes.forEach(function(node) {
     node.neighbors.forEach(function(neighborNode) {
       if (neighborNode.floor == node.floor) {
         var hash = connectionHash(node, neighborNode);
@@ -177,9 +178,14 @@ function rebuildCells(state) {
     dir.normalize();
     var d = 0.01;
     if (len > 0) {
-      for(var i=0.5; i<0.6; i += 0.5) {
-        points.push(dir.dup().scale(i).add(a));
-        //if (Math.random() > 0.9) console.log(a)
+      for(var i=d; i<len; i+=d) {
+        var c = dir.dup().scale(i).add(a);
+        for(var j=0; j<3; j++) {
+          g = c.dup();
+          g.x += random.float(-d/2, d/2);
+          g.y += random.float(-d/2, d/2);
+          points.push(g);
+        }
       }
     }
   })
