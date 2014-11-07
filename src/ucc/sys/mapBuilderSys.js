@@ -126,6 +126,160 @@ function vec2to3(v) {
   return new Vec3(v.x, 0, v.y);
 }
 
+function rebuildCellsDel(state) {
+  var selectedNodes = state.map.selectedNodes;
+
+  var points = selectedNodes.map(R.prop('position'));
+
+  //room centers
+  var cellGroups = fn.groupBy(selectedNodes, 'room');
+  var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
+    var nodes = cellGroups[roomId];
+    var cellPoints = nodes.map(R.prop('position'));
+    var center = cellPoints.reduce(function(center, p) {
+      return center.add(p);
+    }, new Vec3(0, 0, 0)).scale(1/cellPoints.length);
+    points.push(center);
+  });
+
+  //corridors
+
+
+  var addedConnections = {};
+  function connectionHash(nodeA, nodeB) {
+    if (nodeA.id <= nodeB.id) return nodeA.id + '-' + nodeB.id;
+    else return nodeB.id + '-' + nodeA.id;
+  }
+
+  var up = new Vec3(0, 1, 0);
+  var right = new Vec3(0, 0, 0);
+
+  var connections = [];
+  var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
+  corridorNodes.forEach(function(node) {
+    node.neighbors.forEach(function(neighborNode) {
+      if (neighborNode.floor == node.floor) {
+        var hash = connectionHash(node, neighborNode);
+        if (!addedConnections[hash]) {
+          addedConnections[hash] = true;
+          connections.push([node, neighborNode]);
+        }
+      }
+    });
+  });
+
+  var added = {};
+
+  connections.forEach(function(connection) {
+    var a = connection[0].position;
+    var b = connection[1].position;
+    var dir = b.dup().sub(a);
+    var len = dir.length();
+    dir.normalize();
+    var d = 0.01;
+    if (len > 0) {
+      for(var i=d; i<len; i+=d) {
+        var c = dir.dup().scale(i).add(a);
+        for(var j=0; j<1; j++) {
+          g = c.dup();
+          g.x += random.float(-d, d);
+          g.z += random.float(-d, d);
+          points.push(g);
+        }
+      }
+    }
+  })
+
+  //console.log(connections.length)
+
+
+  //cells
+
+  var points2D = points.map(vec3to2);
+
+  var cells = delaunay(points2D);
+  var cellPoints2 = R.flatten(cells);
+
+  //state.entities.push({ map: true, mesh: pointsToMesh(points) });
+  var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.y = points[0].y; return p; })
+
+  var lineBuilder = new LineBuilder();
+  cells.forEach(function(tri) {
+    //cell.forEach(function(edge) {
+      var a = vec2to3(tri[0]);
+      a.y = points[0].y;
+      var b = vec2to3(tri[1]);
+      b.y = points[0].y;
+      var c = vec2to3(tri[2]);
+      c.y = points[0].y;
+      lineBuilder.addLine(a, b);
+      lineBuilder.addLine(b, c);
+      lineBuilder.addLine(c, a);
+    //})
+  })
+
+  var edgeMesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Red }), { lines: true });
+
+  state.entities.push({ map: true, mesh: edgeMesh });
+  state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
+}
+
+function orderEdges(edges) {
+  var ESPSILON = 0.1;
+  var sortedEdges = [];
+  sortedEdges.push(edges.shift());
+  while(edges.length > 0) {
+    var lastEdge = sortedEdges[sortedEdges.length-1];
+    var split = false;
+    for(var i=0; i<edges.length; i++) {
+      var edge = edges[i];
+      if (lastEdge[1].distance(edge[0]) < ESPSILON) {
+        sortedEdges.push(edge);
+        edges.splice(i, 1);
+        split = true;
+        break;
+      }
+      if (lastEdge[1].distance(edge[1]) < ESPSILON) {
+        sortedEdges.push(edge.reverse());
+        edges.splice(i, 1);
+        split = true;
+        break;
+      }
+    }
+    if (!split) {
+      break;
+    }
+  }
+  sortedEdges = sortedEdges.reverse().map(function(edge) {
+    return edge.reverse();
+  })
+  while(edges.length > 0) {
+    var lastEdge = sortedEdges[sortedEdges.length-1];
+    var split = false;
+    for(var i=0; i<edges.length; i++) {
+      var edge = edges[i];
+      if (lastEdge[1].distance(edge[0]) < ESPSILON) {
+        sortedEdges.push(edge);
+        edges.splice(i, 1);
+        split = true;
+        break;
+      }
+      if (lastEdge[1].distance(edge[1]) < ESPSILON) {
+        sortedEdges.push(edge.reverse());
+        edges.splice(i, 1);
+        split = true;
+        break;
+      }
+    }
+    if (!split) {
+      break;
+    }
+  }
+
+
+  return sortedEdges;
+}
+
 function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
 
@@ -183,7 +337,7 @@ function rebuildCells(state) {
         for(var j=0; j<3; j++) {
           g = c.dup();
           g.x += random.float(-d/2, d/2);
-          g.y += random.float(-d/2, d/2);
+          g.z += random.float(-d/2, d/2);
           points.push(g);
         }
       }
@@ -204,17 +358,47 @@ function rebuildCells(state) {
   var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.y = points[0].y; return p; })
 
   var lineBuilder = new LineBuilder();
-  cells.forEach(function(cell) {
+  cells.forEach(function(cell, cellIndex) {
+    //if (cellIndex > 0) return;
+    var start = vec2to3(cell[0][0]);
+    var end = vec2to3(cell[cell.length-1][1]);
+    var dist = start.distance(end);
+
     cell.forEach(function(edge) {
-      var a = vec2to3(edge[0]);
-      a.y = points[0].y;
-      var b = vec2to3(edge[1]);
-      b.y = points[0].y;
-      lineBuilder.addLine(a, b);
+      edge[0] = vec2to3(edge[0]);
+      edge[1] = vec2to3(edge[1]);
     })
+
+    cell = orderEdges(cell);
+    if (cell[0][0].distance(cell[cell.length-1][1]) > 0.05) {
+      //return;
+    }
+
+    //var cellPoints = uniquePoints(R.flatten(cell).map(vec2to3));
+    //console.log(cellPoints);
+    //console.log(start, end)
+    //cell.forEach(function(edge, edgeIndex) {
+    //  var a = vec2to3(edge[0]);
+    //  a.y = points[0].y;
+    //  var b = vec2to3(edge[1]);
+    //  b.y = points[0].y;
+    //  console.log(edgeIndex, a, b)
+    //});
+    //if (dist < 0.01) return;
+    //
+    cell.forEach(function(edge, edgeIndex) {
+      //if (edgeIndex > 0) return;
+      var a = (edge[0]);
+      a.y = points[0].y;
+      var b = (edge[1]);
+      b.y = points[0].y;
+      lineBuilder.addLine(a, b, Color.Yellow);
+    })
+
+    lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
   })
 
-  var edgeMesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Yellow }), { lines: true });
+  var edgeMesh = new Mesh(lineBuilder, new ShowColors({ color: Color.Yellow }), { lines: true });
 
   state.entities.push({ map: true, mesh: edgeMesh });
   state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });

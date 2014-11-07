@@ -15,7 +15,6 @@
 //var Crayon = require('./crayons/crayons');
 //var fn = require('./utils/fn');
 
-
 var Promise           = require('bluebird');
 var sys               = require('pex-sys');
 var glu               = require('pex-glu');
@@ -75,7 +74,10 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
 var State = {
   //scene
-  bgColor: new Color(0.1, 0.1, 0.12, 1.0),
+  //bgColor: new Color(0.1, 0.1, 0.12, 1.0),
+  bgColor2: Color.fromHex('#00CFE2'),
+  bgColor: Color.fromHex('#00758E'),
+  bgColor: Color.Black,
   camera: null,
   cameraPosY: 0.40,
   arcball: null,
