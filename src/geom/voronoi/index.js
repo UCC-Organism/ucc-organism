@@ -1,4 +1,5 @@
 //http://philogb.github.io/blog/2010/02/12/voronoi-tessellation/
+var R = require('ramda');
 
 function voronoi(vertices, W, H) {
   //we will build one polygon for each input point
@@ -22,12 +23,12 @@ function voronoi(vertices, W, H) {
   }, max);
 
   vertices.forEach(function(v) {
-    v.x = (v.x - min.x) / (max.x - min.x);
-    v.y = (v.y - min.y) / (max.y - min.y);
+    v.x -= min.x// / (max.x - min.x);
+    v.y -= min.y// / (max.y - min.y);
   })
 
-  var W = 1;
-  var H = 1;
+  var W = (max.x - min.x);
+  var H = (max.y - min.y);
 
   function clipLine(e) {
     var dy = H,
@@ -510,13 +511,15 @@ function voronoi(vertices, W, H) {
    polygons.forEach(function(triangles) {
     triangles.forEach(function(edges) {
       edges.forEach(function(p) {
-        p.x = p.x * (max.x - min.x) + min.x;
-        p.y = p.y * (max.y - min.y) + min.y;
+        if (p.processed) return;
+        p.processed = true;
+        p.x += min.x;
+        p.y += min.y;
       })
     })
    })
 
-   return polygons;
+  return polygons;
 }
 
 module.exports = voronoi;

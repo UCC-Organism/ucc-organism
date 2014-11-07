@@ -6,6 +6,7 @@ var color             = require('pex-color');
 var gen               = require('pex-gen');
 
 var delaunay          = require('../../geom/delaunay');
+var voronoi           = require('../../geom/voronoi');
 var graph             = require('../../graph');
 var fn                = require('../../utils/fn');
 var GeomUtils         = require('../../geom/GeomUtils');
@@ -18,6 +19,7 @@ var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
 var Mesh              = glu.Mesh;
 var SolidColor        = materials.SolidColor;
+var ShowColors        = materials.ShowColors;
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder
 
@@ -106,18 +108,77 @@ function mapBuilderSys(state) {
   //this.rebuildCorridors();
 }
 
+function pointsToMesh(points) {
+  var lineBuilder = new LineBuilder();
+  points.forEach(function(p) {
+    lineBuilder.addCross(p, 0.005);
+  })
+  var mesh = new Mesh(lineBuilder, new SolidColor(), { lines: true })
+  return mesh;
+}
+
+function vec3to2(v) {
+  return new Vec2(v.x, v.z);
+}
+
+function vec2to3(v) {
+  return new Vec3(v.x, 0, v.y);
+}
+
 function rebuildCells(state) {
+  var selectedNodes = state.map.selectedNodes;
+
+  var points = selectedNodes.map(R.prop('position'));
+
+  var cellGroups = fn.groupBy(selectedNodes, 'room');
+  var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
+    var nodes = cellGroups[roomId];
+    var cellPoints = nodes.map(R.prop('position'));
+    var center = cellPoints.reduce(function(center, p) {
+      return center.add(p);
+    }, new Vec3(0, 0, 0)).scale(1/cellPoints.length);
+    points.push(center);
+  });
+
+  var points2D = points.map(vec3to2);
+
+  var cells = voronoi(points2D);
+  var cellPoints2 = R.flatten(cells);
+
+  //state.entities.push({ map: true, mesh: pointsToMesh(points) });
+  var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.y = points[0].y; return p; })
+
+  var lineBuilder = new LineBuilder();
+  cells.forEach(function(cell) {
+    cell.forEach(function(edge) {
+      var a = vec2to3(edge[0]);
+      a.y = points[0].y;
+      var b = vec2to3(edge[1]);
+      b.y = points[0].y;
+      lineBuilder.addLine(a, b);
+    })
+  })
+
+  var edgeMesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Yellow }), { lines: true });
+
+  state.entities.push({ map: true, mesh: edgeMesh });
+  state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
+}
+
+function rebuildCellsTri(state) {
   var selectedNodes = state.map.selectedNodes;
   var cellGroups = fn.groupBy(selectedNodes, 'room');
   var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
     var nodes = cellGroups[roomId];
-    var roomColor = Color.Grey;
+    var roomColor1 = Color.Grey;
+    var roomColor2 = Color.DarkGrey;
 
     if (state.activities.locations.indexOf(roomId) != -1) {
-      roomColor = Color.fromHSV(0.5, 1.0, 0.5);
+      roomColor1 = Color.fromHSV(0.5, 1.0, 0.5);
+      roomColor2 = Color.fromHSV(0.7, 1.0, 0.6);
     }
 
-    var cellMaterial = new SolidColor({ color: roomColor });
+    var cellMaterial = new ShowColors();
 
     //if (index > 0) return;
     nodes = graph.orderNodes(nodes);
@@ -156,10 +217,16 @@ function rebuildCells(state) {
       return [a, b, c];
     });
 
+    var g = new Geometry({ vertices: true, colors: true, faces: true });
+
     triangles.forEach(function(t) {
-      lineBuilder.addLine(t[0], t[1]);
-      lineBuilder.addLine(t[1], t[2]);
-      lineBuilder.addLine(t[2], t[0]);
+      var n = g.vertices.length;
+      g.vertices.push(t[0], t[1], t[2]);
+      g.colors.push(roomColor1, roomColor1, roomColor2);
+      g.faces.push([n, n+1, n+2]);
+      //lineBuilder.addLine(t[0], t[1]);
+      //lineBuilder.addLine(t[1], t[2]);
+      //lineBuilder.addLine(t[2], t[0]);
     });
 
     //points = points2D.map(function(p) {
@@ -171,7 +238,7 @@ function rebuildCells(state) {
     //  var np = points[(i+1)%points.length];
     //  lineBuilder.addLine(p, np);
     //}
-    var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
+    var mesh = new Mesh(g, cellMaterial, { lines: true })
     state.entities.push({ map: true, mesh: mesh });
   })
 }
