@@ -225,7 +225,7 @@ function rebuildCellsDel(state) {
 }
 
 function orderEdges(edges) {
-  var ESPSILON = 0.1;
+  var ESPSILON = 0.001;
   var sortedEdges = [];
   sortedEdges.push(edges.shift());
   while(edges.length > 0) {
@@ -370,8 +370,8 @@ function rebuildCells(state) {
     })
 
     cell = orderEdges(cell);
-    if (cell[0][0].distance(cell[cell.length-1][1]) > 0.05) {
-      //return;
+    if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
+      return;
     }
 
     //var cellPoints = uniquePoints(R.flatten(cell).map(vec2to3));
