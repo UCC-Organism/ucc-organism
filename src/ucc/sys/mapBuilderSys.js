@@ -130,6 +130,7 @@ function rebuildCells(state) {
 
   var points = selectedNodes.map(R.prop('position'));
 
+  //room centers
   var cellGroups = fn.groupBy(selectedNodes, 'room');
   var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
     var nodes = cellGroups[roomId];
@@ -139,6 +140,56 @@ function rebuildCells(state) {
     }, new Vec3(0, 0, 0)).scale(1/cellPoints.length);
     points.push(center);
   });
+
+  //corridors
+
+
+  var addedConnections = {};
+  function connectionHash(nodeA, nodeB) {
+    if (nodeA.id <= nodeB.id) return nodeA.id + '-' + nodeB.id;
+    else return nodeB.id + '-' + nodeA.id;
+  }
+
+  var up = new Vec3(0, 1, 0);
+  var right = new Vec3(0, 0, 0);
+
+  var connections = [];
+
+  selectedNodes.forEach(function(node) {
+    node.neighbors.forEach(function(neighborNode) {
+      if (neighborNode.floor == node.floor) {
+        var hash = connectionHash(node, neighborNode);
+        if (!addedConnections[hash]) {
+          addedConnections[hash] = true;
+          connections.push([node, neighborNode]);
+        }
+      }
+    });
+  });
+
+  points = [];
+
+  var added = {};
+
+  connections.forEach(function(connection) {
+    var a = connection[0].position;
+    var b = connection[1].position;
+    var dir = b.dup().sub(a);
+    var len = dir.length();
+    dir.normalize();
+    var d = 0.01;
+    if (len > 0) {
+      for(var i=d; i<len; i += d) {
+        points.push(dir.dup().scale(i).add(a));
+        //if (Math.random() > 0.9) console.log(a)
+      }
+    }
+  })
+
+  //console.log(connections.length)
+
+
+  //cells
 
   var points2D = points.map(vec3to2);
 
