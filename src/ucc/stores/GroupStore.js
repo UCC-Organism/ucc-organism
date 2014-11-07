@@ -3,17 +3,14 @@ var Promise = require('bluebird');
 var Config  = require('../../config');
 
 var GroupStore = {
-  activities: [],
+  all: [],
   init: function() {
-    return IOUtils.loadJSON(Config.dataPath + '/static/activities_bundle.json')
-      .then(function(activities) {
-        this.activities = activities;
+    return IOUtils.loadJSON(Config.dataPath + '/static/groups_bundle.json')
+      .then(function(groups) {
+        this.all = groups;
         return this;
       }.bind(this));
   },
-  getActivities: function() {
-    return this.activities;
-  }
 };
 
 module.exports = GroupStore;

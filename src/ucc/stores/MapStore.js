@@ -15,6 +15,7 @@ var MapStore = {
   currentFloor: [],
   dirty: true,
   init: function() {
+    console.log('MapStore.init');
     return Promise.all([
       IOUtils.loadJSON(Config.dataPath + '/map/layers.json'),
       IOUtils.loadJSON(Config.dataPath + '/map/nodes.client.json')
@@ -22,6 +23,7 @@ var MapStore = {
     .spread(function(layersData, nodesData) {
       this.nodes = nodesData.nodes;
       this.rooms = nodesData.rooms;
+      console.log('MapStore.init nodes:' + this.nodes.length + ' rooms:' + this.rooms.length);
 
       //Transform json data to real objects
       this.nodes.forEach(function(node) {

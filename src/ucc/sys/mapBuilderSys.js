@@ -3,15 +3,23 @@ var geom              = require('pex-geom');
 var glu               = require('pex-glu');
 var materials         = require('pex-materials');
 var color             = require('pex-color');
+var gen               = require('pex-gen');
+
+var delaunay          = require('../../geom/delaunay');
+var graph             = require('../../graph');
+var fn                = require('../../utils/fn');
+var GeomUtils         = require('../../geom/GeomUtils');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
 
 var Geometry          = geom.Geometry;
 var BoundingBox       = geom.BoundingBox;
+var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
 var Mesh              = glu.Mesh;
 var SolidColor        = materials.SolidColor;
 var Color             = color.Color;
+var LineBuilder       = gen.LineBuilder
 
 function mapBuilderSys(state) {
   if (!state.map || !state.map.nodes.length || !state.map.selectedNodes.length || !state.map.dirty) {
@@ -87,8 +95,83 @@ function mapBuilderSys(state) {
   state.arcball.setPosition(position);
   state.arcball.setTarget(target);
 
-  //this.rebuildCells();
+  //var roomGeometry = new Geometry({ vertices: true });
+  //roomGeometry.vertices.push(new Vec3(0, 0, 0));
+  //roomGeometry.vertices.push(new Vec3(1, 0, 0));
+  //roomGeometry.vertices.push(new Vec3(0, 0, 1));
+  //var roomMesh = new Mesh(roomGeometry, new SolidColor({ color: Color.Red }));
+  //state.entities.push({ map: true, debug: true, mesh: roomMesh });
+
+  rebuildCells(state);
   //this.rebuildCorridors();
+}
+
+function rebuildCells(state) {
+  var selectedNodes = state.map.selectedNodes;
+  var cellGroups = fn.groupBy(selectedNodes, 'room');
+  var cellNodes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
+    return cellGroups[roomId];
+  });
+  var cellMaterial = new SolidColor();
+  var cellMeshes = cellNodes.map(function(nodes, index) {
+    //if (index > 0) return;
+    nodes = graph.orderNodes(nodes);
+    var points = nodes.map(R.prop('position'));
+    var lineBuilder = new LineBuilder();
+    //add little turbulence to room corners
+
+    points.forEach(function(p) {
+      p.x += (Math.random() - 0.5) * 0.001;
+      p.y += (Math.random() - 0.5) * 0.001;
+    })
+
+    var points2D = points.map(function(p) {
+      return new Vec2(p.x, p.z);
+      //return new Vec2(Math.random(), Math.random());
+    });
+
+    points2D.forEach(function(p) {
+      lineBuilder.addCross(new Vec3(p.x, 0, p.y), 0.01);
+    })
+
+    var triangles = delaunay(points2D);
+    triangles = triangles.map(function(t, i) {
+      var a = new Vec3(t[0].x, 0, t[0].y);
+      var b = new Vec3(t[1].x, 0, t[1].y);
+      var c = new Vec3(t[2].x, 0, t[2].y);
+      return [a, b, c];
+    });
+
+    ////split triangles
+    triangles = R.unnest(triangles.map(function(t) {
+      var center = new Vec3(0, 0, 0);
+      center.add(t[0]).add(t[1]).add(t[2]);
+      center.scale(1/3);
+      return [
+        [t[0], center, t[1]],
+        [t[1], center, t[2]],
+        [t[2], center, t[0]]
+      ];
+    }))
+
+    triangles.forEach(function(t) {
+      lineBuilder.addLine(t[0], t[1]);
+      lineBuilder.addLine(t[1], t[2]);
+      lineBuilder.addLine(t[2], t[0]);
+    });
+
+    //points = points2D.map(function(p) {
+    //  return new Vec3(p.x, 0, p.y);
+    //});
+    //points = GeomUtils.computeBSpline(points);
+    //for(var i=0; i<points.length; i++) {
+    //  var p = points[i];
+    //  var np = points[(i+1)%points.length];
+    //  lineBuilder.addLine(p, np);
+    //}
+    var mesh = new Mesh(lineBuilder, cellMaterial, { lines: true })
+    state.entities.push({ map: true, mesh: mesh });
+  })
 }
 
 module.exports = mapBuilderSys;
