@@ -1,12 +1,11 @@
 var Promise   = require('bluebird');
 var IOUtils   = require('../../sys/IOUtils');
+var Config    = require('../../config');
 var R         = require('ramda');
 var geom      = require('pex-geom');
 var sys       = require('pex-sys');
 var Vec3      = geom.Vec3;
 var Platform  = sys.Platform;
-
-var DATA_PATH = Platform.isPlask ? __dirname + '/../../data' : 'data';
 
 var MapStore = {
   nodes: [],
@@ -17,8 +16,8 @@ var MapStore = {
   dirty: true,
   init: function() {
     return Promise.all([
-      IOUtils.loadJSON(DATA_PATH + '/map/layers.json'),
-      IOUtils.loadJSON(DATA_PATH + '/map/nodes.client.json')
+      IOUtils.loadJSON(Config.dataPath + '/map/layers.json'),
+      IOUtils.loadJSON(Config.dataPath + '/map/nodes.client.json')
     ])
     .spread(function(layersData, nodesData) {
       this.nodes = nodesData.nodes;

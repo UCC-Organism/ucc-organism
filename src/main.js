@@ -12,7 +12,7 @@
 //var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
 //var GeomUtils = require('./geom/GeomUtils');
 //var IOUtils = require('./sys/IOUtils');
-//var Crayon = require('./lib/crayons');
+//var Crayon = require('./crayons/crayons');
 //var fn = require('./utils/fn');
 
 
@@ -109,7 +109,6 @@ var State = {
 };
 
 var DPI = Platform.isPlask ? 2 : 1;
-
 
 sys.Window.create({
   settings: {
