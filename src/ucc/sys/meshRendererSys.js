@@ -10,10 +10,8 @@ var debugFilter = function(debugMode) {
 function meshRendererSys(state) {
   var camera = state.camera;
 
-  var visibleEntities = state.entities.filter(debugFilter(state.debugMode));
+  var visibleEntities = state.entities.filter(debugFilter(state.debug));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
-
-  entitiesWithMesh = state.entities;
 
   entitiesWithMesh.forEach(function(entity) {
     if (entity.mesh.geometry.vertices.length == 0) {

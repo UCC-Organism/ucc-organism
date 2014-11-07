@@ -120,39 +120,36 @@ function rebuildCells(state) {
     var lineBuilder = new LineBuilder();
     //add little turbulence to room corners
 
-    points.forEach(function(p) {
-      p.x += (Math.random() - 0.5) * 0.001;
-      p.y += (Math.random() - 0.5) * 0.001;
+    var subDividedEdges = [];
+    points.forEach(function(p, i) {
+      var np = points[(i + 1) % points.length];
+      subDividedEdges.push(p);
+      subDividedEdges.push(np.clone().sub(p).scale(0.5).add(p));
     })
 
-    var points2D = points.map(function(p) {
+    var points2D = subDividedEdges.map(function(p) {
       return new Vec2(p.x, p.z);
       //return new Vec2(Math.random(), Math.random());
     });
 
     points2D.forEach(function(p) {
-      lineBuilder.addCross(new Vec3(p.x, 0, p.y), 0.01);
-    })
+      p.x += (Math.random() - 0.5) * 0.01;
+      p.y += (Math.random() - 0.5) * 0.01;
+    });
+
+    var center = points2D.reduce(function(center, p) {
+      return center.add(p);
+    }, new Vec2(0, 0)).scale(1/points2D.length);
+
+    points2D.unshift(center);
 
     var triangles = delaunay(points2D);
     triangles = triangles.map(function(t, i) {
-      var a = new Vec3(t[0].x, 0, t[0].y);
-      var b = new Vec3(t[1].x, 0, t[1].y);
-      var c = new Vec3(t[2].x, 0, t[2].y);
+      var a = new Vec3(t[0].x, points[0].y, t[0].y);
+      var b = new Vec3(t[1].x, points[0].y, t[1].y);
+      var c = new Vec3(t[2].x, points[0].y, t[2].y);
       return [a, b, c];
     });
-
-    ////split triangles
-    triangles = R.unnest(triangles.map(function(t) {
-      var center = new Vec3(0, 0, 0);
-      center.add(t[0]).add(t[1]).add(t[2]);
-      center.scale(1/3);
-      return [
-        [t[0], center, t[1]],
-        [t[1], center, t[2]],
-        [t[2], center, t[0]]
-      ];
-    }))
 
     triangles.forEach(function(t) {
       lineBuilder.addLine(t[0], t[1]);
