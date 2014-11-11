@@ -292,24 +292,24 @@ function rebuildCells(state) {
 
     cell = orderEdges(cell);
 
-    var room = false;
-    var edgeCell = false;
+    var isRoom = false;
+    var isEdgeCell = false;
 
     var cellPoint = points[cellIndex];
     var roomIndex = roomCenterPoints.indexOf(cellPoint);
     if (roomIndex != -1) {
-      room = true;
+      isRoom = true;
     }
 
     if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
       //return;
-      edgeCell = true;
+      isEdgeCell = true;
     }
 
     //var cellColor = room ? Color.fromHSV(0.2, 0.9, 0.5, 0.1) : Color.fromHSV(0.5, 0.8, 0.3, 0.1);
     //var cellColorEdge = room ? Color.fromHSV(0.2, 0.9, 0.4, 1) : Color.fromHSV(0.5, 0.8, 0.4, 1);
-    var cellColorEdge = edgeCell ? Color.fromHSV(0.5, 0.8, 0.4, 0.5) : Color.fromHSV(0.5, 0.8, 0.4, 1);
-    var cellColor = room ? Color.fromHSV(0.2, 0.2, 0.9, 0.2) : Color.fromHSV(0.5, 0.2, 0.9, 0.03);
+    var cellColorEdge = isEdgeCell ? Color.fromHSV(0.5, 0.8, 0.4, 0.5) : Color.fromHSV(0.5, 0.8, 0.4, 1);
+    var cellColor = isRoom ? Color.fromHSV(0.2, 0.2, 0.9, 0.2) : Color.fromHSV(0.5, 0.2, 0.9, 0.03);
 
     cell.forEach(function(edge, edgeIndex) {
       //if (edgeIndex > 0) return;
@@ -351,8 +351,6 @@ function rebuildCells(state) {
 
     //lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
   })
-
-  console.log(vertices.length);
 
   var edgeMesh = new Mesh(lineBuilder, new ShowColors({ color: Color.fromHex('#002112') }), { lines: true });
   var blobsMesh = new Mesh(blobsGeometry, new ShowColors({ color: Color.fromHex('#00CFE2') }), { faces: true });
