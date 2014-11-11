@@ -1,20 +1,3 @@
-//var glu = require('pex-glu');
-//var materials = require('pex-materials');
-//var color = require('pex-color');
-//var gen = require('pex-gen');
-//var geom = require('pex-geom');
-//var gen = require('pex-gen');
-//var graph = require('./graph');
-//var R = require('ramda');
-//var Promise = require('bluebird');
-//var remap = require('re-map');
-//
-//var BoundingBoxHelper = require('./helpers/BoundingBoxHelper');
-//var GeomUtils = require('./geom/GeomUtils');
-//var IOUtils = require('./sys/IOUtils');
-//var Crayon = require('./crayons/crayons');
-//var fn = require('./utils/fn');
-
 var Promise           = require('bluebird');
 var sys               = require('pex-sys');
 var glu               = require('pex-glu');
@@ -30,6 +13,9 @@ var mapBuilderSys     = require('./ucc/sys/mapBuilderSys');
 var MapStore          = require('./ucc/stores/MapStore');
 var ActivityStore     = require('./ucc/stores/ActivityStore');
 var GroupsStore       = require('./ucc/stores/GroupStore');
+
+//UI
+var ActivityTimeline  = require('./ucc/ui/ActivityTimeline');
 
 var Platform          = sys.Platform;
 var Time              = sys.Time;
@@ -135,6 +121,8 @@ sys.Window.create({
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
     this.gui.addParam('Color', State, 'bgColor');
+
+    this.activityTimeline = new ActivityTimeline(this, 180 * DPI, 10 * DPI, this.width - 190 * DPI, 150 * DPI);
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
@@ -437,5 +425,6 @@ sys.Window.create({
     //State.ui.draw();
 
     this.gui.draw();
+    this.activityTimeline.draw(State);
   }
 });
