@@ -74,7 +74,7 @@ function mapBuilderSys(state) {
   var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
 
   var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Grey }), { lines: true });
+  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Orange }), { lines: true });
 
   var floorBBox = BoundingBox.fromPoints(pointVertices);
   var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
@@ -189,6 +189,7 @@ function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
 
   var points = selectedNodes.map(R.prop('position'));
+  var roomCenterPoints = [];
 
   //points = [];
 
@@ -201,6 +202,7 @@ function rebuildCells(state) {
       return center.add(p);
     }, new Vec3(0, 0, 0)).scale(1/cellPoints.length);
     points.push(center);
+    roomCenterPoints.push(center);
   });
 
   //corridors
@@ -291,13 +293,23 @@ function rebuildCells(state) {
     cell = orderEdges(cell);
 
     var room = false;
+    var edgeCell = false;
 
-    if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
-      //return;
+    var cellPoint = points[cellIndex];
+    var roomIndex = roomCenterPoints.indexOf(cellPoint);
+    if (roomIndex != -1) {
       room = true;
     }
 
-    var cellColor = room ? Color.fromHSV(0.2, 0.9, 0.5, 0.1) : Color.fromHSV(0.5, 0.8, 0.3, 0.1);
+    if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
+      //return;
+      edgeCell = true;
+    }
+
+    //var cellColor = room ? Color.fromHSV(0.2, 0.9, 0.5, 0.1) : Color.fromHSV(0.5, 0.8, 0.3, 0.1);
+    //var cellColorEdge = room ? Color.fromHSV(0.2, 0.9, 0.4, 1) : Color.fromHSV(0.5, 0.8, 0.4, 1);
+    var cellColorEdge = edgeCell ? Color.fromHSV(0.5, 0.8, 0.4, 0.5) : Color.fromHSV(0.5, 0.8, 0.4, 1);
+    var cellColor = room ? Color.fromHSV(0.2, 0.2, 0.9, 0.2) : Color.fromHSV(0.5, 0.2, 0.9, 0.03);
 
     cell.forEach(function(edge, edgeIndex) {
       //if (edgeIndex > 0) return;
@@ -305,7 +317,7 @@ function rebuildCells(state) {
       a.y = points[0].y;
       var b = (edge[1]);
       b.y = points[0].y;
-      lineBuilder.addLine(a, b, Color.fromHSV(0.4, 0.9, 0.1));
+      lineBuilder.addLine(a, b, Color.fromHSV(0.4, 0.2, 0.9));
     })
 
     cell = R.flatten(cell);
@@ -320,6 +332,7 @@ function rebuildCells(state) {
 
     var cellCloseness = 0.2;
 
+
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
       var np = splinePoints[(i+1)%splinePoints.length];
@@ -333,7 +346,7 @@ function rebuildCells(state) {
       colors.push(cellColor);
       colors.push(cellColor);
       faces.push([n, n+1, n+2]);
-      lineBuilder.addLine(p2, np2, Color.fromHSV(0.5, 0.9, 0.5));
+      lineBuilder.addLine(p2, np2, cellColorEdge);
     }
 
     //lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
@@ -346,7 +359,8 @@ function rebuildCells(state) {
 
   state.entities.push({ map: true, mesh: edgeMesh });
   state.entities.push({ map: true, mesh: blobsMesh });
-  state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
+  //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
+  state.entities.push({ map: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
 }
 

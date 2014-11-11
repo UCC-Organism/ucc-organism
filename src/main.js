@@ -77,8 +77,8 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var State = {
   //scene
   //bgColor: new Color(0.1, 0.1, 0.12, 1.0),
-  bgColor: Color.fromHex('#00331B'),
-  //bgColor: Color.fromHex('#00758E'),
+  //bgColor: Color.fromHex('#00331B'),
+  bgColor: Color.fromHSV(0.4, 0.85, 0.6),
   //bgColor: Color.Black,
   camera: null,
   cameraPosY: 0.40,
@@ -429,6 +429,7 @@ sys.Window.create({
     //glu.enableDepthReadAndWrite(false);
     //glu.enableAlphaBlending(true);
 
+    glu.enableAlphaBlending();
     mapBuilderSys(State);
     meshRendererSys(State);
 
