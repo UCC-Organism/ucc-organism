@@ -519,6 +519,11 @@ function voronoi(vertices, W, H) {
     })
    })
 
+  vertices.forEach(function(v) {
+    v.x += min.x// / (max.x - min.x);
+    v.y += min.y// / (max.y - min.y);
+  })
+
   return polygons;
 }
 

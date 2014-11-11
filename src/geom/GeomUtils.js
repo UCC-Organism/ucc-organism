@@ -1,5 +1,6 @@
 var geom = require('pex-geom');
 
+var Vec2 = geom.Vec2;
 var Vec3 = geom.Vec3;
 
 var GeomUtils = {};
@@ -65,7 +66,8 @@ GeomUtils.computeBSpline = function(points) {
   return result;
 }
 
-GeomUtils.smoothCurve = function(points, c) {
+GeomUtils.smoothCurve = function(points, c, n) {
+  n = n || 10;
   c = (typeof(c) == 'undefined') ? 1 : c;
   var spline = [];
   function deCasteljau(points, t) {
@@ -79,8 +81,8 @@ GeomUtils.smoothCurve = function(points, c) {
       return newPoints[0];
   }
   for(var i=0; i<points.length; i++) {
-    for(var j=0; j<10; j++) {
-      var t = j/10;
+    for(var j=0; j<n; j++) {
+      var t = j/n;
       var p0 = points[(i-1 + points.length) % points.length];
       var p1 = points[(i-0 + points.length) % points.length];
       var p2 = points[(i+1 + points.length) % points.length];
@@ -115,6 +117,15 @@ GeomUtils.resampleLine = function(a, b, options) {
   else {
     throw new Error('GeomUtils.resampleLine needs options with numPoints or distance');
   }
+}
+
+GeomUtils.center3 = function(points) {
+  var sum = new Vec3(0, 0, 0);
+  for(var i=0; i<points.length; i++) {
+    sum.add(points[i]);
+  }
+  sum.scale(1/points.length);
+  return sum;
 }
 
 module.exports = GeomUtils;

@@ -20,6 +20,7 @@ var sys               = require('pex-sys');
 var glu               = require('pex-glu');
 var random            = require('pex-random');
 var color             = require('pex-color');
+var gui               = require('pex-gui');
 
 //CES
 var meshRendererSys   = require('./ucc/sys/meshRendererSys');
@@ -35,6 +36,7 @@ var Time              = sys.Time;
 var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball           = glu.Arcball;
 var Color             = color.Color;
+var GUI               = gui.GUI;
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -75,9 +77,9 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var State = {
   //scene
   //bgColor: new Color(0.1, 0.1, 0.12, 1.0),
-  bgColor2: Color.fromHex('#00CFE2'),
-  bgColor: Color.fromHex('#00758E'),
-  bgColor: Color.Black,
+  bgColor: Color.fromHex('#00331B'),
+  //bgColor: Color.fromHex('#00758E'),
+  //bgColor: Color.Black,
   camera: null,
   cameraPosY: 0.40,
   arcball: null,
@@ -120,12 +122,19 @@ sys.Window.create({
     fullscreen: Platform.isBrowser ? true : false,
     highdpi: DPI,
   },
+  bla: 0,
   init: function() {
+    this.initGUI();
     this.initWatchdog();
     this.initLibs();
     this.initScene();
     this.initStores();
     this.initKeys();
+  },
+  initGUI: function() {
+    this.gui = new GUI(this);
+    this.gui.addLabel('UI');
+    this.gui.addParam('Color', State, 'bgColor');
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
@@ -425,5 +434,7 @@ sys.Window.create({
 
     //glu.enableAlphaBlending();
     //State.ui.draw();
+
+    this.gui.draw();
   }
 });

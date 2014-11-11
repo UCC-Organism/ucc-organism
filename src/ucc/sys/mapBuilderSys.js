@@ -11,6 +11,7 @@ var voronoi           = require('../../geom/voronoi');
 var graph             = require('../../graph');
 var fn                = require('../../utils/fn');
 var GeomUtils         = require('../../geom/GeomUtils');
+var Rect              = require('../../geom/Rect');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
 
@@ -22,7 +23,9 @@ var Mesh              = glu.Mesh;
 var SolidColor        = materials.SolidColor;
 var ShowColors        = materials.ShowColors;
 var Color             = color.Color;
-var LineBuilder       = gen.LineBuilder
+var LineBuilder       = gen.LineBuilder;
+
+var EPSILON = 0.001;
 
 function mapBuilderSys(state) {
   if (!state.map || !state.map.nodes.length || !state.map.selectedNodes.length || !state.map.dirty) {
@@ -109,12 +112,13 @@ function mapBuilderSys(state) {
   //this.rebuildCorridors();
 }
 
-function pointsToMesh(points) {
+function pointsToMesh(points, color) {
+  color = color || Color.White;
   var lineBuilder = new LineBuilder();
   points.forEach(function(p) {
     lineBuilder.addCross(p, 0.003);
   })
-  var mesh = new Mesh(lineBuilder, new SolidColor(), { lines: true })
+  var mesh = new Mesh(lineBuilder, new SolidColor({ color : color }), { lines: true })
   return mesh;
 }
 
@@ -126,106 +130,7 @@ function vec2to3(v) {
   return new Vec3(v.x, 0, v.y);
 }
 
-function rebuildCellsDel(state) {
-  var selectedNodes = state.map.selectedNodes;
-
-  var points = selectedNodes.map(R.prop('position'));
-
-  //room centers
-  var cellGroups = fn.groupBy(selectedNodes, 'room');
-  var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
-    var nodes = cellGroups[roomId];
-    var cellPoints = nodes.map(R.prop('position'));
-    var center = cellPoints.reduce(function(center, p) {
-      return center.add(p);
-    }, new Vec3(0, 0, 0)).scale(1/cellPoints.length);
-    points.push(center);
-  });
-
-  //corridors
-
-
-  var addedConnections = {};
-  function connectionHash(nodeA, nodeB) {
-    if (nodeA.id <= nodeB.id) return nodeA.id + '-' + nodeB.id;
-    else return nodeB.id + '-' + nodeA.id;
-  }
-
-  var up = new Vec3(0, 1, 0);
-  var right = new Vec3(0, 0, 0);
-
-  var connections = [];
-  var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
-  corridorNodes.forEach(function(node) {
-    node.neighbors.forEach(function(neighborNode) {
-      if (neighborNode.floor == node.floor) {
-        var hash = connectionHash(node, neighborNode);
-        if (!addedConnections[hash]) {
-          addedConnections[hash] = true;
-          connections.push([node, neighborNode]);
-        }
-      }
-    });
-  });
-
-  var added = {};
-
-  connections.forEach(function(connection) {
-    var a = connection[0].position;
-    var b = connection[1].position;
-    var dir = b.dup().sub(a);
-    var len = dir.length();
-    dir.normalize();
-    var d = 0.01;
-    if (len > 0) {
-      for(var i=d; i<len; i+=d) {
-        var c = dir.dup().scale(i).add(a);
-        for(var j=0; j<1; j++) {
-          g = c.dup();
-          g.x += random.float(-d, d);
-          g.z += random.float(-d, d);
-          points.push(g);
-        }
-      }
-    }
-  })
-
-  //console.log(connections.length)
-
-
-  //cells
-
-  var points2D = points.map(vec3to2);
-
-  var cells = delaunay(points2D);
-  var cellPoints2 = R.flatten(cells);
-
-  //state.entities.push({ map: true, mesh: pointsToMesh(points) });
-  var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.y = points[0].y; return p; })
-
-  var lineBuilder = new LineBuilder();
-  cells.forEach(function(tri) {
-    //cell.forEach(function(edge) {
-      var a = vec2to3(tri[0]);
-      a.y = points[0].y;
-      var b = vec2to3(tri[1]);
-      b.y = points[0].y;
-      var c = vec2to3(tri[2]);
-      c.y = points[0].y;
-      lineBuilder.addLine(a, b);
-      lineBuilder.addLine(b, c);
-      lineBuilder.addLine(c, a);
-    //})
-  })
-
-  var edgeMesh = new Mesh(lineBuilder, new SolidColor({ color: Color.Red }), { lines: true });
-
-  state.entities.push({ map: true, mesh: edgeMesh });
-  state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
-}
-
 function orderEdges(edges) {
-  var ESPSILON = 0.001;
   var sortedEdges = [];
   sortedEdges.push(edges.shift());
   while(edges.length > 0) {
@@ -233,13 +138,13 @@ function orderEdges(edges) {
     var split = false;
     for(var i=0; i<edges.length; i++) {
       var edge = edges[i];
-      if (lastEdge[1].distance(edge[0]) < ESPSILON) {
+      if (lastEdge[1].distance(edge[0]) < EPSILON) {
         sortedEdges.push(edge);
         edges.splice(i, 1);
         split = true;
         break;
       }
-      if (lastEdge[1].distance(edge[1]) < ESPSILON) {
+      if (lastEdge[1].distance(edge[1]) < EPSILON) {
         sortedEdges.push(edge.reverse());
         edges.splice(i, 1);
         split = true;
@@ -258,13 +163,13 @@ function orderEdges(edges) {
     var split = false;
     for(var i=0; i<edges.length; i++) {
       var edge = edges[i];
-      if (lastEdge[1].distance(edge[0]) < ESPSILON) {
+      if (lastEdge[1].distance(edge[0]) < EPSILON) {
         sortedEdges.push(edge);
         edges.splice(i, 1);
         split = true;
         break;
       }
-      if (lastEdge[1].distance(edge[1]) < ESPSILON) {
+      if (lastEdge[1].distance(edge[1]) < EPSILON) {
         sortedEdges.push(edge.reverse());
         edges.splice(i, 1);
         split = true;
@@ -285,6 +190,8 @@ function rebuildCells(state) {
 
   var points = selectedNodes.map(R.prop('position'));
 
+  //points = [];
+
   //room centers
   var cellGroups = fn.groupBy(selectedNodes, 'room');
   var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
@@ -297,7 +204,6 @@ function rebuildCells(state) {
   });
 
   //corridors
-
 
   var addedConnections = {};
   function connectionHash(nodeA, nodeB) {
@@ -344,18 +250,31 @@ function rebuildCells(state) {
     }
   })
 
-  //console.log(connections.length)
-
-
   //cells
 
   var points2D = points.map(vec3to2);
+
+  var boundingRect = Rect.fromPoints(points2D);
+  var center = boundingRect.getCenter();
+  var size = boundingRect.getSize();
+  var r = Math.max(size.x, size.y) / 2;
+  for(var i=0; i<30; i++) {
+    points2D.push(new Vec2(
+      center.x + r * Math.cos(2 * Math.PI * i/30),
+      center.y + r * Math.sin(2 * Math.PI * i/30)
+    ))
+  }
 
   var cells = voronoi(points2D);
   var cellPoints2 = R.flatten(cells);
 
   //state.entities.push({ map: true, mesh: pointsToMesh(points) });
   var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.y = points[0].y; return p; })
+
+  var blobsGeometry = new Geometry({ vertices: true, colors: true, faces: true });
+  var vertices = blobsGeometry.vertices;
+  var faces = blobsGeometry.faces;
+  var colors = blobsGeometry.colors;
 
   var lineBuilder = new LineBuilder();
   cells.forEach(function(cell, cellIndex) {
@@ -370,116 +289,66 @@ function rebuildCells(state) {
     })
 
     cell = orderEdges(cell);
+
+    var room = false;
+
     if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
-      return;
+      //return;
+      room = true;
     }
 
-    //var cellPoints = uniquePoints(R.flatten(cell).map(vec2to3));
-    //console.log(cellPoints);
-    //console.log(start, end)
-    //cell.forEach(function(edge, edgeIndex) {
-    //  var a = vec2to3(edge[0]);
-    //  a.y = points[0].y;
-    //  var b = vec2to3(edge[1]);
-    //  b.y = points[0].y;
-    //  console.log(edgeIndex, a, b)
-    //});
-    //if (dist < 0.01) return;
-    //
+    var cellColor = room ? Color.fromHSV(0.2, 0.9, 0.5, 0.1) : Color.fromHSV(0.5, 0.8, 0.3, 0.1);
+
     cell.forEach(function(edge, edgeIndex) {
       //if (edgeIndex > 0) return;
       var a = (edge[0]);
       a.y = points[0].y;
       var b = (edge[1]);
       b.y = points[0].y;
-      lineBuilder.addLine(a, b, Color.Yellow);
+      lineBuilder.addLine(a, b, Color.fromHSV(0.4, 0.9, 0.1));
     })
 
-    lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
-  })
+    cell = R.flatten(cell);
+    var uniquePoints = cell.filter(function(p, i) {
+      if (i == 0) return true;
+      return cell[i-1].distance(p) > EPSILON;
+    });
 
-  var edgeMesh = new Mesh(lineBuilder, new ShowColors({ color: Color.Yellow }), { lines: true });
+    var splinePoints = GeomUtils.smoothCurve(uniquePoints, 0.9, 3);
 
-  state.entities.push({ map: true, mesh: edgeMesh });
-  state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
-}
+    var center = GeomUtils.center3(splinePoints);
 
-function rebuildCellsTri(state) {
-  var selectedNodes = state.map.selectedNodes;
-  var cellGroups = fn.groupBy(selectedNodes, 'room');
-  var cellMeshes = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
-    var nodes = cellGroups[roomId];
-    var roomColor1 = Color.Grey;
-    var roomColor2 = Color.DarkGrey;
+    var cellCloseness = 0.2;
 
-    if (state.activities.locations.indexOf(roomId) != -1) {
-      roomColor1 = Color.fromHSV(0.5, 1.0, 0.5);
-      roomColor2 = Color.fromHSV(0.7, 1.0, 0.6);
+    for(var i=0; i<splinePoints.length; i++) {
+      var p = splinePoints[i];
+      var np = splinePoints[(i+1)%splinePoints.length];
+      var p2 = p.dup().add(center.dup().sub(p).scale(cellCloseness));
+      var np2 = np.dup().add(center.dup().sub(np).scale(cellCloseness));
+      var n = vertices.length;
+      vertices.push(p2);
+      vertices.push(np2);
+      vertices.push(center);
+      colors.push(cellColor);
+      colors.push(cellColor);
+      colors.push(cellColor);
+      faces.push([n, n+1, n+2]);
+      lineBuilder.addLine(p2, np2, Color.fromHSV(0.5, 0.9, 0.5));
     }
 
-    var cellMaterial = new ShowColors();
-
-    //if (index > 0) return;
-    nodes = graph.orderNodes(nodes);
-    var points = nodes.map(R.prop('position'));
-    var lineBuilder = new LineBuilder();
-    //add little turbulence to room corners
-
-    var subDividedEdges = [];
-    points.forEach(function(p, i) {
-      var np = points[(i + 1) % points.length];
-      subDividedEdges.push(p);
-      subDividedEdges.push(np.clone().sub(p).scale(0.5).add(p));
-    })
-
-    var points2D = subDividedEdges.map(function(p) {
-      return new Vec2(p.x, p.z);
-      //return new Vec2(Math.random(), Math.random());
-    });
-
-    points2D.forEach(function(p) {
-      p.x += (Math.random() - 0.5) * 0.01;
-      p.y += (Math.random() - 0.5) * 0.01;
-    });
-
-    var center = points2D.reduce(function(center, p) {
-      return center.add(p);
-    }, new Vec2(0, 0)).scale(1/points2D.length);
-
-    points2D.unshift(center);
-
-    var triangles = delaunay(points2D);
-    triangles = triangles.map(function(t, i) {
-      var a = new Vec3(t[0].x, points[0].y, t[0].y);
-      var b = new Vec3(t[1].x, points[0].y, t[1].y);
-      var c = new Vec3(t[2].x, points[0].y, t[2].y);
-      return [a, b, c];
-    });
-
-    var g = new Geometry({ vertices: true, colors: true, faces: true });
-
-    triangles.forEach(function(t) {
-      var n = g.vertices.length;
-      g.vertices.push(t[0], t[1], t[2]);
-      g.colors.push(roomColor1, roomColor1, roomColor2);
-      g.faces.push([n, n+1, n+2]);
-      //lineBuilder.addLine(t[0], t[1]);
-      //lineBuilder.addLine(t[1], t[2]);
-      //lineBuilder.addLine(t[2], t[0]);
-    });
-
-    //points = points2D.map(function(p) {
-    //  return new Vec3(p.x, 0, p.y);
-    //});
-    //points = GeomUtils.computeBSpline(points);
-    //for(var i=0; i<points.length; i++) {
-    //  var p = points[i];
-    //  var np = points[(i+1)%points.length];
-    //  lineBuilder.addLine(p, np);
-    //}
-    var mesh = new Mesh(g, cellMaterial, { lines: true })
-    state.entities.push({ map: true, mesh: mesh });
+    //lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
   })
+
+  console.log(vertices.length);
+
+  var edgeMesh = new Mesh(lineBuilder, new ShowColors({ color: Color.fromHex('#002112') }), { lines: true });
+  var blobsMesh = new Mesh(blobsGeometry, new ShowColors({ color: Color.fromHex('#00CFE2') }), { faces: true });
+
+  state.entities.push({ map: true, mesh: edgeMesh });
+  state.entities.push({ map: true, mesh: blobsMesh });
+  state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
+  //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
 }
+
 
 module.exports = mapBuilderSys;
