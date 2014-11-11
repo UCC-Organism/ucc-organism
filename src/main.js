@@ -81,7 +81,7 @@ var State = {
   bgColor: Color.fromHSV(0.4, 0.85, 0.6),
   //bgColor: Color.Black,
   camera: null,
-  cameraPosY: 0.40,
+  cameraPosZ: 0.40,
   arcball: null,
 
   //entities

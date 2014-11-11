@@ -96,7 +96,7 @@ function mapBuilderSys(state) {
 
   //center camera on the new floor
   var target = floorBBox.getCenter();
-  var position = new Vec3(state.camera.target.x, state.camera.target.y + state.cameraPosY, state.camera.target.z + 0.01);
+  var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
   state.camera.setUp(new Vec3(0, 0, -1));
   state.arcball.setPosition(position);
   state.arcball.setTarget(target);
@@ -123,11 +123,11 @@ function pointsToMesh(points, color) {
 }
 
 function vec3to2(v) {
-  return new Vec2(v.x, v.z);
+  return new Vec2(v.x, v.y);
 }
 
 function vec2to3(v) {
-  return new Vec3(v.x, 0, v.y);
+  return new Vec3(v.x, v.y, 0);
 }
 
 function orderEdges(edges) {
@@ -245,7 +245,7 @@ function rebuildCells(state) {
         for(var j=0; j<3; j++) {
           g = c.dup();
           g.x += random.float(-d/2, d/2);
-          g.z += random.float(-d/2, d/2);
+          g.y += random.float(-d/2, d/2);
           points.push(g);
         }
       }
@@ -271,7 +271,7 @@ function rebuildCells(state) {
   var cellPoints2 = R.flatten(cells);
 
   //state.entities.push({ map: true, mesh: pointsToMesh(points) });
-  var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.y = points[0].y; return p; })
+  var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.z = points[0].z; return p; })
 
   var blobsGeometry = new Geometry({ vertices: true, colors: true, faces: true });
   var vertices = blobsGeometry.vertices;
@@ -314,9 +314,9 @@ function rebuildCells(state) {
     cell.forEach(function(edge, edgeIndex) {
       //if (edgeIndex > 0) return;
       var a = (edge[0]);
-      a.y = points[0].y;
+      a.z = points[0].z;
       var b = (edge[1]);
-      b.y = points[0].y;
+      b.z = points[0].z;
       lineBuilder.addLine(a, b, Color.fromHSV(0.4, 0.2, 0.9));
     })
 

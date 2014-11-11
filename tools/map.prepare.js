@@ -14,7 +14,8 @@ var nodes = nodesData.nodes.map(function(node) {
   return {
     floor: node.layerId,
     room: '',
-    position: node.position,
+    //rotate not '90, for easier 3D -> 2D handling
+    position: { x: node.position.x, y: node.position.z, z: node.position.y },
     neighbors: []
   }
 });
