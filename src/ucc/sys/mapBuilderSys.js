@@ -28,9 +28,31 @@ var LineBuilder       = gen.LineBuilder;
 var EPSILON = 0.001;
 
 function mapBuilderSys(state) {
-  if (!state.map || !state.map.nodes.length || !state.map.selectedNodes.length || !state.map.dirty) {
+  if (!state.map || !state.map.nodes.length || !state.map.selectedNodes.length) {
     return;
   }
+
+  if (state.map.dirty) {
+    rebuildMap(state);
+  }
+  else {
+    updateMap(state);
+  }
+}
+
+function updateMap(state) {
+  var roomEntities = state.entities.filter(R.where({ room: R.identity }));
+  roomEntities.forEach(function(roomEntity) {
+    if (state.activities.activeLocations.indexOf(roomEntity.room) != -1) {
+      roomEntity.mesh.material.uniforms.color = Color.Red;
+    }
+    else {
+      roomEntity.mesh.material.uniforms.color = Color.White;
+    }
+  })
+}
+
+function rebuildMap(state) {
 
   state.map.dirty = false;
 
@@ -54,6 +76,8 @@ function mapBuilderSys(state) {
       return [ node.position, neighborNode.position ];
     })
   }));
+
+  var roomVertexGroups = fn.groupBy(roomVertices, 'room');
 
   var corridorEdgeVertices = R.flatten(corridorNodes.map(function(node) {
     return node.neighbors.map(function(neighborNode) {
@@ -87,12 +111,25 @@ function mapBuilderSys(state) {
   });
 
   //add new entities
-  state.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
-  state.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
-  state.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
-  state.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
-  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-  state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+  //state.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
+  //state.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
+  //state.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
+  //state.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
+  //state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
+  //state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+
+  Object.keys(roomVertexGroups).forEach(function(roomId) {
+    var roomVertices = roomVertexGroups[roomId];
+
+    var roomEdges = R.flatten(roomVertices.map(function(node) {
+      return node.neighbors.filter(R.where({ room: R.identity })).map(function(neighborNode) {
+        return [ node.position, neighborNode.position ];
+      })
+    }));
+    var g = new Geometry({ vertices: roomEdges });
+    var m = new Mesh(g, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
+    state.entities.push({ map: true, debug: true, room: roomId, mesh: m });
+  })
 
   //center camera on the new floor
   var target = floorBBox.getCenter();
@@ -108,7 +145,7 @@ function mapBuilderSys(state) {
   //var roomMesh = new Mesh(roomGeometry, new SolidColor({ color: Color.Red }));
   //state.entities.push({ map: true, debug: true, mesh: roomMesh });
 
-  rebuildCells(state);
+  //rebuildCells(state);
   //this.rebuildCorridors();
 }
 
@@ -278,6 +315,11 @@ function rebuildCells(state) {
   var faces = blobsGeometry.faces;
   var colors = blobsGeometry.colors;
 
+  var roomCellsGeometry = new Geometry({ vertices: true, colors: true, faces: true });
+  var roomCellsVertices = roomCellsGeometry.vertices;
+  var roomCellsFaces = roomCellsGeometry.faces;
+  var roomCellsColors = roomCellsGeometry.colors;
+
   var lineBuilder = new LineBuilder();
   cells.forEach(function(cell, cellIndex) {
     //if (cellIndex > 0) return;
@@ -293,12 +335,14 @@ function rebuildCells(state) {
     cell = orderEdges(cell);
 
     var isRoom = false;
+    var roomId;
     var isEdgeCell = false;
 
     var cellPoint = points[cellIndex];
     var roomIndex = roomCenterPoints.indexOf(cellPoint);
     if (roomIndex != -1) {
       isRoom = true;
+      roomId = Object.keys(cellGroups).filter(R.identity)[roomIndex];
     }
 
     if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
@@ -332,31 +376,44 @@ function rebuildCells(state) {
 
     var cellCloseness = 0.2;
 
-
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
       var np = splinePoints[(i+1)%splinePoints.length];
       var p2 = p.dup().add(center.dup().sub(p).scale(cellCloseness));
       var np2 = np.dup().add(center.dup().sub(np).scale(cellCloseness));
-      var n = vertices.length;
-      vertices.push(p2);
-      vertices.push(np2);
-      vertices.push(center);
-      colors.push(cellColor);
-      colors.push(cellColor);
-      colors.push(cellColor);
-      faces.push([n, n+1, n+2]);
+      if (isRoom) {
+        var n = roomCellsVertices.length;
+        roomCellsVertices.push(p2);
+        roomCellsVertices.push(np2);
+        roomCellsVertices.push(center);
+        roomCellsColors.push(cellColor);
+        roomCellsColors.push(cellColor);
+        roomCellsColors.push(cellColor);
+        roomCellsFaces.push([n, n+1, n+2]);
+      }
+      else {
+        var n = vertices.length;
+        vertices.push(p2);
+        vertices.push(np2);
+        vertices.push(center);
+        colors.push(cellColor);
+        colors.push(cellColor);
+        colors.push(cellColor);
+        faces.push([n, n+1, n+2]);
+      }
       lineBuilder.addLine(p2, np2, cellColorEdge);
     }
 
     //lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
   })
 
-  var edgeMesh = new Mesh(lineBuilder, new ShowColors({ color: Color.fromHex('#002112') }), { lines: true });
-  var blobsMesh = new Mesh(blobsGeometry, new ShowColors({ color: Color.fromHex('#00CFE2') }), { faces: true });
+  var edgeMesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
+  var blobsMesh = new Mesh(blobsGeometry, new ShowColors(), { faces: true });
+  var roomCellsMesh = new Mesh(roomCellsGeometry, new ShowColors(), { faces: true });
 
   state.entities.push({ map: true, mesh: edgeMesh });
   state.entities.push({ map: true, mesh: blobsMesh });
+  state.entities.push({ map: true, mesh: roomCellsMesh });
   //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
   state.entities.push({ map: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });

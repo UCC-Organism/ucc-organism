@@ -96,7 +96,7 @@ var State = {
   //
 };
 
-var DPI = Platform.isPlask ? 2 : 1;
+var DPI = Platform.isPlask ? 1 : 1;
 
 sys.Window.create({
   settings: {
