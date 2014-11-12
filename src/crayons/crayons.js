@@ -41,13 +41,20 @@ SkCanvasCrayon.prototype.fill = function(enabledColor) {
   return this;
 };
 
-SkCanvasCrayon.prototype.stroke = function(enabled) {
+SkCanvasCrayon.prototype.stroke = function(enabledColor) {
   var on = (enabledColor !== undefined) ? enabledColor : true;
   if (on) {
     this.currentStyle.setStroke();
     this.currentStyle.setColor(enabledColor[0], enabledColor[1], enabledColor[2], enabledColor[3]);
   }
   else this.currentStyle.setFill();
+  return this;
+};
+
+SkCanvasCrayon.prototype.font = function(fontFamily, fontSize, fontWeight) {
+  this.currentStyle.setFontFamily(fontFamily);
+  this.currentStyle.setTextSize(fontSize);
+  this.currentStyle.fontSize = fontSize;
   return this;
 };
 
@@ -61,13 +68,17 @@ SkCanvasCrayon.prototype.circle = function(x, y, r) {
   return this;
 };
 
+SkCanvasCrayon.prototype.text = function(str, x, y) {
+  this.canvas.drawText(this.currentStyle, str, x, y);
+}
+
 SkCanvasCrayon.prototype.line = function(x1, y1, x2, y2) {
   this.canvas.drawLine(this.currentStyle, x1, y1, x2, y2);
   return this;
 };
 
 SkCanvasCrayon.prototype.clear = function(transparent) {
-  this.canvas.drawColor(0, 0, 0, transparent ? 0 : 255);
+  this.canvas.clear(0, 0, 0, transparent ? 0 : 255);
   return this;
 };
 
