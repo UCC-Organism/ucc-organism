@@ -98,7 +98,7 @@ function rebuildMap(state) {
   var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
 
   var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Orange }), { lines: true });
+  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Yellow }), { lines: true });
 
   var floorBBox = BoundingBox.fromPoints(pointVertices);
   var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
@@ -115,7 +115,7 @@ function rebuildMap(state) {
   //state.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
   //state.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
   //state.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
-  //state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
+  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
   //state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
   Object.keys(roomVertexGroups).forEach(function(roomId) {

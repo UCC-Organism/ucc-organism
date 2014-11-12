@@ -14,6 +14,15 @@ var ActivityStore = {
 
         this.all = activities;
 
+        //remap room names to cleaner id's
+        activities.forEach(function(activity) {
+          activity.locations = activity.locations.map(function(location) {
+            if (Config.roomIdMap[location]) return Config.roomIdMap[location];
+            else return location;
+          })
+        })
+
+        //convert time to dates
         this.all.forEach(function(activity) {
           activity.start = new Date(activity.start);
           activity.end = new Date(activity.end);

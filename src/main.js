@@ -4,6 +4,7 @@ var glu               = require('pex-glu');
 var random            = require('pex-random');
 var color             = require('pex-color');
 var gui               = require('pex-gui');
+var R                 = require('ramda');
 
 //CES
 var meshRendererSys   = require('./ucc/sys/meshRendererSys');
@@ -148,10 +149,31 @@ sys.Window.create({
     .spread(function(map, activities) {
       State.map = map;
       State.activities = activities;
-    })
+      this.checkMissingRooms(State);
+    }.bind(this))
     .catch(function(e) {
       console.log(e.stack)
     })
+  },
+  checkMissingRooms: function(state) {
+    var roomsOnTheMap = R.uniq(R.pluck('id', state.map.rooms));
+    var activityLocations = state.activities.locations;
+
+    var missingRooms = R.difference(activityLocations, roomsOnTheMap);
+    if (missingRooms.length > 0) {
+      //console.log('roomsOnTheMap', roomsOnTheMap);
+      //console.log('activityLocations', activityLocations);
+      var str = missingRooms.map(function(roomId) {
+        var roomActivities = state.activities.all.filter(function(activity) {
+          return activity.locations.indexOf(roomId) != -1;
+        });
+        roomActivities = R.uniq(R.pluck('subject', roomActivities));
+        return ' - ' +  roomId + ' ' + JSON.stringify(roomActivities);
+      }).join('\n');
+
+      str = 'Main.missingRooms ' + missingRooms.length + '\n' + str;
+      console.log(str);
+    }
   },
   initKeys: function() {
     this.on('keyDown', function(e) {
