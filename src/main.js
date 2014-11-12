@@ -78,6 +78,7 @@ var State = {
 
   //state
   currentTime: 0,
+  timeSpeed: 60 * 60 * 5,
   debug: true
 
   //graph: null,
@@ -86,7 +87,6 @@ var State = {
   //floors: [],
   //currentFloor: 6,
   //
-  
   //pointSpriteMeshEntity: null,
   //agentDebugInfoMeshEntity: null,
   //agentSpeed: 0.02,
@@ -94,8 +94,6 @@ var State = {
   //minNodeDistance: 0.01,
   //debug: false,
   //
-
-  
 };
 
 var DPI = Platform.isPlask ? 2 : 1;
@@ -118,6 +116,8 @@ sys.Window.create({
     this.initKeys();
   },
   initGUI: function() {
+    Time.verbose = true;
+
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
     this.gui.addParam('Color', State, 'bgColor');
@@ -398,8 +398,6 @@ sys.Window.create({
   //  }
   //},
   update: function() {
-    State.currentTime += Time.delta * 100000;
-
     //this.updateUI();
   },
   draw: function() {
