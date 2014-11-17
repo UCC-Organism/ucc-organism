@@ -7,7 +7,7 @@ function agentTargetNodeUpdaterSys(state) {
 
   var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
 
-  if (state.debug) console.log('agentTargetNodeUpdaterSys agents:', agents.length, 'agentsWithNoTarget:', agentsWithNoTarget.length);
+  if (state.verbose) console.log('agentTargetNodeUpdaterSys agents:', agents.length, 'agentsWithNoTarget:', agentsWithNoTarget.length);
 
   //agentsWithNoTarget.forEach(function(agentEntity) {
   //  var targetNode = geom.randomElement(selectedNodes);

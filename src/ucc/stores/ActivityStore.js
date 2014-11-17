@@ -7,7 +7,9 @@ var ActivityStore = {
   all: [],
   locations: [],
   current: [],
+  currentGroups: [],
   currentLocations: [],
+  currentStudents: [],
   init: function() {
     console.log('ActivityStore.init');
     return IOUtils.loadJSON(Config.dataPath + '/static/activities_bundle.json')

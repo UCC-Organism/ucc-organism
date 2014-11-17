@@ -4,14 +4,18 @@ var color   = require('pex-color');
 
 var Color   = color.Color;
 
-function agentSpawnSys(state) {
-  var agents = R.filter(R.where({ agent: R.identity }), state.entities);
-  var selectedNodes = state.map.selectedNodes;
+function spawnStudents(state, agents) {
+  var aliveStudents = R.filter(R.where({ studentId: R.identity }), agents);
 
-  if (selectedNodes.length == 0) return;
+  var aliveStudentsIds = R.map(R.prop('studentId'), aliveStudents);
+  var currentStudentsIds = R.map(R.prop('id'), state.activities.currentStudents);
 
-  for(var i=0; i<100 - agents.length; i++) {
-    var position = random.element(selectedNodes).position;
+  var studentsToSpawn = R.difference(currentStudentsIds, aliveStudentsIds);
+
+  if (state.verbose) console.log('spawnStudents', 'aliveStudentsIds:', aliveStudentsIds.length, 'currentStudentsIds:', currentStudentsIds.length, 'studentsToSpawn:', studentsToSpawn.length);
+
+  studentsToSpawn.forEach(function(studentId) {
+    var position = random.element(state.map.selectedNodes).position;
     var color = Color.Red;
     state.entities.push({
       pointSize: 5,
@@ -20,8 +24,33 @@ function agentSpawnSys(state) {
       prevPosition: position.dup(),
       color: color,
       targetNode: null,
+      studentId: studentId
     });
-  }
+  })
+}
+
+function agentSpawnSys(state) {
+  var agents = R.filter(R.where({ agent: R.identity }), state.entities);
+
+  spawnStudents(state, agents);
+
+  
+
+  //state.activities.current.forEach(function(activity) {
+  //  activity.groups.map(function(groupId) {
+  //    var group = state.groups.byId[groupId];
+  //    if (!group) return;
+  //    group.students.forEach(function(student) {
+  //      if (aliveAgentsIds.indexOf(student.id) == -1) {
+//
+  //      }
+  //    })
+  //  }))
+  //})
+
+  //for(var i=0; i<100 - agents.length; i++) {
+    
+  //}
 
   //if (!State.selectedNodes) return;
   //  if (agents.length >= State.maxNumAgents) return;

@@ -276,7 +276,7 @@ sys.Window.create({
     glu.clearColorAndDepth(state.bgColor);
     glu.enableDepthReadAndWrite(true);
 
-    if (state.map && state.activities && state.groups) {
+    if (state.map && state.activities && state.groups && state.map.selectedNodes) {
        agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);

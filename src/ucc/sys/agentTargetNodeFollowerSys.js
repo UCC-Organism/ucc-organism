@@ -8,7 +8,7 @@ var Vec3  = geom.Vec3;
 function agentTargetNodeFollowerSys(state) {
   var targetFollowers = R.filter(R.where({ targetNode: R.identity }), state.entities);
 
-  if (state.debug) console.log('agentTargetNodeFollowerSys', 'targetFollowers:', targetFollowers.length);
+  if (state.verbose) console.log('agentTargetNodeFollowerSys', 'targetFollowers:', targetFollowers.length);
 
   var tmpDir = new Vec3();
   targetFollowers.forEach(function(followerEntity) {
