@@ -84,10 +84,6 @@ ActivityTimeline.prototype.updateTime = function(state) {
       this.needsFullRedraw = true;
     }
   }
-
-  state.activities.activeLocations = R.uniq(R.flatten(state.activities.all.filter(function(activity) {
-    return (activity.startTime <= state.currentTime && activity.endTime >= state.currentTime);
-  }).map(R.prop('locations'))));
 }
 
 ActivityTimeline.prototype.drawTime = function(state) {

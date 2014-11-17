@@ -6,7 +6,8 @@ var R       = require('ramda');
 var ActivityStore = {
   all: [],
   locations: [],
-  activeLocations: [],
+  current: [],
+  currentLocations: [],
   init: function() {
     console.log('ActivityStore.init');
     return IOUtils.loadJSON(Config.dataPath + '/static/activities_bundle.json')

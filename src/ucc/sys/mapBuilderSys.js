@@ -28,7 +28,7 @@ var LineBuilder       = gen.LineBuilder;
 var EPSILON = 0.001;
 
 function mapBuilderSys(state) {
-  if (!state.map || !state.map.nodes.length || !state.map.selectedNodes.length) {
+  if (!state.map.nodes.length || !state.map.selectedNodes.length) {
     return;
   }
 
@@ -43,7 +43,7 @@ function mapBuilderSys(state) {
 function updateMap(state) {
   var roomEntities = state.entities.filter(R.where({ room: R.identity }));
   roomEntities.forEach(function(roomEntity) {
-    if (state.activities.activeLocations.indexOf(roomEntity.room) != -1) {
+    if (state.activities.currentLocations.indexOf(roomEntity.room) != -1) {
       roomEntity.mesh.material.uniforms.color = Color.Red;
     }
     else {

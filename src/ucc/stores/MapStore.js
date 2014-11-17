@@ -12,7 +12,7 @@ var MapStore = {
   rooms: [],
   selectedNodes: [],
   floors: [],
-  currentFloor: [],
+  currentFloor: -1,
   dirty: true,
   init: function() {
     console.log('MapStore.init');
@@ -43,7 +43,7 @@ var MapStore = {
       this.floors.unshift('-1');
 
       //skip first global floor '-1'
-      this.currentFloor = this.floors[7];
+      //this.currentFloor = this.floors[7];
       this.setFloor(this.currentFloor);
 
       return this;
