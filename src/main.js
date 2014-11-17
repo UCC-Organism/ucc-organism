@@ -13,6 +13,7 @@ var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var pointSpriteUpdaterSys         = require('./ucc/sys/pointSpriteUpdaterSys');
+var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
@@ -82,10 +83,14 @@ var state = {
   //stores
   map: null,
 
+  //map config
+  minNodeDistance: 0.001,
+  maxAgentLimit: 100,
+
   //state
   currentTime: 0,
   timeSpeed: 0,//60 * 60 * 5,
-  agentSpeed: 1,
+  agentSpeed: 0.02,
   debug: true
 
   //graph: null,
@@ -98,7 +103,6 @@ var state = {
   //agentDebugInfoMeshEntity: null,
   //agentSpeed: 0.02,
   //maxNumAgents: 100,
-  //minNodeDistance: 0.01,
   //debug: false,
   //
 };
@@ -125,6 +129,7 @@ sys.Window.create({
 
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
+    this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 0.1 });
     this.gui.addParam('Color', state, 'bgColor');
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
@@ -202,34 +207,6 @@ sys.Window.create({
     })
     */
   },
-  agentDebugInfoUpdaterSys: function(allEntities) {
-    /*
-    if (!state.agentDebugInfoMeshEntity) {
-      var lineBuilder = new LineBuilder();
-      lineBuilder.addLine(new Vec3(0, 0, 0), geom.randomVec3());
-      lineBuilder.addLine(new Vec3(0, 0, 0), geom.randomVec3());
-      lineBuilder.addLine(new Vec3(0, 0, 0), geom.randomVec3());
-      lineBuilder.addLine(new Vec3(0, 0, 0), geom.randomVec3());
-      var mesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
-      state.agentDebugInfoMeshEntity = {
-        mesh: mesh
-      };
-      state.entities.push(state.agentDebugInfoMeshEntity);
-    }
-
-    var lineBuilder = state.agentDebugInfoMeshEntity.mesh.geometry;
-    lineBuilder.reset();
-
-    if (state.debug) {
-      var agents = R.filter(R.where({ agent: R.identity }), allEntities);
-      agents.forEach(function(agent) {
-        if (agent.targetNode) {
-          lineBuilder.addLine(agent.position, agent.targetNode.position, Color.White);
-        }
-      })
-    }
-    */
-  },
   //updateUI: function() {
   //  if (Time.frameNumber % 2 == 0) {
   //    var x = remap(state.currentTime, state.activtiesStartTime, state.activtiesEndTime, 0, state.crayon.canvas.width);
@@ -277,10 +254,10 @@ sys.Window.create({
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
-       agentSpawnSys(state);
+      agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
-      //agentDebugInfoUpdaterSys(state.entities);
+      agentDebugInfoUpdaterSys(state);
       pointSpriteUpdaterSys(state);
 
       //glu.enableDepthReadAndWrite(false);

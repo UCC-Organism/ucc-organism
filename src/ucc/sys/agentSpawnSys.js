@@ -5,9 +5,9 @@ var color   = require('pex-color');
 var Color   = color.Color;
 
 function spawnStudents(state, agents) {
-  var aliveStudents = R.filter(R.where({ studentId: R.identity }), agents);
+  var aliveStudentAgents = R.filter(R.where({ studentId: R.identity }), agents);
 
-  var aliveStudentsIds = R.map(R.prop('studentId'), aliveStudents);
+  var aliveStudentsIds = R.map(R.prop('studentId'), aliveStudentAgents);
   var currentStudentsIds = R.map(R.prop('id'), state.activities.currentStudents);
 
   var studentsToSpawn = R.difference(currentStudentsIds, aliveStudentsIds);
@@ -17,15 +17,22 @@ function spawnStudents(state, agents) {
   studentsToSpawn.forEach(function(studentId) {
     var position = random.element(state.map.selectedNodes).position;
     var color = Color.Red;
-    state.entities.push({
-      pointSize: 5,
-      agent: true,
-      position: position,
-      prevPosition: position.dup(),
-      color: color,
-      targetNode: null,
-      studentId: studentId
-    });
+
+    //console.log(aliveStudents.length, state.maxAgentLimit)
+    if (aliveStudentAgents.length < state.maxAgentLimit) {
+      var studentAgent = {
+        pointSize: 5,
+        agent: true,
+        position: position,
+        prevPosition: position.dup(),
+        color: color,
+        targetNode: null,
+        studentId: studentId
+      };
+
+      state.entities.push(studentAgent);
+      aliveStudentAgents.push(studentAgent);
+    }
   })
 }
 
