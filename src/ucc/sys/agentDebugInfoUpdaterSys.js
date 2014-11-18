@@ -35,6 +35,16 @@ function agentDebugInfoUpdaterSys(state) {
       if (agent.targetNode) {
         lineBuilder.addLine(agent.position, agent.targetNode.position, Color.Green);
       }
+      if (agent.targetNodeList) {
+        for(var i=0; i<agent.targetNodeList.length-1; i++) {
+          var p = agent.targetNodeList[i].position;
+          var np = agent.targetNodeList[i+1].position;
+          lineBuilder.addCross(p, 0.01, Color.Orange);
+          lineBuilder.addCross(p.dup().lerp(np, 0.25), 0.01, Color.Orange);
+          lineBuilder.addCross(p.dup().lerp(np, 0.50), 0.01, Color.Orange);
+          lineBuilder.addCross(p.dup().lerp(np, 0.75), 0.01, Color.Orange);
+        }
+      }
     })
   }
 }

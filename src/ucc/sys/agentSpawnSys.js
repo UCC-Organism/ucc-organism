@@ -18,12 +18,11 @@ function spawnStudents(state, agents) {
     var position = random.element(state.map.selectedNodes).position;
     var color = Color.Red;
 
-    //console.log(aliveStudents.length, state.maxAgentLimit)
-    if (aliveStudentAgents.length < state.maxAgentLimit) {
+    if (aliveStudentAgents.length < state.maxAgentCount) {
       var studentAgent = {
         pointSize: 5,
         agent: true,
-        position: position,
+        position: position.dup(),
         prevPosition: position.dup(),
         color: color,
         targetNode: null,

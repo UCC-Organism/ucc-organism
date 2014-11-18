@@ -69,9 +69,9 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var state = {
   DPI: Platform.isPlask ? 1 : 1,
   //scene
-  //bgColor: new Color(0.1, 0.1, 0.12, 1.0),
+  bgColor: new Color(0.1, 0.1, 0.12, 1.0),
   //bgColor: Color.fromHex('#00331B'),
-  bgColor: Color.fromHSV(0.4, 0.85, 0.6),
+  //bgColor: Color.fromHSV(0.4, 0.85, 0.6),
   //bgColor: Color.Black,
   camera: null,
   cameraPosZ: 0.40,
@@ -85,12 +85,12 @@ var state = {
 
   //map config
   minNodeDistance: 0.001,
-  maxAgentLimit: 100,
+  maxAgentCount: 1,
 
   //state
   currentTime: 0,
   timeSpeed: 0,//60 * 60 * 5,
-  agentSpeed: 0.02,
+  agentSpeed: 0, //0.02,
   debug: true
 
   //graph: null,
@@ -129,7 +129,8 @@ sys.Window.create({
 
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
-    this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 0.1 });
+    this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
+    this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 100, step: 1 });
     this.gui.addParam('Color', state, 'bgColor');
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
@@ -191,6 +192,7 @@ sys.Window.create({
       switch(e.str) {
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
+        case ' ': this.killAllAgents(); break;
       }
       switch(e.keyCode) {
         case VK_LEFT: state.map.setPrevFloor(); break;
@@ -199,13 +201,11 @@ sys.Window.create({
     }.bind(this));
   },
   killAllAgents: function() {
-    /*/
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
 
     agents.forEach(function(agent) {
       state.entities.splice(state.entities.indexOf(agent), 1);
     })
-    */
   },
   //updateUI: function() {
   //  if (Time.frameNumber % 2 == 0) {

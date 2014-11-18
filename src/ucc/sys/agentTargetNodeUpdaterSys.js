@@ -39,6 +39,10 @@ function agentTargetNodeUpdaterSys(state) {
           else {
             studentAgent.targetNodeList = path;
             studentAgent.targetNode = studentAgent.targetNodeList.shift();
+            var pathids = path.map(R.prop('id')).sort();
+            for(var i=0; i<pathids.length-1; i++) {
+              if (pathids[i] == pathids[i+1]) console.log('invalid path', pathids)
+            }
           }
 
         })
