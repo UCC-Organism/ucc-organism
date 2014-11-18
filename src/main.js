@@ -131,7 +131,7 @@ sys.Window.create({
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
-    this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 500, step: 1 });
+    this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
     this.gui.addParam('Color', state, 'bgColor');
 

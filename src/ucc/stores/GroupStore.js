@@ -16,6 +16,8 @@ var GroupStore = {
         }, 0);
         console.log('GroupStore.init groups:', groups.length, 'students', totalStudents)
 
+        console.log(R.uniq(R.map(R.prop('programme'), groups)));
+
         //var sids =  R.flatten(R.map(R.prop('id'), R.flatten(R.map(R.prop('students'), groups))));
         //var usids = R.uniq(sids);
         //console.log('Total students', sids.length, 'unique', usids.length);

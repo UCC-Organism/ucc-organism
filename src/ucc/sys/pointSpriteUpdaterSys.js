@@ -13,7 +13,7 @@ var Mesh                = glu.Mesh;
 function pointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true });
-    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 20 * state.DPI, texture: Texture2D.load('../assets/U2.png') });
+    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 20 * state.DPI, texture: Texture2D.load('../assets/B1.png') });
     state.pointSpriteMeshEntity = {
       mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }

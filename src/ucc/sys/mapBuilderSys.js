@@ -44,10 +44,10 @@ function updateMap(state) {
   var roomEntities = state.entities.filter(R.where({ room: R.identity }));
   roomEntities.forEach(function(roomEntity) {
     if (state.activities.currentLocations.indexOf(roomEntity.room) != -1) {
-      roomEntity.mesh.material.uniforms.color = Color.Red;
+      roomEntity.mesh.material.uniforms.color = Color.White;
     }
     else {
-      roomEntity.mesh.material.uniforms.color = Color.White;
+      roomEntity.mesh.material.uniforms.color = Color.Grey;
     }
   })
 }
@@ -98,7 +98,7 @@ function rebuildMap(state) {
   var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
 
   var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Yellow }), { lines: true });
+  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.DarkGrey }), { lines: true });
 
   var floorBBox = BoundingBox.fromPoints(pointVertices);
   var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);

@@ -1,5 +1,8 @@
-var sys = require('pex-sys');
-var Platform = sys.Platform;
+var sys       = require('pex-sys');
+var color     = require('pex-color');
+
+var Platform  = sys.Platform;
+var Color     = color.Color;
 
 var RoomIdMap = {
   //'Afleveres i Wiseflow',
@@ -18,9 +21,18 @@ var RoomIdMap = {
   'Brikserum C.129' : 'C.129'
 }
 
+var ProgrammeColors = {
+  'default'                        : { primary: Color.fromHSL(0.0, 0, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
+  'SPL - Sygeplejerskeuddannelsen' : { primary: Color.fromHSL(0.0, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
+  'PMU - Psykomotorikuddannelsen'  : { primary: Color.fromHSL(0.1, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
+  'FYS - Fysioterapeutuddannelsen' : { primary: Color.fromHSL(0.4, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
+  'PÆD - Pædagoguddannelsen'       : { primary: Color.fromHSL(0.6, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) }
+}
+
 var Config = {
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
-  roomIdMap: RoomIdMap
+  roomIdMap: RoomIdMap,
+  programmeColors: ProgrammeColors
 }
 
 module.exports = Config;

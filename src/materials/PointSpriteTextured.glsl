@@ -53,6 +53,8 @@ void main() {
   texCoord += texOffset;
 
   gl_FragColor = texture2D(texture, texCoord);
+  gl_FragColor.rgb *= vColor.rgb;
+
   //gl_FragColor.rgb *= mix(1.0 - vColor.rgb, vColor.rgb, step(0.75, gl_FragColor.r));
   //gl_FragColor.a *= vColor.a;
   //gl_FragColor = vec4(step(0.75, gl_FragColor.r));

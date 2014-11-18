@@ -1,6 +1,7 @@
 var R      = require('ramda');
 var graph  = require('../../graph');
 var random = require('pex-random');
+var config = require('../../config');
 
 function agentTargetNodeUpdaterSys(state) {
   //var selectedNodes = State.selectedNodes;
@@ -28,6 +29,13 @@ function agentTargetNodeUpdaterSys(state) {
           var studentAgent = studentAgentIdMap[student.id];
 
           if (!studentAgent) return;
+
+          if ( config.programmeColors[group.programme]) {
+            studentAgent.color = config.programmeColors[group.programme].primary;
+          }
+          else {
+            studentAgent.color = config.programmeColors.default.primary;
+          }
 
           var targetNode = random.element(activityLocationNodes);
           //targetNode = state.map.selectedNodes[0];
