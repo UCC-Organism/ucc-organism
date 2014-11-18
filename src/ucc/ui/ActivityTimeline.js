@@ -4,11 +4,13 @@ var Crayon        = require('../../crayons/crayons');
 var remap         = require('re-map');
 var moment        = require('moment');
 var R             = require('ramda');
+var Color         = require('pex-color').Color;
 var Texture2D     = glu.Texture2D;
 var ScreenImage   = glu.ScreenImage;
 var Context       = glu.Context;
 var Platform      = sys.Platform;
 var Time          = sys.Time;
+var config        = require('../../config');
 
 function updateTexture(texture, canvas) {
   var gl = Context.currentContext;
@@ -33,6 +35,8 @@ function ActivityTimeline(window, x, y, width, height) {
 }
 
 ActivityTimeline.prototype.drawActivities = function(state) {
+  if (!state.groups) return;
+
   var activities = state.activities.all;
   var activtiesStart = activities[0].start;
   var activtiesEnd = activities[activities.length-1].end;
@@ -42,16 +46,30 @@ ActivityTimeline.prototype.drawActivities = function(state) {
 
   var activeColor = [255, 0, 0, 255];
   var incactiveColor = [ 150, 0, 0, 255];
+  var missingGroups = [];
 
   for(var i=0; i<activities.length; i++) {
     var activity = activities[i];
 
-    if (activity.startTime <= state.currentTime && activity.endTime >= state.currentTime) {
-      this.crayon.fill(activeColor);
+    var groupId = activity.groups[0];
+    var groupColor = Color.White.clone();
+
+    if (state.groups.byId[groupId]) {
+      var group = state.groups.byId[groupId];
+      groupColor = config.programmeColors[group.programme].primary.clone();
     }
     else {
-      this.crayon.fill(incactiveColor);
+      missingGroups.push(groupId);
     }
+
+    if (activity.startTime <= state.currentTime && activity.endTime >= state.currentTime) {
+      groupColor.a = 1;
+    }
+    else {
+      groupColor.a = 0.70;
+    }
+
+    this.crayon.fill([255 * groupColor.r, 255 * groupColor.g, 255 * groupColor.b, 255 * groupColor.a]);
 
     var location = activity.locations[0];
 
@@ -60,7 +78,7 @@ ActivityTimeline.prototype.drawActivities = function(state) {
     var s = remap(activity.startTime, activtiesStartTime, activtiesEndTime, 0, this.canvas.width);
     var e = remap(activity.endTime, activtiesStartTime, activtiesEndTime, 0, this.canvas.width);
     var y = 10 * dpi + locationIndex * 3 * dpi;
-    this.crayon.rect(s, y, e - s - 2, 2 * dpi);
+    this.crayon.rect(s, y, e - s, 2 * dpi);
   }
 
   var startDate = moment(activtiesStart).format("MMM Do");
@@ -68,6 +86,9 @@ ActivityTimeline.prototype.drawActivities = function(state) {
 
   this.crayon.fill([255, 255, 255, 255]).font("Arial", 16 * dpi).text(startDate, 10 * dpi, this.canvas.height - 12 * dpi)
   this.crayon.fill([255, 255, 255, 255]).font("Arial", 16 * dpi).text(endDate, this.canvas.width - 100 * dpi, this.canvas.height - 12 * dpi)
+
+  missingGroups = R.uniq(missingGroups);
+  console.log('missingGroups', missingGroups.length, "[" + missingGroups + "]");
 }
 
 ActivityTimeline.prototype.updateTime = function(state) {

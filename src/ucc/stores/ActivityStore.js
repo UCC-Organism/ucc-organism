@@ -2,6 +2,10 @@ var IOUtils = require('../../sys/IOUtils');
 var Promise = require('bluebird');
 var Config  = require('../../config');
 var R       = require('ramda');
+var moment  = require('moment');
+
+var weekStart = moment().day(1).hours(0).minutes(0).seconds(0).toDate().getTime(); //prev monday
+var weekEnd   = moment().day(8).hours(0).minutes(0).seconds(0).toDate().getTime(); //next monday
 
 var ActivityStore = {
   all: [],
@@ -15,7 +19,14 @@ var ActivityStore = {
     return IOUtils.loadJSON(Config.dataPath + '/static/activities_bundle.json')
       .then(function(activities) {
 
-        this.all = activities;
+        this.all = activities.filter(function(activity) {
+          return activity.startTime >= weekStart && activity.endTime <= weekEnd;
+        })
+
+        this.all.sort(function(a, b) {
+          return a.startTime - b.startTime;
+        })
+
 
         //remap room names to cleaner id's
         activities.forEach(function(activity) {
@@ -51,6 +62,7 @@ var ActivityStore = {
           )
         );
 
+        console.log('ActivityStore.init', this.all[0].start, R.last(this.all).end);
         console.log('ActivityStore.init activities:' + this.all.length + ' locations:' + this.locations.length + ' teachers:' + this.teachers.length + ' groups:' + this.groups.length);
         return this;
       }.bind(this));

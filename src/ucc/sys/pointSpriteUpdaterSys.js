@@ -2,6 +2,7 @@ var R                   = require('ramda');
 var geom                = require('pex-geom');
 var glu                 = require('pex-glu');
 var random              = require('pex-random');
+var sys                 = require('pex-sys');
 
 var PointSpriteTextured = require('../../materials/PointSpriteTextured')
 
@@ -9,17 +10,18 @@ var Geometry            = geom.Geometry;
 var Vec3                = geom.Vec3;
 var Texture2D           = glu.Texture2D;
 var Mesh                = glu.Mesh;
+var Platform            = sys.Platform;
 
 function pointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
+    var image = Platform.isPlask ? '../assets/B1.png' : 'assets/B1.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true });
-    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 20 * state.DPI, texture: Texture2D.load('../assets/B1.png') });
+    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 15 * state.DPI, texture: Texture2D.load(image) });
     state.pointSpriteMeshEntity = {
       mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }
     state.entities.push(state.pointSpriteMeshEntity);
   }
-
 
   var entitiesWithPointSprite = R.filter(R.where({ pointSize: R.identity }), state.entities);
 

@@ -23,6 +23,9 @@ var GroupStore        = require('./ucc/stores/GroupStore');
 //UI
 var ActivityTimeline  = require('./ucc/ui/ActivityTimeline');
 
+//Config
+var config            = require('./config');
+
 var Platform          = sys.Platform;
 var Time              = sys.Time;
 var PerspectiveCamera = glu.PerspectiveCamera;
@@ -74,7 +77,7 @@ var state = {
   //bgColor: Color.fromHSV(0.4, 0.85, 0.6),
   //bgColor: Color.Black,
   camera: null,
-  cameraPosZ: 0.40,
+  cameraPosZ: 0.80,
   arcball: null,
 
   //entities
@@ -85,12 +88,12 @@ var state = {
 
   //map config
   minNodeDistance: 0.001,
-  maxAgentCount: 1,
+  maxAgentCount: Platform.isPlask ? 100 : 500,
 
   //state
   currentTime: 0,
-  timeSpeed: 0,//60 * 60 * 5,
-  agentSpeed: 0, //0.02,
+  timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
+  agentSpeed: Platform.isPlask ? 0 : 0.02,
   debug: true,
   clearBg: true,
 
@@ -134,6 +137,12 @@ sys.Window.create({
     this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
     this.gui.addParam('Color', state, 'bgColor');
+
+    Object.keys(config.programmeColors).forEach(function(programme) {
+      if (programme != 'default') {
+        this.gui.addParam(programme.substr(0, 12) + '...', config.programmeColors[programme], 'primary', { readonly: true });
+      }
+    }.bind(this))
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
   },

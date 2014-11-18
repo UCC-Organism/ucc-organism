@@ -14,13 +14,25 @@ function spawnStudents(state, agents) {
 
   if (state.verbose) console.log('spawnStudents', 'aliveStudentsIds:', aliveStudentsIds.length, 'currentStudentsIds:', currentStudentsIds.length, 'studentsToSpawn:', studentsToSpawn.length);
 
+  var stairsNodes = state.map.selectedNodes.filter(function(node) {
+    return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
+      return sameFloorSoFar && (neighborNode.floor == node.floor);
+    }, true)
+  });
+
+  stairsNodes = stairsNodes.filter(R.where({floor:1}));
+
+  if (!stairsNodes.length) return;
+
+  studentsToSpawn = studentsToSpawn.slice(0, 10)
+
   studentsToSpawn.forEach(function(studentId) {
-    var position = random.element(state.map.selectedNodes).position;
+    var position = random.element(stairsNodes).position;
     var color = Color.Red;
 
     if (aliveStudentAgents.length < state.maxAgentCount) {
       var studentAgent = {
-        pointSize: 5,
+        pointSize: 3,
         agent: true,
         position: position.dup(),
         prevPosition: position.dup(),
