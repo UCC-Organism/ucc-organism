@@ -130,7 +130,8 @@ sys.Window.create({
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
-    this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 100, step: 1 });
+    this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 500, step: 1 });
+    this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
     this.gui.addParam('Color', state, 'bgColor');
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
@@ -257,7 +258,7 @@ sys.Window.create({
       agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
-      agentDebugInfoUpdaterSys(state);
+      //agentDebugInfoUpdaterSys(state);
       pointSpriteUpdaterSys(state);
 
       //glu.enableDepthReadAndWrite(false);

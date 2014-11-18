@@ -18,6 +18,9 @@ function agentTargetNodeUpdaterSys(state) {
   });
 
   state.activities.current.forEach(function(activity) {
+    var location = activity.locations[0];
+    if (!location) return;
+    var activityLocationNodes = state.map.nodes.filter(R.where({ room: location }));
     activity.groups.forEach(function(groupId) {
       var group = state.groups.byId[groupId];
         if (!group) return;
@@ -26,8 +29,8 @@ function agentTargetNodeUpdaterSys(state) {
 
           if (!studentAgent) return;
 
-          var targetNode = random.element(state.map.selectedNodes);
-          targetNode = state.map.selectedNodes[0];
+          var targetNode = random.element(activityLocationNodes);
+          //targetNode = state.map.selectedNodes[0];
           var closestNode = graph.findNearestNode(state.map.selectedNodes, studentAgent.position);
           var path = graph.findShortestPath(closestNode, targetNode);
 
@@ -58,7 +61,7 @@ function agentTargetNodeUpdaterSys(state) {
         agentEntity.targetNode = agentEntity.targetNodeList.shift();
       }
       else {
-        //agentEntity.targetNode = null;
+        agentEntity.targetNode = null;
       }
     }
   })
