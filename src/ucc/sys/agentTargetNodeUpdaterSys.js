@@ -42,16 +42,29 @@ function agentTargetNodeUpdaterSys(state) {
           else {
             studentAgent.targetNodeList = path;
             studentAgent.targetNode = studentAgent.targetNodeList.shift();
-            var pathids = path.map(R.prop('id')).sort();
-            for(var i=0; i<pathids.length-1; i++) {
-              if (pathids[i] == pathids[i+1]) console.log('invalid path', pathids)
-            }
           }
 
         })
     })
   })
 
+  //agents with nothing to do anymore, they should go out and dissapear
+  var studentAgentsWithNoTarget2 = agents.filter(R.not(R.prop('targetNode')));
+  studentAgentsWithNoTarget2.forEach(function(agent) {
+    targetNode = state.map.selectedNodes[0];
+    var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
+    var path = graph.findShortestPath(closestNode, targetNode);
+
+    if (!path) {
+      //No path found, try next time
+      agent.targetNodeList = [];
+      agent.targetNode = null;
+    }
+    else {
+      agent.targetNodeList = path;
+      agent.targetNode = agent.targetNodeList.shift();
+    }
+  })
 
   var agentsWithTarget = agents.filter(R.prop('targetNode'));
   agentsWithTarget.forEach(function(agentEntity) {

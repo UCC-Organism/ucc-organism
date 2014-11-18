@@ -91,7 +91,8 @@ var state = {
   currentTime: 0,
   timeSpeed: 0,//60 * 60 * 5,
   agentSpeed: 0, //0.02,
-  debug: true
+  debug: true,
+  clearBg: true,
 
   //graph: null,
   //nodes: [],
@@ -193,6 +194,7 @@ sys.Window.create({
       switch(e.str) {
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
+        case 'c': state.clearBg = !state.clearBg; break;
         case ' ': this.killAllAgents(); break;
       }
       switch(e.keyCode) {
@@ -251,7 +253,7 @@ sys.Window.create({
   draw: function() {
     this.update();
 
-    glu.clearColorAndDepth(state.bgColor);
+    if (state.clearBg) glu.clearColorAndDepth(state.bgColor);
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
