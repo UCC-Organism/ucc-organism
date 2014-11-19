@@ -47,6 +47,7 @@ ActivityTimeline.prototype.drawActivities = function(state) {
   var activeColor = [255, 0, 0, 255];
   var incactiveColor = [ 150, 0, 0, 255];
   var missingGroups = [];
+  var missingProgrammes = [];
 
   for(var i=0; i<activities.length; i++) {
     var activity = activities[i];
@@ -56,7 +57,13 @@ ActivityTimeline.prototype.drawActivities = function(state) {
 
     if (state.groups.byId[groupId]) {
       var group = state.groups.byId[groupId];
-      groupColor = config.programmeColors[group.programme].primary.clone();
+      if (config.programmeColors[group.programme]) {
+        groupColor = config.programmeColors[group.programme].primary.clone();
+      }
+      else {
+        missingProgrammes.push(group.programme);
+        groupColor = Color.White.clone();
+      }
     }
     else {
       missingGroups.push(groupId);
@@ -69,7 +76,7 @@ ActivityTimeline.prototype.drawActivities = function(state) {
       groupColor.a = 0.70;
     }
 
-    this.crayon.fill([255 * groupColor.r, 255 * groupColor.g, 255 * groupColor.b, 255 * groupColor.a]);
+    this.crayon.fill([Math.floor(255 * groupColor.r), Math.floor(255 * groupColor.g), Math.floor(255 * groupColor.b), Math.floor(255 * groupColor.a)]);
 
     var location = activity.locations[0];
 
@@ -88,7 +95,9 @@ ActivityTimeline.prototype.drawActivities = function(state) {
   this.crayon.fill([255, 255, 255, 255]).font("Arial", 16 * dpi).text(endDate, this.canvas.width - 100 * dpi, this.canvas.height - 12 * dpi)
 
   missingGroups = R.uniq(missingGroups);
-  console.log('missingGroups', missingGroups.length, "[" + missingGroups + "]");
+  missingProgrammes = R.uniq(missingProgrammes);
+  if (state.verbose) console.log('missingGroups', missingGroups.length, "[" + missingGroups + "]");
+  if (state.verbose) console.log('missingProgrammes', missingProgrammes.length, "[" + missingProgrammes + "]");
 }
 
 ActivityTimeline.prototype.updateTime = function(state) {

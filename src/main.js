@@ -140,7 +140,7 @@ sys.Window.create({
 
     Object.keys(config.programmeColors).forEach(function(programme) {
       if (programme != 'default') {
-        this.gui.addParam(programme.substr(0, 12) + '...', config.programmeColors[programme], 'primary', { readonly: true });
+        this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this))
 

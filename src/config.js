@@ -22,11 +22,15 @@ var RoomIdMap = {
 }
 
 var ProgrammeColors = {
-  'default'                        : { primary: Color.fromHSL(0.0, 0, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
-  'SPL - Sygeplejerskeuddannelsen' : { primary: Color.fromHSL(0.0, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
-  'PMU - Psykomotorikuddannelsen'  : { primary: Color.fromHSL(0.1, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
-  'FYS - Fysioterapeutuddannelsen' : { primary: Color.fromHSL(0.4, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) },
-  'PÆD - Pædagoguddannelsen'       : { primary: Color.fromHSL(0.6, 1, 0.5), secondary: Color.fromHSL(0, 1, 0.4) }
+  'default'                               : { primary: Color.fromHSL(0.0, 0, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'SPL - Sygeplejerskeuddannelsen'        : { primary: Color.fromHSL(0.0, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'PMU - Psykomotorikuddannelsen'         : { primary: Color.fromHSL(0.1, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'FYS - Fysioterapeutuddannelsen'        : { primary: Color.fromHSL(0.4, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'PÆD - Pædagoguddannelsen'              : { primary: Color.fromHSL(0.6, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'SOC - Socialrådgiveruddannelsen'       : { primary: Color.fromHSL(0.2, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'DIV - Diverse aktiviteter'             : { primary: Color.fromHSL(0.9, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'Diplom S - Diplomuddannelse - Sundhed' : { primary: Color.fromHSL(0.75, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) }
 }
 
 var Config = {
