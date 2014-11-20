@@ -27,10 +27,16 @@ var LineBuilder       = gen.LineBuilder;
 
 var EPSILON = 0.001;
 
-
 var MapSys = {
   ready: false
 };
+
+function makeMapMeshEntity(state, vertices, color) {
+  var g = new Geometry({ vertices: vertices });
+  var mesh = new Mesh(g, new SolidColor({ pointSize: 2, color: color }), { lines: true });
+
+  state.entities.push({ map: true, debug: true, mesh: mesh });
+}
 
 function removeMapEntities(state) {
   //remove existing map meshes
@@ -41,21 +47,20 @@ function removeMapEntities(state) {
   });
 }
 
-function rebuildMap(state) {
-  var nodes = state.map.nodes;
-  var selectedNodes = state.map.selectedNodes;
-  var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
-  var entranceNodes = selectedNodes.filter(R.pipe(R.prop('neighbors'), R.prop('length'), R.rPartial(R.eq, 1)));
-  var stairsNodes = selectedNodes.filter(function(node) {
-    return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
-      return sameFloorSoFar && (neighborNode.floor == node.floor);
-    }, true)
-  });
+function rebuildCorridorNodes(state) {
+  var corridorNodes = state.map.selectedNodes.filter(R.where({ room: R.not(R.identity) }));
 
-  var pointVertices = selectedNodes.map(R.prop('position'));
-  var roomVertices = selectedNodes.filter(R.where({ room: R.identity }));
-  var entrancePointVertices = entranceNodes.map(R.prop('position'));
-  var stairsPointVertices = stairsNodes.map(R.prop('position'));
+  var corridorEdgeVertices = R.flatten(corridorNodes.map(function(node) {
+    return node.neighbors.map(function(neighborNode) {
+      return [ node.position, neighborNode.position ];
+    })
+  }));
+
+  makeMapMeshEntity(state, corridorEdgeVertices, Color.DarkGrey);
+}
+
+function rebuildRooms(state) {
+  var roomVertices = state.map.selectedNodes.filter(R.where({ room: R.identity }));
 
   var roomEdgeVertices = R.flatten(roomVertices.map(function(node) {
     return node.neighbors.filter(R.where({ room: R.identity })).map(function(neighborNode) {
@@ -63,13 +68,50 @@ function rebuildMap(state) {
     })
   }));
 
+  makeMapMeshEntity(state, roomEdgeVertices, Color.Cyan);
+}
+
+function rebuildBoundingBox(state) {
+  var pointVertices = state.map.selectedNodes.map(R.prop('position'));
+  var floorBBox = BoundingBox.fromPoints(pointVertices);
+
+  var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
+
+  state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+
+  return floorBBox;
+}
+
+function centerCamera(state, floorBBox) {
+  var target = floorBBox.getCenter();
+  var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
+  state.camera.setUp(new Vec3(0, 0, -1));
+  state.arcball.setPosition(position);
+  state.arcball.setTarget(target);
+}
+
+function rebuildMap(state) {
+  removeMapEntities(state);
+  rebuildCorridorNodes(state);
+  rebuildRooms(state);
+  var floorBBox = rebuildBoundingBox(state);
+  centerCamera(state, floorBBox);
+
+  return;
+
+  var selectedNodes = state.map.selectedNodes;
+  var entranceNodes = selectedNodes.filter(R.pipe(R.prop('neighbors'), R.prop('length'), R.rPartial(R.eq, 1)));
+  
+
+  var pointVertices = selectedNodes.map(R.prop('position'));
+  var entrancePointVertices = entranceNodes.map(R.prop('position'));
+  var stairsPointVertices = stairsNodes.map(R.prop('position'));
+
+ 
+
   var roomVertexGroups = fn.groupBy(roomVertices, 'room');
 
-  var corridorEdgeVertices = R.flatten(corridorNodes.map(function(node) {
-    return node.neighbors.map(function(neighborNode) {
-      return [ node.position, neighborNode.position ];
-    })
-  }));
+  
 
   var mapPointsGeometry = new Geometry({ vertices: pointVertices });
   var mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColor({ pointSize: 5, color: Color.Red }), { points: true });
@@ -80,24 +122,22 @@ function rebuildMap(state) {
   var starisPointsGeometry = new Geometry({ vertices: stairsPointVertices });
   var starisPointsMesh = new Mesh(starisPointsGeometry, new SolidColor({ pointSize: 10, color: Color.Orange }), { points: true });
 
-  var roomEdgesGeometry = new Geometry({ vertices: roomEdgeVertices });
-  var roomEdgesMesh = new Mesh(roomEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
+  
 
-  var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.DarkGrey }), { lines: true });
+  
 
-  var floorBBox = BoundingBox.fromPoints(pointVertices);
-  var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
+  //var floorBBox = BoundingBox.fromPoints(pointVertices);
+  //var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
 
-  removeMapEntities(state);
+  
 
   //add new entities
   //state.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
   //state.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
   state.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
-  state.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
-  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-  state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+  
+  
+  
 
   Object.keys(roomVertexGroups).forEach(function(roomId) {
     var roomVertices = roomVertexGroups[roomId];
@@ -113,11 +153,7 @@ function rebuildMap(state) {
   })
 
   //center camera on the new floor
-  var target = floorBBox.getCenter();
-  var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
-  state.camera.setUp(new Vec3(0, 0, -1));
-  state.arcball.setPosition(position);
-  state.arcball.setTarget(target);
+  
 
   rebuildCells(state);
 }
@@ -256,7 +292,7 @@ function rebuildCells(state) {
           g = c.dup();
           g.x += random.float(-d/2, d/2);
           g.y += random.float(-d/2, d/2);
-          points.push(g);
+          //points.push(g);
         }
       }
     }
