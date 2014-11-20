@@ -7,10 +7,17 @@ var debugFilter = function(debugMode) {
   }
 }
 
+var bioFilter = function(bioMode) {
+  return function(o) {
+    if (typeof o.bio == 'undefined') return true;
+    else return o.bio == bioMode;
+  }
+}
+
 function meshRendererSys(state) {
   var camera = state.camera;
 
-  var visibleEntities = state.entities.filter(debugFilter(state.debug));
+  var visibleEntities = state.entities.filter(debugFilter(state.debug)).filter(bioFilter(state.bio));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
   entitiesWithMesh.forEach(function(entity) {

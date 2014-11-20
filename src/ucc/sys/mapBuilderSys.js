@@ -145,7 +145,7 @@ function rebuildMap(state) {
   //var roomMesh = new Mesh(roomGeometry, new SolidColor({ color: Color.Red }));
   //state.entities.push({ map: true, debug: true, mesh: roomMesh });
 
-  //rebuildCells(state);
+  rebuildCells(state);
   //this.rebuildCorridors();
 }
 
@@ -411,11 +411,11 @@ function rebuildCells(state) {
   var blobsMesh = new Mesh(blobsGeometry, new ShowColors(), { faces: true });
   var roomCellsMesh = new Mesh(roomCellsGeometry, new ShowColors(), { faces: true });
 
-  state.entities.push({ map: true, mesh: edgeMesh });
-  state.entities.push({ map: true, mesh: blobsMesh });
-  state.entities.push({ map: true, mesh: roomCellsMesh });
+  state.entities.push({ map: true, bio: true, mesh: edgeMesh });
+  state.entities.push({ map: true, bio: true, mesh: blobsMesh });
+  state.entities.push({ map: true, bio: true, mesh: roomCellsMesh });
   //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
-  state.entities.push({ map: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
+  state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
 }
 

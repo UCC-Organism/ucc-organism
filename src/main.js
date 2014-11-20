@@ -95,6 +95,7 @@ var state = {
   timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
   agentSpeed: Platform.isPlask ? 0 : 0.02,
   debug: true,
+  bio: true,
   clearBg: true,
 
   //graph: null,
@@ -203,6 +204,7 @@ sys.Window.create({
       switch(e.str) {
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
+        case 'b': state.bio = !state.bio; break;
         case 'c': state.clearBg = !state.clearBg; break;
         case ' ': this.killAllAgents(); break;
       }
