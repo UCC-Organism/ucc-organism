@@ -168,6 +168,7 @@ sys.Window.create({
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
+    this.gui.addParam('Animate cells', state, 'animateCells', false);
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
     this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
