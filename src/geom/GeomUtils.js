@@ -119,7 +119,11 @@ GeomUtils.resampleLine = function(a, b, options) {
   }
 }
 
-GeomUtils.center3 = function(points) {
+//Alternative centroid implementation (slower)
+//  return points.reduce(function(center, p) {
+//    return center.add(p);
+//  }, new Vec3(0, 0, 0)).scale(1/points.length);
+GeomUtils.centroid = function(points) {
   var sum = new Vec3(0, 0, 0);
   for(var i=0; i<points.length; i++) {
     sum.add(points[i]);

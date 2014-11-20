@@ -4,6 +4,7 @@ var glu               = require('pex-glu');
 var random            = require('pex-random');
 var color             = require('pex-color');
 var gui               = require('pex-gui');
+var random            = require('pex-random');
 var R                 = require('ramda');
 
 //CES
@@ -77,7 +78,7 @@ var state = {
   //bgColor: Color.fromHSV(0.4, 0.85, 0.6),
   //bgColor: Color.Black,
   camera: null,
-  cameraPosZ: 0.80,
+  cameraPosZ: 0.40,
   arcball: null,
 
   //entities
@@ -97,9 +98,10 @@ var state = {
   debug: true,
   bio: true,
   clearBg: true,
+  animateCells: false,
 
   //ui
-  showSchedule: false
+  showSchedule: false,
 
   //graph: null,
   //nodes: [],
@@ -113,7 +115,35 @@ var state = {
   //maxNumAgents: 100,
   //debug: false,
   //
+
+  selectedRooms: {
+    'A.004': 1,
+    'Stu01': 1,
+    'S': 1,
+    'room_1': 1,
+    'room_2': 1,
+    'room_3': 1,
+    'room_9': 1,
+    'room_10': 1,
+    'room_11': 1,
+    'room_12': 1,
+    'TA03': 1,
+    'room_13': 1,
+    'room_14': 1,
+    'room_15': 1,
+    'room_16': 1,
+    'TA01': 1,
+    'TA02': 1,
+    'room_17': 1,
+    'room_18': 1,
+    'room_19': 1,
+    'room_20': 1,
+    'room_21': 1,
+    'room_22': 1
+  }
 };
+
+
 
 sys.Window.create({
   settings: {
@@ -148,6 +178,11 @@ sys.Window.create({
         this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this))
+
+    this.gui.addLabel('Rooms').setPosition(180, 20);
+    Object.keys(state.selectedRooms).forEach(function(roomId) {
+      this.gui.addParam(roomId, state.selectedRooms, roomId, { min: 0, max: 1 });
+    }.bind(this));
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
   },
@@ -208,6 +243,7 @@ sys.Window.create({
       switch(e.str) {
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
+        case 'g': this.gui.enabled = !this.gui.enabled; break;
         case 'b': state.bio = !state.bio; break;
         case 'c': state.clearBg = !state.clearBg; break;
         case ' ': this.killAllAgents(); break;
@@ -232,8 +268,18 @@ sys.Window.create({
   //    state.uiTexture.update(state.canvas);
   //  }
   //},
+  updateFake: function() {
+    if (state.animateCells) {
+      Object.keys(state.selectedRooms).forEach(function(roomId, roomIndex) {
+        random.seed(roomIndex);
+        state.selectedRooms[roomId] = 0.75 + 0.5 * Math.cos(Time.seconds + random.float(0, Math.PI * 2));
+      })
+    }
+  },
   update: function() {
     var verbose = false;
+
+    this.updateFake();
 
     //this.updateUI();
 

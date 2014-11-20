@@ -47,6 +47,21 @@ function vec2to3(v) {
 
 //-----------------------------------------------------------------------------
 
+function PointSet3() {
+  this.points = [];
+}
+
+PointSet3.prototype.add = function(v) {
+  for(var i=0; i<this.points.length; i++) {
+    var p = this.points[i];
+    if (p.distance(v) < EPSILON) return p;
+  }
+  this.points.push(v);
+  return v;
+}
+
+//-----------------------------------------------------------------------------
+
 function pointsToMesh(points, color) {
   color = color || Color.White;
   var lineBuilder = new LineBuilder();
@@ -208,20 +223,39 @@ function orderEdges(edges) {
 
 //-----------------------------------------------------------------------------
 
-function centroid(points) {
-  return points.reduce(function(center, p) {
-    return center.add(p);
-  }, new Vec3(0, 0, 0)).scale(1/points.length);
-}
-
-//-----------------------------------------------------------------------------
-
 function getRoomsCenters(cellGroups) {
   return Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
     var cellNodes = cellGroups[roomId];
     var cellPoints = cellNodes.map(R.prop('position'));
-    return centroid(cellPoints);
+    return GeomUtils.centroid(cellPoints);
   });
+}
+
+//-----------------------------------------------------------------------------
+
+function closestPoint(points, p) {
+  var best = points.reduce(function(best, node, nodeIndex) {
+    var dist = node.squareDistance(p);
+    if (dist < best.distance) {
+      best.node = node;
+      best.index = nodeIndex;
+      best.distance = dist;
+    }
+    return best;
+  }, { index: -1, distance: Infinity, node: null });
+
+  return best.node;
+}
+
+//-----------------------------------------------------------------------------
+
+function makeSpring(start, end) {
+  return {
+    start: start,
+    end: end,
+    startBase: start.dup(),
+    length: start.squareDistance(end)
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -258,10 +292,47 @@ function rebuildCells(state) {
   var points2D = points.map(vec3to2);
 
   var cells = voronoi(points2D);
-  var cellPoints2 = R.flatten(cells);
 
-  //state.entities.push({ map: true, mesh: pointsToMesh(points) });
-  var cellPoints3 = cellPoints2.map(vec2to3).map(function(p) { p.z = points[0].z; return p; })
+  var uniquePoints = new PointSet3();
+  cells = cells.map(function(cell, cellIndex) {
+    cell.forEach(function(edge) {
+      edge[0] = uniquePoints.add(vec2to3(edge[0]));
+      edge[1] = uniquePoints.add(vec2to3(edge[1]));
+      edge[0].roomIds = [];
+      edge[1].roomIds = [];
+      edge[0].basePos = edge[0].dup();
+      edge[1].basePos = edge[1].dup();
+    });
+
+    return orderEdges(cell);
+  });
+
+  var cellsRoomIds = cells.map(function(cell, cellIndex) {
+    var cellPoint = points[cellIndex];
+    var roomIndex = roomCenterPoints.indexOf(cellPoint);
+    if (roomIndex != -1) {
+      return Object.keys(cellGroups).filter(R.identity)[roomIndex];
+    }
+    return -1;
+  });
+
+  var edgesVertices = R.flatten(cells);
+  var edgesEdges = R.unnest(cells.map(function(cell, cellIndex) {
+    return cell.map(function(edge) {
+      var a = edge[0];
+      var b = edge[1];
+      a.roomIds.push(cellsRoomIds[cellIndex])
+      b.roomIds.push(cellsRoomIds[cellIndex])
+      return [edgesVertices.indexOf(a), edgesVertices.indexOf(b)]
+    });
+  }));
+
+  //voronoi edges / corridors
+
+  var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
+  state.entities.push({ map: true, bio: true, mesh: edgeMesh });
+
+  //cell blobs
 
   var blobsGeometry = new Geometry({ vertices: true, colors: true, faces: true });
   var vertices = blobsGeometry.vertices;
@@ -274,48 +345,13 @@ function rebuildCells(state) {
   var roomCellsColors = roomCellsGeometry.colors;
 
   var lineBuilder = new LineBuilder();
+
+  var springs = [];
+
   cells.forEach(function(cell, cellIndex) {
-    //if (cellIndex > 0) return;
-    var start = vec2to3(cell[0][0]);
-    var end = vec2to3(cell[cell.length-1][1]);
-    var dist = start.distance(end);
-
-    cell.forEach(function(edge) {
-      edge[0] = vec2to3(edge[0]);
-      edge[1] = vec2to3(edge[1]);
-    })
-
-    cell = orderEdges(cell);
-
-    var isRoom = false;
-    var roomId;
-    var isEdgeCell = false;
-
-    var cellPoint = points[cellIndex];
-    var roomIndex = roomCenterPoints.indexOf(cellPoint);
-    if (roomIndex != -1) {
-      isRoom = true;
-      roomId = Object.keys(cellGroups).filter(R.identity)[roomIndex];
-    }
-
-    if (cell[0][0].distance(cell[cell.length-1][1]) > 0.001) {
-      //return;
-      isEdgeCell = true;
-    }
-
-    //var cellColor = room ? Color.fromHSV(0.2, 0.9, 0.5, 0.1) : Color.fromHSV(0.5, 0.8, 0.3, 0.1);
-    //var cellColorEdge = room ? Color.fromHSV(0.2, 0.9, 0.4, 1) : Color.fromHSV(0.5, 0.8, 0.4, 1);
-    var cellColorEdge = isEdgeCell ? Color.fromHSV(0.5, 0.8, 0.4, 0.1) : Color.fromHSV(0.5, 0.8, 0.4, 1);
+    var isRoom = cellsRoomIds[cellIndex] != -1;
+    var cellColorEdge = Color.fromHSV(0.5, 0.8, 0.4, 0.5);
     var cellColor = isRoom ? Color.fromHSV(0.2, 0.2, 0.9, 0.2) : Color.fromHSV(0.5, 0.2, 0.9, 0.03);
-
-    cell.forEach(function(edge, edgeIndex) {
-      //if (edgeIndex > 0) return;
-      var a = (edge[0]);
-      a.z = points[0].z;
-      var b = (edge[1]);
-      b.z = points[0].z;
-      lineBuilder.addLine(a, b, Color.fromHSV(0.4, 0.2, 0.9));
-    })
 
     cell = R.flatten(cell);
     var uniquePoints = cell.filter(function(p, i) {
@@ -325,7 +361,7 @@ function rebuildCells(state) {
 
     var splinePoints = GeomUtils.smoothCurve(uniquePoints, 0.9, 3);
 
-    var center = GeomUtils.center3(splinePoints);
+    var center = GeomUtils.centroid(splinePoints);
 
     var cellCloseness = 0.2;
 
@@ -334,6 +370,16 @@ function rebuildCells(state) {
       var np = splinePoints[(i+1)%splinePoints.length];
       var p2 = p.dup().add(center.dup().sub(p).scale(cellCloseness));
       var np2 = np.dup().add(center.dup().sub(np).scale(cellCloseness));
+      p2.cellIndex = cellIndex;
+      np2.cellIndex = cellIndex;
+      center.cellIndex = cellIndex;
+      p2.basePos = p2.dup()
+      np2.basePos = np2.dup();
+      center.basePos = center.dup();
+      springs.push(makeSpring(p2, closestPoint(uniquePoints, p2)));
+      springs.push(makeSpring(np2, closestPoint(uniquePoints, np2)));
+      springs.push(makeSpring(center, closestPoint(uniquePoints, center)));
+
       if (isRoom) {
         var n = roomCellsVertices.length;
         roomCellsVertices.push(p2);
@@ -355,21 +401,104 @@ function rebuildCells(state) {
         faces.push([n, n+1, n+2]);
       }
       lineBuilder.addLine(p2, np2, cellColorEdge);
+      var a = lineBuilder.vertices[lineBuilder.vertices.length-1];
+      var b = lineBuilder.vertices[lineBuilder.vertices.length-2];
+      springs.push(makeSpring(a, closestPoint(uniquePoints, a)));
+      springs.push(makeSpring(b, closestPoint(uniquePoints, b)));
     }
 
     //lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
   })
 
-  var edgeMesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
+
+  var blobEdgeMesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
   var blobsMesh = new Mesh(blobsGeometry, new ShowColors(), { faces: true });
   var roomCellsMesh = new Mesh(roomCellsGeometry, new ShowColors(), { faces: true });
 
-  state.entities.push({ map: true, bio: true, mesh: edgeMesh });
-  state.entities.push({ map: true, bio: true, mesh: blobsMesh });
+  state.entities.push({ name: 'blobEdgeMesh', map: true, bio: true, mesh: blobEdgeMesh });
+  state.entities.push({ name: 'blobsMesh', map: true, bio: true, mesh: blobsMesh });
   state.entities.push({ map: true, bio: true, mesh: roomCellsMesh });
   //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
-  state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
+  //state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
+
+  MapSys.edgeMesh = edgeMesh;
+  MapSys.roomCellsMesh = roomCellsMesh;
+  MapSys.blobsMesh = blobsMesh;
+  MapSys.blobEdgeMesh = blobEdgeMesh;
+  MapSys.cells = cells;
+  MapSys.points = points;
+  MapSys.cellsRoomIds = cellsRoomIds;
+  MapSys.roomCenterPoints = roomCenterPoints;
+  MapSys.springs = springs;
+
+  console.log(roomCellsVertices.filter(function(v) {
+    return v.roomId == 'A.004';
+  }).length);
+}
+
+//-----------------------------------------------------------------------------
+
+function updateMap(state) {
+  var count = 0;
+  var roomValue;
+  for(var i=0; i<MapSys.cells.length; i++) {
+    var cell = MapSys.cells[i];
+    var cellPoint = MapSys.points[i];
+    var roomId = MapSys.cellsRoomIds[i];
+    if (roomId != -1) {
+      roomValue = state.selectedRooms[roomId];
+      //if (roomValue != 0) console.log(i, roomId, roomValue)
+      if (roomValue !== undefined) {
+        for(var j=0; j<cell.length; j++) {
+          var edge = cell[j];
+          edge[0].setVec3(edge[0].basePos).lerp(cellPoint, 1.0 - roomValue);
+          edge[1].setVec3(edge[1].basePos).lerp(cellPoint, 1.0 - roomValue);
+        }
+      }
+    }
+  }
+  MapSys.edgeMesh.geometry.vertices.dirty = true;
+
+  for(var i=0; i<MapSys.springs.length; i++) {
+    var spring = MapSys.springs[i];
+    if (spring.start.squareDistance(spring.end) > spring.length) {
+      spring.start.lerp(spring.end, 0.1);
+    }
+    else {
+      spring.start.lerp(spring.startBase, 0.1);
+    }
+  }
+
+  MapSys.roomCellsMesh.geometry.vertices.dirty = true;
+  MapSys.blobEdgeMesh.geometry.vertices.dirty = true;
+  /*
+  for(var i=0; i<MapSys.roomCellsMesh.geometry.vertices.length; i++) {
+    var v = MapSys.roomCellsMesh.geometry.vertices[i];
+
+    var roomId = MapSys.cellsRoomIds[v.cellIndex];
+    if (roomId != -1) {
+      roomValue = state.selectedRooms[roomId];
+      if (roomValue !== undefined) {
+        v.setVec3(v.basePos).lerp(MapSys.points[v.cellIndex], 1.0 - roomValue);
+      }
+    }
+  }
+  
+
+  for(var i=0; i<MapSys.blobEdgeMesh.geometry.vertices.length; i++) {
+    var v = MapSys.blobEdgeMesh.geometry.vertices[i];
+
+    var roomId = MapSys.cellsRoomIds[v.cellIndex];
+    if (roomId != -1) {
+      roomValue = state.selectedRooms[roomId];
+      if (roomValue !== undefined) {
+        v.setVec3(v.basePos).lerp(MapSys.points[v.cellIndex], 1.0 - roomValue);
+      }
+    }
+  }
+  
+  */
 }
 
 //-----------------------------------------------------------------------------
@@ -383,6 +512,9 @@ function update(state) {
     MapSys.ready = true;
     state.map.dirty = false;
     rebuildMap(state);
+  }
+  else {
+    updateMap(state);
   }
 }
 
