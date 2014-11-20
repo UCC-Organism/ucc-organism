@@ -8,7 +8,7 @@ var R                 = require('ramda');
 
 //CES
 var meshRendererSys               = require('./ucc/sys/meshRendererSys');
-var mapBuilderSys                 = require('./ucc/sys/mapBuilderSys');
+var mapSys                 = require('./ucc/sys/mapSys');
 var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys');
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
@@ -98,6 +98,9 @@ var state = {
   bio: true,
   clearBg: true,
 
+  //ui
+  showSchedule: false
+
   //graph: null,
   //nodes: [],
   //selectedNodes: [],
@@ -134,6 +137,7 @@ sys.Window.create({
 
     this.gui = new GUI(this);
     this.gui.addLabel('UI');
+    this.gui.addParam('Show Schedule', state, 'showSchedule', false);
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
     this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
@@ -278,7 +282,7 @@ sys.Window.create({
       //glu.enableAlphaBlending(true);
 
       glu.enableAlphaBlending();
-      mapBuilderSys(state);
+      mapSys(state);
       meshRendererSys(state);
     }
 
@@ -286,6 +290,8 @@ sys.Window.create({
     //state.ui.draw();
 
     this.gui.draw();
-    this.activityTimeline.draw(state);
+    if (state.showSchedule) {
+      this.activityTimeline.draw(state);
+    }
   }
 });

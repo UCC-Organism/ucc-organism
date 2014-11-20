@@ -14,10 +14,20 @@ var bioFilter = function(bioMode) {
   }
 }
 
+var enabledFilter = function() {
+  return function(o) {
+    if (typeof o.enabled == 'undefined') return true;
+    else return o.enabled;
+  }
+}
+
 function meshRendererSys(state) {
   var camera = state.camera;
 
-  var visibleEntities = state.entities.filter(debugFilter(state.debug)).filter(bioFilter(state.bio));
+  var visibleEntities = state.entities
+    .filter(debugFilter(state.debug))
+    .filter(bioFilter(state.bio))
+    .filter(enabledFilter());
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
   entitiesWithMesh.forEach(function(entity) {

@@ -27,25 +27,21 @@ var LineBuilder       = gen.LineBuilder;
 
 var EPSILON = 0.001;
 
-function mapBuilderSys(state) {
-  if (!state.map.nodes.length) {
-    return;
-  }
 
-  if (!state.mapMesh) {
-    rebuildMap(state);
-  }
-  else {
-    updateMap(state);
-  }
+var MapSys = {
+  ready: false
+};
+
+function removeMapEntities(state) {
+  //remove existing map meshes
+  state.entities.filter(R.where({ map: true})).forEach(function(entity) {
+    entity.mesh.material.program.dispose();
+    entity.mesh.dispose();
+    state.entities.splice(state.entities.indexOf(entity), 1);
+  });
 }
 
-
-
 function rebuildMap(state) {
-
-  state.map.dirty = false;
-
   var nodes = state.map.nodes;
   var selectedNodes = state.map.selectedNodes;
   var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
@@ -93,20 +89,15 @@ function rebuildMap(state) {
   var floorBBox = BoundingBox.fromPoints(pointVertices);
   var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
 
-  //remove existing map meshes
-  state.entities.filter(R.where({ map: true})).forEach(function(entity) {
-    entity.mesh.material.program.dispose();
-    entity.mesh.dispose();
-    state.entities.splice(state.entities.indexOf(entity), 1);
-  });
+  removeMapEntities(state);
 
   //add new entities
   //state.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
   //state.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
-  //state.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
-  //state.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
+  state.entities.push({ map: true, debug: true, mesh: starisPointsMesh });
+  state.entities.push({ map: true, debug: true, mesh: roomEdgesMesh });
   state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-  //state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
+  state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
   Object.keys(roomVertexGroups).forEach(function(roomId) {
     var roomVertices = roomVertexGroups[roomId];
@@ -128,27 +119,7 @@ function rebuildMap(state) {
   state.arcball.setPosition(position);
   state.arcball.setTarget(target);
 
-  //var roomGeometry = new Geometry({ vertices: true });
-  //roomGeometry.vertices.push(new Vec3(0, 0, 0));
-  //roomGeometry.vertices.push(new Vec3(1, 0, 0));
-  //roomGeometry.vertices.push(new Vec3(0, 0, 1));
-  //var roomMesh = new Mesh(roomGeometry, new SolidColor({ color: Color.Red }));
-  //state.entities.push({ map: true, debug: true, mesh: roomMesh });
-
-  //rebuildCells(state);
-  //this.rebuildCorridors();
-}
-
-function updateMap2(state) {
-  var roomEntities = state.entities.filter(R.where({ room: R.identity }));
-  roomEntities.forEach(function(roomEntity) {
-    if (state.activities.currentLocations.indexOf(roomEntity.room) != -1) {
-      roomEntity.mesh.material.uniforms.color = Color.White;
-    }
-    else {
-      roomEntity.mesh.material.uniforms.color = Color.Grey;
-    }
-  })
+  rebuildCells(state);
 }
 
 function pointsToMesh(points, color) {
@@ -421,5 +392,16 @@ function rebuildCells(state) {
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
 }
 
+function update(state) {
+  if (!state.map.nodes.length) {
+    return;
+  }
 
-module.exports = mapBuilderSys;
+  if (!MapSys.ready || state.map.dirty) {
+    MapSys.ready = true;
+    state.map.dirty = false;
+    rebuildMap(state);
+  }
+}
+
+module.exports = update;
