@@ -34,9 +34,28 @@ var ProgrammeColors = {
 }
 
 var Config = {
+  settingsFile: 'settings.json',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
-  programmeColors: ProgrammeColors
+  programmeColors: ProgrammeColors,
+
+  //look
+  cellCloseness: 0.0035,
+  cellEdgeWidth: 1,
+  bgColor: Color.fromHex('#312D2D'),
+  cellColor: Color.fromHex('#696E98'),
+  cellCenterColor: Color.fromHex('#696E98'),
+  cellEdgeColor: Color.fromHex('#FF00FF'),
+  corridorColor: Color.fromHex('#FFFF00'),
+  classroomColor: Color.fromHex('#FFFFFF'),
+  classroomCenterColor: Color.fromHex('#FFFFFF'),
+  classroomEdgeColor: Color.fromHex('#FFFFFF'),
+  otherRoomColor: Color.fromHex('#FFFFFF'),
+  otherRoomCenterColor: Color.fromHex('#FFFFFF'),
+  otherRoomEdgeColor: Color.fromHex('#FFFFFF'),
+  toiletColor: Color.fromHex('#FFFFFF'),
+  toiletCenterColor: Color.fromHex('#FFFFFF'),
+  toiletEdgeColor: Color.fromHex('#FFFFFF')
 }
 
 module.exports = Config;

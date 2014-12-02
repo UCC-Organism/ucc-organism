@@ -63,6 +63,11 @@ SkCanvasCrayon.prototype.rect = function(x, y, w, h) {
   return this;
 };
 
+SkCanvasCrayon.prototype.roundRect = function(x, y, w, h, r) {
+  this.canvas.drawRoundRect(this.currentStyle, x, y, x + w, y + h, r, r);
+  return this;
+};
+
 SkCanvasCrayon.prototype.circle = function(x, y, r) {
   this.canvas.drawCircle(this.currentStyle, x, y, r);
   return this;
@@ -81,6 +86,26 @@ SkCanvasCrayon.prototype.clear = function(transparent) {
   this.canvas.clear(0, 0, 0, transparent ? 0 : 255);
   return this;
 };
+
+SkCanvasCrayon.prototype.translate = function(x, y) {
+  this.canvas.translate(x, y);
+}
+
+SkCanvasCrayon.prototype.scale = function(x, y) {
+  this.canvas.scale(x, y);
+}
+
+SkCanvasCrayon.prototype.rotate = function(a) {
+  this.canvas.rotate(a);
+}
+
+SkCanvasCrayon.prototype.save = function() {
+  this.canvas.save();
+}
+
+SkCanvasCrayon.prototype.restore = function() {
+  this.canvas.restore();
+}
 
 if (typeof document === 'undefined') {
   module.exports = SkCanvasCrayon;
@@ -208,6 +233,31 @@ HTMLCanvasCrayon.prototype.rect = function(x, y, w, h) {
   return this;
 };
 
+
+HTMLCanvasCrayon.prototype.roundRect = function(x, y, w, h, r) {
+  this.beforeDraw();
+
+  if (w < 2 * r) r = w / 2;
+  if (h < 2 * r) r = h / 2;
+  this.context.beginPath();
+  this.context.moveTo(x+r, y);
+  this.context.arcTo(x+w, y,   x+w, y+h, r);
+  this.context.arcTo(x+w, y+h, x,   y+h, r);
+  this.context.arcTo(x,   y+h, x,   y,   r);
+  this.context.arcTo(x,   y,   x+w, y,   r);
+  this.context.closePath();
+
+  if (this.currentStyle.fill) {
+    this.context.fill();
+  }
+  if (this.currentStyle.stroke) {
+    this.context.stroke();
+  }
+
+  this.afterDraw();
+  return this;
+};
+
 HTMLCanvasCrayon.prototype.circle = function(x, y, r) {
   this.beforeDraw();
 
@@ -223,6 +273,7 @@ HTMLCanvasCrayon.prototype.circle = function(x, y, r) {
   this.afterDraw();
   return this;
 };
+
 
 HTMLCanvasCrayon.prototype.ellipse = function(x, y, w, h) {
   this.beforeDraw();
@@ -318,7 +369,7 @@ HTMLCanvasCrayon.prototype.text = function(str, x, y) {
   return this;
 };
 
-HTMLCanvasCrayon.prototype.clear = function() {
+HTMLCanvasCrayon.prototype.clear = function(color) {
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   this.reset();
   return this;
