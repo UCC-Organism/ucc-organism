@@ -14,6 +14,7 @@ var GeomUtils         = require('../../geom/GeomUtils');
 var Rect              = require('../../geom/Rect');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
+var config            = require('../../config');
 
 var Geometry          = geom.Geometry;
 var BoundingBox       = geom.BoundingBox;
@@ -43,6 +44,13 @@ function vec3to2(v) {
 
 function vec2to3(v) {
   return new Vec3(v.x, v.y, 0);
+}
+
+//-----------------------------------------------------------------------------
+
+Vec3.prototype.setLength = function(len) {
+  this.normalize().scale(len);
+  return this;
 }
 
 //-----------------------------------------------------------------------------
@@ -339,65 +347,94 @@ function rebuildCells(state) {
 
   //voronoi edges / corridors
 
-  var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
+  //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
+  var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: config.corridorColor }), { lines: true });
   state.entities.push({ map: true, bio: true, mesh: edgeMesh });
 
   //cell blobs
 
-  var blobsGeometry = new Geometry({ vertices: true, colors: true, faces: true });
-  var vertices = blobsGeometry.vertices;
-  var faces = blobsGeometry.faces;
-  var colors = blobsGeometry.colors;
+  var cellGeometry = new Geometry({ vertices: true, colors: true, faces: true });
+  var cellVertices = cellGeometry.vertices;
+  var cellFaces = cellGeometry.faces;
+  var cellColors = cellGeometry.colors;
+
+  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, edges: true });
+  var cellEdgeVertices = cellEdgeGeometry.vertices;
+  var cellEdgeEdges = cellEdgeGeometry.edges;
+  var cellEdgeColors = cellEdgeGeometry.colors;
 
   var lineBuilder = new LineBuilder();
 
   cells.forEach(function(cell, cellIndex) {
-    var isRoom = cellsRoomIds[cellIndex] != -1;
-    var cellColorEdge = Color.fromHSV(0.5, 0.8, 0.4, 0.5);
-    var cellColor = isRoom ? Color.fromHSV(0.2, 0.2, 0.9, 0.2) : Color.fromHSV(0.5, 0.2, 0.9, 0.03);
-
+    var roomId = cellsRoomIds[cellIndex];
+    var isRoom = roomId != -1;
+    var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
     cell.uniquePoints = findUniquePoints(R.flatten(cell));
 
     var splinePoints = GeomUtils.smoothCurve(cell.uniquePoints, 0.9, 3);
 
     var center = GeomUtils.centroid(splinePoints);
-
-    var cellCloseness = 0.002;
+    cell.center = center;
 
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
       var np = splinePoints[(i+1)%splinePoints.length];
-      var p2 = p.dup().add(center.dup().sub(p).limit(cellCloseness));
-      var np2 = np.dup().add(center.dup().sub(np).limit(cellCloseness));
+      var p2 = p.dup().add(center.dup().sub(p).setLength(config.cellCloseness));
+      var np2 = np.dup().add(center.dup().sub(np).setLength(config.cellCloseness));
+      var vidx = cellVertices.length;
+      var eidx = cellEdgeVertices.length;
 
-      var n = vertices.length;
-      vertices.push(p2);
-      vertices.push(np2);
-      vertices.push(center);
-      colors.push(cellColor);
-      colors.push(cellColor);
-      colors.push(cellColor);
-      faces.push([n, n+1, n+2]);
+      var cellColor = config.cellColor;
+      var cellCenterColor = config.cellCenterColor;
+      var cellEdgeColor = config.cellEdgeColor;
 
-      lineBuilder.addLine(p2, np2, cellColorEdge);
+      if (isRoom) {
+        if (roomType == 'classroom') {
+          cellColor = config.classroomColor;
+          cellCenterColor = config.classroomCenterColor;
+          cellEdgeColor = config.classroomEdgeColor;
+        }
+        else if (roomType == 'toilet') {
+          cellColor = config.toiletColor;
+          cellCenterColor = config.toiletCenterColor;
+          cellEdgeColor = config.toiletEdgeColor;
+        }
+        else {
+          cellColor = config.otherRoomColor;
+          cellCenterColor = config.otherRoomCenterColor;
+          cellEdgeColor = config.otherRoomEdgeColor;
+        }
+      }
+
+      cellVertices.push(p2);
+      cellVertices.push(np2);
+      cellVertices.push(center);
+      cellColors.push(cellColor);
+      cellColors.push(cellColor);
+      cellColors.push(cellCenterColor);
+      cellFaces.push([vidx, vidx+1, vidx+2]);
+
+      cellEdgeVertices.push(p2.dup().add(new Vec3(0, 0, 0.001)));
+      cellEdgeVertices.push(np2.dup().add(new Vec3(0, 0, 0.001)));
+      cellEdgeColors.push(cellEdgeColor);
+      cellEdgeColors.push(cellEdgeColor);
+      cellEdgeEdges.push([eidx, eidx+1]);
     }
-
-    //lineBuilder.addLine(cell[0][0], cell[cell.length-1][1], Color.Red);
   })
 
 
-  var blobEdgeMesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
-  var blobsMesh = new Mesh(blobsGeometry, new ShowColors(), { faces: true });
+  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({ }), { lines: true });
+  var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
 
-  state.entities.push({ name: 'blobEdgeMesh', map: true, bio: true, mesh: blobEdgeMesh });
-  state.entities.push({ name: 'blobsMesh', map: true, bio: true, mesh: blobsMesh });
+  state.entities.push({ name: 'cellMesh', map: true, bio: true, mesh: cellMesh });
+  state.entities.push({ name: 'cellEdgeMesh', map: true, bio: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
   //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
   //state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
 
   MapSys.edgeMesh = edgeMesh;
-  MapSys.blobsMesh = blobsMesh;
-  MapSys.blobEdgeMesh = blobEdgeMesh;
+  MapSys.cellMesh = cellMesh;
+  MapSys.cellEdgeMesh = cellEdgeMesh;
   MapSys.cells = cells;
   MapSys.points = points;
   MapSys.cellsRoomIds = cellsRoomIds;
@@ -407,11 +444,11 @@ function rebuildCells(state) {
 //-----------------------------------------------------------------------------
 
 function updateMap(state) {
+  return;
   var count = 0;
   var roomValue;
   for(var i=0; i<MapSys.cells.length; i++) {
     var cell = MapSys.cells[i];
-    var cellPoint = MapSys.points[i];
     var roomId = MapSys.cellsRoomIds[i];
     if (roomId != -1) {
       roomValue = state.selectedRooms[roomId];
@@ -419,8 +456,8 @@ function updateMap(state) {
       if (roomValue !== undefined) {
         for(var j=0; j<cell.length; j++) {
           var edge = cell[j];
-          edge[0].setVec3(edge[0].basePos).lerp(cellPoint, 1.0 - roomValue);
-          edge[1].setVec3(edge[1].basePos).lerp(cellPoint, 1.0 - roomValue);
+          edge[0].setVec3(edge[0].basePos).lerp(cell.center, 1.0 - roomValue);
+          edge[1].setVec3(edge[1].basePos).lerp(cell.center, 1.0 - roomValue);
         }
       }
     }
@@ -430,35 +467,30 @@ function updateMap(state) {
   var idx = 0;
   var lidx = 0;
   MapSys.cells.forEach(function(cell, cellIndex) {
-    var isRoom = MapSys.cellsRoomIds[cellIndex] != -1;
-    var cellColorEdge = Color.fromHSV(0.5, 0.8, 0.4, 0.5);
-    var cellColor = isRoom ? Color.fromHSV(0.2, 0.2, 0.9, 0.2) : Color.fromHSV(0.5, 0.2, 0.9, 0.03);
-
     var splinePoints = GeomUtils.smoothCurve(cell.uniquePoints, 0.9, 3);
 
     var center = GeomUtils.centroid(splinePoints);
 
-    var cellCloseness = 0.1;
-
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
       var np = splinePoints[(i+1)%splinePoints.length];
-      var p2 = p.dup().add(center.dup().sub(p).scale(cellCloseness));
-      var np2 = np.dup().add(center.dup().sub(np).scale(cellCloseness));
+      var p2 = p.dup().add(center.dup().sub(p).setLength(config.cellCloseness));
+      var np2 = np.dup().add(center.dup().sub(np).setLength(config.cellCloseness));
 
-      MapSys.blobsMesh.geometry.vertices[idx].setVec3(p2);
-      MapSys.blobsMesh.geometry.vertices[idx+1].setVec3(np2);
-      MapSys.blobsMesh.geometry.vertices[idx+2].setVec3(center);
-      MapSys.blobEdgeMesh.geometry.vertices[lidx].setVec3(p2);
-      MapSys.blobEdgeMesh.geometry.vertices[lidx+1].setVec3(np2);
+      MapSys.cellMesh.geometry.vertices[idx].setVec3(p2);
+      MapSys.cellMesh.geometry.vertices[idx+1].setVec3(np2);
+      MapSys.cellMesh.geometry.vertices[idx+2].setVec3(center);
+      MapSys.cellEdgeMesh.geometry.vertices[lidx].setVec3(p2);
+      MapSys.cellEdgeMesh.geometry.vertices[lidx+1].setVec3(np2);
       idx += 3;
       lidx += 2;
     }
   })
 
-
-  MapSys.blobsMesh.geometry.vertices.dirty = true;
-  MapSys.blobEdgeMesh.geometry.vertices.dirty = true;
+  MapSys.cellMesh.geometry.vertices.dirty = true;
+  MapSys.cellMesh.geometry.colors.dirty = true;
+  MapSys.cellEdgeMesh.geometry.vertices.dirty = true;
+  MapSys.cellEdgeMesh.geometry.colors.dirty = true;
 }
 
 //-----------------------------------------------------------------------------

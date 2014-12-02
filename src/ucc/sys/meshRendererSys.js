@@ -1,4 +1,7 @@
 var R = require('ramda');
+var glu = require('pex-glu');
+
+var Context = glu.Context;
 
 var debugFilter = function(debugMode) {
   return function(o) {
@@ -23,6 +26,7 @@ var enabledFilter = function() {
 
 function meshRendererSys(state) {
   var camera = state.camera;
+  var gl = Context.currentContext;
 
   var visibleEntities = state.entities
     .filter(debugFilter(state.debug))
@@ -34,7 +38,13 @@ function meshRendererSys(state) {
     if (entity.mesh.geometry.vertices.length == 0) {
       return;
     }
+    if (entity.lineWidth) {
+      gl.lineWidth(entity.lineWidth);
+    }
     entity.mesh.draw(camera);
+    if (entity.lineWidth) {
+      gl.lineWidth(1);
+    }
   })
 }
 

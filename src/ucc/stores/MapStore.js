@@ -10,6 +10,7 @@ var Platform  = sys.Platform;
 var MapStore = {
   nodes: [],
   rooms: [],
+  roomsById: {},
   selectedNodes: [],
   floors: [],
   currentFloor: 1,
@@ -23,6 +24,9 @@ var MapStore = {
     .spread(function(layersData, nodesData) {
       this.nodes = nodesData.nodes;
       this.rooms = nodesData.rooms;
+      this.rooms.forEach(function(room) {
+        this.roomsById[room.id] = room;
+      }.bind(this))
       console.log('MapStore.init nodes:' + this.nodes.length + ' rooms:' + this.rooms.length);
 
       //Transform json data to real objects

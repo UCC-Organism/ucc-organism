@@ -4,8 +4,8 @@ var Config  = require('../../config');
 var R       = require('ramda');
 var moment  = require('moment');
 
-var weekStart = moment().day(1).hours(0).minutes(0).seconds(0).toDate().getTime(); //prev monday
-var weekEnd   = moment().day(8).hours(0).minutes(0).seconds(0).toDate().getTime(); //next monday
+var weekStart = moment().day(1-7).hours(0).minutes(0).seconds(0).toDate().getTime(); //prev monday
+var weekEnd   = moment().day(8-7).hours(0).minutes(0).seconds(0).toDate().getTime(); //next monday
 
 var ActivityStore = {
   all: [],

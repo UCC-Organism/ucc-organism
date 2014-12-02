@@ -4,12 +4,11 @@ var glu               = require('pex-glu');
 var random            = require('pex-random');
 var color             = require('pex-color');
 var gui               = require('pex-gui');
-var random            = require('pex-random');
 var R                 = require('ramda');
 
 //CES
 var meshRendererSys               = require('./ucc/sys/meshRendererSys');
-var mapSys                 = require('./ucc/sys/mapSys');
+var mapSys                        = require('./ucc/sys/mapSys');
 var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys');
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
@@ -71,12 +70,8 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 //}
 
 var state = {
-  DPI: Platform.isPlask ? 1 : 1,
+  DPI: Platform.isPlask ? 2 : 1,
   //scene
-  bgColor: new Color(0.1, 0.1, 0.12, 1.0),
-  //bgColor: Color.fromHex('#00331B'),
-  //bgColor: Color.fromHSV(0.4, 0.85, 0.6),
-  //bgColor: Color.Black,
   camera: null,
   cameraPosZ: 0.40,
   arcball: null,
@@ -116,33 +111,8 @@ var state = {
   //debug: false,
   //
 
-  selectedRooms: {
-    'A.004': 1,
-    'Stu01': 1,
-    'S': 1,
-    'room_1': 1,
-    'room_2': 1,
-    'room_3': 1,
-    'room_9': 1,
-    'room_10': 1,
-    'room_11': 1,
-    'room_12': 1,
-    'TA03': 1,
-    'room_13': 1,
-    'room_14': 1,
-    'room_15': 1,
-    'room_16': 1,
-    'TA01': 1,
-    'TA02': 1,
-    'room_17': 1,
-    'room_18': 1,
-    'room_19': 1,
-    'room_20': 1,
-    'room_21': 1,
-    'room_22': 1
-  }
+  selectedRooms: {}
 };
-
 
 
 sys.Window.create({
@@ -172,28 +142,43 @@ sys.Window.create({
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
     this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
-    this.gui.addParam('Color', state, 'bgColor');
+    this.gui.addLabel('Look');
+    this.gui.addParam('Cell Edge Width', config, 'cellEdgeWidth', { min: 0.5, max: 5 });
+    this.gui.addParam('BgColor', config, 'bgColor');
+    this.gui.addParam('Cell', config, 'cellColor');
+    this.gui.addParam('Cell Center', config, 'cellCenterColor');
+    this.gui.addParam('Cell Edge', config, 'cellEdgeColor');
+    this.gui.addParam('Classroom', config, 'classroomColor').setPosition(180 * state.DPI, 10 * state.DPI);;
+    this.gui.addParam('Classroom Center', config, 'classroomCenterColor');
+    this.gui.addParam('Classroom Edge', config, 'classroomEdgeColor');
+    this.gui.addParam('Other room', config, 'otherRoomColor')
+    this.gui.addParam('Other room Center', config, 'otherRoomCenterColor');
+    this.gui.addParam('Other room Edge', config, 'otherRoomEdgeColor');
+    this.gui.addParam('Toilet', config, 'toiletColor')
+    this.gui.addParam('Toilet Center', config, 'toiletCenterColor');
+    this.gui.addParam('Toilet Edge', config, 'toiletEdgeColor');
 
-    Object.keys(config.programmeColors).forEach(function(programme) {
+    this.gui.addParam('Corridor', config, 'corridorColor');
+
+    Object.keys(config.programmeColors).forEach(function(programme, programmeIndex) {
       if (programme != 'default') {
-        this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
+        var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this))
 
-    this.gui.addLabel('Rooms').setPosition(180, 20);
-    Object.keys(state.selectedRooms).forEach(function(roomId) {
-      this.gui.addParam(roomId, state.selectedRooms, roomId, { min: 0, max: 1 });
-    }.bind(this));
+    //this.gui.addLabel('Rooms').setPosition(180, 10);
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
+
+    this.gui.load(config.settingsFile);
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
       window.setInterval(function() {
         uccextension.aliveSync();
       }, 5000);
+      console.log('WARN', 'uccextension not found');
     }
-    console.log('WARN', 'uccextension not found');
   },
   initLibs: function() {
     Promise.longStackTraces();
@@ -214,6 +199,10 @@ sys.Window.create({
       state.activities = activities;
       state.groups = groups;
       this.checkMissingRooms(state);
+
+      activities.locations.forEach(function(roomId) {
+        state.selectedRooms[roomId] = 1;
+      })
     }.bind(this))
     .catch(function(e) {
       console.log(e.stack)
@@ -248,6 +237,8 @@ sys.Window.create({
         case 'b': state.bio = !state.bio; break;
         case 'c': state.clearBg = !state.clearBg; break;
         case ' ': this.killAllAgents(); break;
+        case 'S': this.gui.save(config.settingsFile); break;
+        case 'L': this.gui.load(config.settingsFile); break;
       }
       switch(e.keyCode) {
         case VK_LEFT: state.map.setPrevFloor(); break;
@@ -315,7 +306,7 @@ sys.Window.create({
   draw: function() {
     this.update();
 
-    if (state.clearBg) glu.clearColorAndDepth(state.bgColor);
+    if (state.clearBg) glu.clearColorAndDepth(config.bgColor);
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
@@ -325,10 +316,10 @@ sys.Window.create({
       //agentDebugInfoUpdaterSys(state);
       pointSpriteUpdaterSys(state);
 
-      //glu.enableDepthReadAndWrite(false);
+      glu.enableDepthReadAndWrite(false);
       //glu.enableAlphaBlending(true);
 
-      glu.enableAlphaBlending();
+      //glu.enableAlphaBlending();
       mapSys(state);
       meshRendererSys(state);
     }
