@@ -58,8 +58,9 @@ function agentTargetNodeUpdaterSys(state) {
 
   //agents with nothing to do anymore, they should go out and dissapear
   var studentAgentsWithNoTarget2 = agents.filter(R.not(R.prop('targetNode')));
-  studentAgentsWithNoTarget2.forEach(function(agent) {
-    targetNode = state.map.selectedNodes[0];
+  studentAgentsWithNoTarget2.forEach(function(agent, agentIndex) {
+    random.seed(Date.now() + agentIndex);
+    var targetNode = random.element(state.map.selectedNodes);
     var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
     var path = graph.findShortestPath(closestNode, targetNode);
 

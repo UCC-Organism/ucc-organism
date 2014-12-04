@@ -89,11 +89,13 @@ var state = {
   //state
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
-  agentSpeed: Platform.isPlask ? 0 : 0.02,
+  agentSpeed: Platform.isPlask ? 0.02 : 0.02,
   debug: true,
   bio: true,
   clearBg: true,
   animateCells: false,
+
+  numRandomStudents: 50,
 
   //ui
   showSchedule: false,

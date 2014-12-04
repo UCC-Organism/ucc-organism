@@ -22,13 +22,25 @@ function spawnStudents(state, agents) {
 
   stairsNodes = stairsNodes.filter(R.where({floor:1}));
 
-  if (!stairsNodes.length) return;
+  if (!stairsNodes.length) {
+    stairsNodes = state.selectedNodes;
+  }
 
   studentsToSpawn = studentsToSpawn.slice(0, 10)
 
-  studentsToSpawn.forEach(function(studentId) {
+  if (studentsToSpawn.length == 0) {
+    if (aliveStudentAgents.length < state.numRandomStudents) {
+      var position = random.element(stairsNodes).position;
+      studentsToSpawn = R.range(0, 10).map(function() {
+        return 'temp' + random.int(0, 999999999);
+      })
+    }
+  }
+
+  studentsToSpawn.forEach(function(studentId, studentIndex) {
+    random.seed(Date.now() + studentIndex);
     var position = random.element(stairsNodes).position;
-    var color = Color.Red;
+    var color = Color.Yellow;
 
     if (aliveStudentAgents.length < state.maxAgentCount) {
       var studentAgent = {
@@ -52,7 +64,6 @@ function agentSpawnSys(state) {
 
   spawnStudents(state, agents);
 
-  
 
   //state.activities.current.forEach(function(activity) {
   //  activity.groups.map(function(groupId) {
