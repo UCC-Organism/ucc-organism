@@ -292,7 +292,8 @@ function rebuildCells(state) {
 
   //room centers
   var cellGroups = fn.groupBy(state.map.selectedNodes, 'room');
-  var roomCenterPoints = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
+  var cellsRoomIds = Object.keys(cellGroups).filter(R.identity);
+  var roomCenterPoints = cellsRoomIds.map(function(roomId) {
     return GeomUtils.centroid(R.pluck('position', cellGroups[roomId]));
   })
   points = roomCenterPoints.concat(points);
@@ -322,7 +323,6 @@ function rebuildCells(state) {
 
   //reject edge cells
 
-  /*
   //if you reject cells you need to rebuild points too
   var boundingRect = Rect.fromPoints(voronoiCells.points);
   for(var i=0; i<voronoiCells.cells.length; i++) {
@@ -338,15 +338,15 @@ function rebuildCells(state) {
         break;
       }
     }
-    if (rejectCell) {
+    var isRoom = i < cellsRoomIds.length;
+    if (rejectCell && !isRoom) {
       voronoiCells.cells.splice(i, 1);
       --i;
     }
   }
   //console.log(points2D.length, voronoiCells.cells.length);
   //voronoiCells.cells = voronoiCells.cells.slice(0, voronoiCells.cells.length - 30);
-  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
-  */
+  //voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
@@ -401,10 +401,10 @@ function rebuildCells(state) {
   */
   //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
-  state.entities.push({ map: true, bio: true, mesh: edgeMesh });
+  state.entities.unshift({ map: true, bio: true, mesh: edgeMesh, debug: true });
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: Color.Red, pointSize: 5 }), { points: true });
-  state.entities.push({ map: true, bio: true, mesh: pointsMesh });
+  state.entities.unshift({ map: true, bio: true, mesh: pointsMesh, debug: true });
 
   //override map
 
@@ -434,8 +434,6 @@ function rebuildCells(state) {
   var cellEdgeColors = cellEdgeGeometry.colors;
 
   //var lineBuilder = new LineBuilder();
-
-  var cellsRoomIds = Object.keys(cellGroups).filter(R.identity); //the same as above when construction center points
 
   voronoiCells.cells.forEach(function(cell, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
@@ -499,8 +497,9 @@ function rebuildCells(state) {
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({ }), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
 
-  state.entities.push({ name: 'cellMesh', map: true, bio: true, mesh: cellMesh });
-  state.entities.push({ name: 'cellEdgeMesh', map: true, bio: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
+  state.entities.unshift({ name: 'cellEdgeMesh', map: true, bio: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
+  state.entities.unshift({ name: 'cellMesh', map: true, bio: true, mesh: cellMesh });
+
   //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
   //state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
