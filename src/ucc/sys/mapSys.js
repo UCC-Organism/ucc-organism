@@ -346,7 +346,7 @@ function rebuildCells(state) {
   }
   //console.log(points2D.length, voronoiCells.cells.length);
   //voronoiCells.cells = voronoiCells.cells.slice(0, voronoiCells.cells.length - 30);
-  //voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {

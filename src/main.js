@@ -70,7 +70,7 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 //}
 
 var state = {
-  DPI: Platform.isPlask ? 2 : 1,
+  DPI: Platform.isPlask ? 2 : 2,
   //scene
   camera: null,
   cameraPosZ: 0.930,
@@ -90,7 +90,7 @@ var state = {
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
   agentSpeed: Platform.isPlask ? 0.02 : 0.02,
-  debug: true,
+  debug: false,
   bio: true,
   addon: true,
   clearBg: true,
@@ -99,6 +99,7 @@ var state = {
   numRandomStudents: 150,
 
   //ui
+  showGUI: false,
   showSchedule: false,
 
   //graph: null,
@@ -236,7 +237,7 @@ sys.Window.create({
       switch(e.str) {
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
-        case 'g': this.gui.enabled = !this.gui.enabled; break;
+        case 'g': state.showGUI = !state.showGUI; break;
         case 'b': state.bio = !state.bio; break;
         case 'a': state.addon = !state.addon; break;
         case 'c': state.clearBg = !state.clearBg; break;
@@ -339,7 +340,9 @@ sys.Window.create({
     //glu.enableAlphaBlending();
     //state.ui.draw();
 
-    this.gui.draw();
+    if (state.showGUI) {
+      this.gui.draw();
+    }
     if (state.showSchedule) {
       this.activityTimeline.draw(state);
     }

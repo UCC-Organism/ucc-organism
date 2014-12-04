@@ -547,11 +547,11 @@ Window.create({
 
     var cellTypes = [
       //SimpleCell,
-      //TeacherCell,
-      //FysCell,
+      TeacherCell,
+      FysCell,
       PaedCell,
-      //PaedCell2,
-      //PaedCell3
+      PaedCell2,
+      PaedCell3
     ];
 
     exampleGroups.forEach(function(group, groupIndex) {
