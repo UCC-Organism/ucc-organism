@@ -398,10 +398,11 @@ function rebuildCells(state) {
   //voronoi edges / corridors
   */
   //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
-  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: Color.fromHSL(0.5, 0.8, 0.15, 0.19) }), { lines: true });
+  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
   state.entities.unshift({ map: true, bio: true, mesh: edgeMesh });
 
-  var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: Color.fromHSL(0.5, 0.8, 0.15, 0.19), pointSize: 5 }), { points: true });
+  ///Color.fromHSL(0.5, 0.8, 0.15, 0.19)
+  var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, bio: true, mesh: pointsMesh });
 
   //override map
