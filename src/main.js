@@ -146,19 +146,19 @@ sys.Window.create({
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
     this.gui.addLabel('Look');
     this.gui.addParam('Cell Edge Width', config, 'cellEdgeWidth', { min: 0.5, max: 5 });
-    this.gui.addParam('BgColor', config, 'bgColor');
-    this.gui.addParam('Cell', config, 'cellColor');
-    this.gui.addParam('Cell Center', config, 'cellCenterColor');
-    this.gui.addParam('Cell Edge', config, 'cellEdgeColor');
-    this.gui.addParam('Classroom', config, 'classroomColor').setPosition(180 * state.DPI, 10 * state.DPI);;
-    this.gui.addParam('Classroom Center', config, 'classroomCenterColor');
-    this.gui.addParam('Classroom Edge', config, 'classroomEdgeColor');
-    this.gui.addParam('Other room', config, 'otherRoomColor')
-    this.gui.addParam('Other room Center', config, 'otherRoomCenterColor');
-    this.gui.addParam('Other room Edge', config, 'otherRoomEdgeColor');
-    this.gui.addParam('Toilet', config, 'toiletColor')
-    this.gui.addParam('Toilet Center', config, 'toiletCenterColor');
-    this.gui.addParam('Toilet Edge', config, 'toiletEdgeColor');
+    this.gui.addParam('BgColor', config, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell', config, 'cellColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Center', config, 'cellCenterColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Edge', config, 'cellEdgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Classroom', config, 'classroomColor', {}, this.onColorChange.bind(this)).setPosition(180 * state.DPI, 10 * state.DPI);;
+    this.gui.addParam('Classroom Center', config, 'classroomCenterColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Classroom Edge', config, 'classroomEdgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Other room', config, 'otherRoomColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Other room Center', config, 'otherRoomCenterColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Other room Edge', config, 'otherRoomEdgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Toilet', config, 'toiletColor', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Toilet Center', config, 'toiletCenterColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Toilet Edge', config, 'toiletEdgeColor', {}, this.onColorChange.bind(this));
 
     this.gui.addParam('Corridor', config, 'corridorColor');
 
@@ -302,8 +302,17 @@ sys.Window.create({
       );
     }
   },
+  onColorChange: function() {
+    console.log('onColorChange');
+    var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), state.entities);
+    console.log('entitiesWithMesh', entitiesWithMesh.length)
+    entitiesWithMesh.forEach(function(entity) {
+      if (entity.mesh.geometry.colors) {
+        entity.mesh.geometry.colors.dirty = true;
+      }
+    });
+  },
   updateSystems: function() {
-
   },
   draw: function() {
     this.update();
