@@ -357,8 +357,6 @@ function rebuildCells(state) {
     })
   })
 
-
-
   /*
 
   var pointsCount = 0;
@@ -401,10 +399,10 @@ function rebuildCells(state) {
   */
   //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
-  state.entities.unshift({ map: true, bio: true, mesh: edgeMesh, debug: true });
+  state.entities.unshift({ map: true, bio: true, mesh: edgeMesh });
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: Color.Red, pointSize: 5 }), { points: true });
-  state.entities.unshift({ map: true, bio: true, mesh: pointsMesh, debug: true });
+  state.entities.unshift({ map: true, bio: true, mesh: pointsMesh });
 
   //override map
 
@@ -439,7 +437,7 @@ function rebuildCells(state) {
     var roomId = cellsRoomIds[cellIndex] || -1;
     var isRoom = roomId != -1;
     var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
-    
+
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
     var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 3);
