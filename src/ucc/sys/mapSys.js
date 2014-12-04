@@ -53,20 +53,6 @@ Vec3.prototype.setLength = function(len) {
   return this;
 }
 
-//-----------------------------------------------------------------------------
-
-function PointSet3() {
-  this.points = [];
-}
-
-PointSet3.prototype.add = function(v) {
-  for(var i=0; i<this.points.length; i++) {
-    var p = this.points[i];
-    if (p.distance(v) < EPSILON) return p;
-  }
-  this.points.push(v);
-  return v;
-}
 
 //-----------------------------------------------------------------------------
 
@@ -231,16 +217,6 @@ function orderEdges(edges) {
 
 //-----------------------------------------------------------------------------
 
-function getRoomsCenters(cellGroups) {
-  return Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
-    var cellNodes = cellGroups[roomId];
-    var cellPoints = cellNodes.map(R.prop('position'));
-    return GeomUtils.centroid(cellPoints);
-  });
-}
-
-//-----------------------------------------------------------------------------
-
 function closestPoint(points, p) {
   var best = points.reduce(function(best, node, nodeIndex) {
     var dist = node.squareDistance(p);
@@ -285,8 +261,10 @@ function rebuildCells(state) {
 
   //room centers
   var cellGroups = fn.groupBy(state.map.selectedNodes, 'room');
-  var roomCenterPoints = getRoomsCenters(cellGroups);
-  points = points.concat(roomCenterPoints)
+  var roomCenterPoints = Object.keys(cellGroups).filter(R.identity).map(function(roomId) {
+    return GeomUtils.centroid(R.pluck('position', cellGroups[roomId]));
+  })
+  points = roomCenterPoints.concat(points);
 
   //2d points
 
@@ -307,10 +285,22 @@ function rebuildCells(state) {
 
   //cells
 
-  var points2D = points.map(vec3to2);
+  var voronoiCells = voronoi(points2D);
 
-  var cells = voronoi(points2D);
+  //add center points
+  roomCenterPoints.forEach(function(p, cellIndex) {
+    var newPointIndex = voronoiCells.points.length;
+    voronoiCells.points.push(p);
+    voronoiCells.cells[cellIndex].forEach(function(cellPointIndex) {
+      voronoiCells.edges.push([cellPointIndex, newPointIndex]);
+    })
+  })
 
+
+
+  /*
+
+  var pointsCount = 0;
   var uniquePoints = new PointSet3();
   cells = cells.map(function(cell, cellIndex) {
     cell.forEach(function(edge) {
@@ -320,6 +310,7 @@ function rebuildCells(state) {
       edge[1].roomIds = [];
       edge[0].basePos = edge[0].dup();
       edge[1].basePos = edge[1].dup();
+      pointsCount += 2;
     });
 
     return orderEdges(cell);
@@ -346,10 +337,14 @@ function rebuildCells(state) {
   }));
 
   //voronoi edges / corridors
-
+  */
   //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
-  var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: config.corridorColor }), { lines: true });
+  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
   state.entities.push({ map: true, bio: true, mesh: edgeMesh });
+
+  var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: Color.Red, pointSize: 5 }), { points: true });
+  state.entities.push({ map: true, bio: true, mesh: pointsMesh });
+  return;
 
   //cell blobs
 
@@ -440,8 +435,6 @@ function rebuildCells(state) {
   MapSys.cellsRoomIds = cellsRoomIds;
   MapSys.roomCenterPoints = roomCenterPoints;
 }
-
-//-----------------------------------------------------------------------------
 
 function updateMap(state) {
   return;

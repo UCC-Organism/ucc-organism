@@ -1,7 +1,10 @@
 //http://philogb.github.io/blog/2010/02/12/voronoi-tessellation/
 var R = require('ramda');
+var PointSet = require('../PointSet');
+var Vec2 = require('pex-geom').Vec2;
+var GeomUtils = require('../GeomUtils');
 
-function voronoi(vertices, W, H) {
+function computeVoronoi(vertices) {
   //we will build one polygon for each input point
   //this array will hold edges of each polygon
   var polygons = vertices.map(function() { return [] });
@@ -525,6 +528,69 @@ function voronoi(vertices, W, H) {
   })
 
   return polygons;
+}
+
+//http://gamedev.stackexchange.com/questions/13229/sorting-array-of-points-in-clockwise-order
+function orderCCWPoints2(points) {
+  var c = GeomUtils.centroid(points);
+  var sortedPoints = points.map(function(p) {
+    return {
+      point: p,
+      angle: Math.atan2(p.y - c.y, p.x - c.x)
+    }
+  })
+  .sort(function(a, b) {
+    return a.angle - b.angle;
+  })
+  return R.pluck('point', sortedPoints);
+}
+
+function voronoi(points) {
+  var cells = computeVoronoi(points);
+
+  var uniquePoints = new PointSet();
+
+  cells = cells.map(function(cell, cellIndex) {
+    return orderCCWPoints2(R.uniq(R.flatten(cell.map(function(edge) {
+      edge[0] = uniquePoints.add(new Vec2(edge[0].x, edge[0].y));
+      edge[1] = uniquePoints.add(new Vec2(edge[1].x, edge[1].y));
+      return edge;
+    }))));
+  });
+
+  cells = cells.map(function(cell) {
+    return cell.map(function(p) {
+      return uniquePoints.points.indexOf(p);
+    })
+  })
+
+  var edges = R.unnest(cells.map(function(cell) {
+    return cell.map(function(i, index) {
+      return [i, cell[(index + 1) % cell.length ]].sort();
+    })
+  }))
+
+  //finding unique edges
+
+  //first sort by edge indices
+  edges.sort(function(a, b) {
+    if (a[0] > b[0]) return 1;
+    if (a[0] < b[0]) return -1;
+    else return a[1] - b[1];
+  })
+
+  //skip edge if the previous edge is the same
+  edges = edges.filter(function(edge, index, list) {
+    if (index == 0) return true;
+    if (list[index-1][0] == edge[0] && list[index-1][1] == edge[1]) return false;
+    return true;
+  })
+
+  return {
+    points: uniquePoints.points,
+    cells: cells,
+    edges: edges
+  }
 }
 
 module.exports = voronoi;
