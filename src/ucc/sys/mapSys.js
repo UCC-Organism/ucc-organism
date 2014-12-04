@@ -406,6 +406,8 @@ function rebuildCells(state) {
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: Color.Red, pointSize: 5 }), { points: true });
   state.entities.push({ map: true, bio: true, mesh: pointsMesh });
 
+  //override map
+
   state.map.selectedNodes = voronoiCells.points.map(function(p, pindex) {
     return {
       id: pindex,
@@ -419,8 +421,6 @@ function rebuildCells(state) {
     state.map.selectedNodes[edge[1]].neighbors.push(state.map.selectedNodes[edge[0]])
   })
 
-  return;
-
   //cell blobs
 
   var cellGeometry = new Geometry({ vertices: true, colors: true, faces: true });
@@ -433,18 +433,21 @@ function rebuildCells(state) {
   var cellEdgeEdges = cellEdgeGeometry.edges;
   var cellEdgeColors = cellEdgeGeometry.colors;
 
-  var lineBuilder = new LineBuilder();
+  //var lineBuilder = new LineBuilder();
 
-  cells.forEach(function(cell, cellIndex) {
-    var roomId = cellsRoomIds[cellIndex];
+  var cellsRoomIds = Object.keys(cellGroups).filter(R.identity); //the same as above when construction center points
+
+  voronoiCells.cells.forEach(function(cell, cellIndex) {
+    var roomId = cellsRoomIds[cellIndex] || -1;
     var isRoom = roomId != -1;
     var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
-    cell.uniquePoints = findUniquePoints(R.flatten(cell));
+    
+    var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cell.uniquePoints, 0.9, 3);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 3);
 
     var center = GeomUtils.centroid(splinePoints);
-    cell.center = center;
+    //cell.center = center;
 
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
@@ -502,13 +505,13 @@ function rebuildCells(state) {
   //state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
   //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
 
-  MapSys.edgeMesh = edgeMesh;
-  MapSys.cellMesh = cellMesh;
-  MapSys.cellEdgeMesh = cellEdgeMesh;
-  MapSys.cells = cells;
-  MapSys.points = points;
-  MapSys.cellsRoomIds = cellsRoomIds;
-  MapSys.roomCenterPoints = roomCenterPoints;
+  //MapSys.edgeMesh = edgeMesh;
+  //MapSys.cellMesh = cellMesh;
+  //MapSys.cellEdgeMesh = cellEdgeMesh;
+  //MapSys.cells = cells;
+  //MapSys.points = points;
+  //MapSys.cellsRoomIds = cellsRoomIds;
+  //MapSys.roomCenterPoints = roomCenterPoints;
 }
 
 function updateMap(state) {
