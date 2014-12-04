@@ -42,6 +42,7 @@ function spawnStudents(state, agents) {
     var position = random.element(stairsNodes).position;
     var hues = [0, 0.4, 0.6];
     var color = Color.fromHSL(random.element(hues), 0.8, 0.7);
+    color = Color.White;
 
     if (aliveStudentAgents.length < state.maxAgentCount) {
       var studentAgent = {
@@ -51,7 +52,7 @@ function spawnStudents(state, agents) {
         prevPosition: position.dup(),
         color: color,
         targetNode: null,
-        studentId: studentId
+        studentId: studentId,
       };
 
       state.entities.push(studentAgent);

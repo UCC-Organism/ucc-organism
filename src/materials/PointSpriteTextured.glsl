@@ -48,7 +48,7 @@ void main() {
   rot += PI / 2.0;
 
   vec2 texCoord = gl_PointCoord;
-  texCoord.y = 1.0 - texCoord.y;
+  //texCoord.y = 1.0 - texCoord.y;
   texCoord -= vec2(0.5, 0.5);
   texCoord = rotate2(rot) * texCoord;
   texCoord += vec2(0.5, 0.5);

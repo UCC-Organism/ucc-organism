@@ -26,7 +26,6 @@ var state = {
 
 function matrixLayout(w, h, n) {
   var size = w / n;
-  console.log('size', size);
   return function(i) {
     var cx = i % n;
     var cy = Math.floor(i / n);
@@ -51,7 +50,7 @@ function SimpleCell(student, x, y, size) {
   this.fy = 0;
   this.baseX = x;
   this.baseY = y;
-  this.size = size;
+  this.size = size * 0.75;
   this.seed = Math.random();
 }
 
@@ -108,7 +107,7 @@ function TeacherCell(student, x, y, size) {
   this.fy = 0;
   this.baseX = x;
   this.baseY = y;
-  this.size = size;
+  this.size = size * 0.75;
   this.seed = Math.random();
 }
 
@@ -216,7 +215,7 @@ FysCell.prototype.draw = function(crayon) {
   crayon.restore();
 }
 
-function PaedCell(student, x, y, size, scale) {
+function PaedCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -227,7 +226,6 @@ function PaedCell(student, x, y, size, scale) {
   this.baseX = x;
   this.baseY = y;
   this.size = size;
-  this.scale = scale;
   this.seed = Math.random();
   //this.path = new plask.SkPath();
 }
@@ -245,7 +243,6 @@ PaedCell.prototype.draw = function(crayon) {
   crayon.save();
   crayon.translate(this.x, this.y);
   crayon.rotate(t * 50 * (seed - 0.5));
-  crayon.scale(this.scale, this.scale);
 
   var x = Math.cos(seed * Math.PI * 2) * r*0.3;
   var y = Math.sin(seed * Math.PI * 2) * r*0.3;
@@ -480,12 +477,21 @@ Window.create({
     fullscreen: Platform.isBrowser ? true : false,
   },
   cells: [],
+  saveFrame: false,
   init: function() {
     this.initScene();
     this.initStores();
     this.initMouse();
+    this.initKeyboard();
 
     this.crayon = new Crayons(this.canvas);
+  },
+  initKeyboard: function() {
+    this.on('keyDown', function(e) {
+      if (e.str == ' ') {
+        this.saveFrame = true;
+      }
+    }.bind(this));
   },
   initMouse: function() {
     this.on('mouseDown', function(e) {
@@ -542,11 +548,11 @@ Window.create({
       return group;
     });
 
-    var layout = matrixLayout(this.width*2, this.height, 14*2);
+    var layout = matrixLayout(this.width, this.height, 14);
     var index = 0;
 
     var cellTypes = [
-      //SimpleCell,
+      SimpleCell,
       TeacherCell,
       FysCell,
       PaedCell,
@@ -556,20 +562,23 @@ Window.create({
 
     exampleGroups.forEach(function(group, groupIndex) {
       var CellType = cellTypes[groupIndex % cellTypes.length];
-      group.students = group.students.slice(0, Math.floor(group.students.length/2));
-      if (group.students.length == 0) {
-        for(var i=0; i<10; i++) {
+      //group.students = group.students.slice(0, Math.floor(group.students.length/2));
+      group.students = group.students.slice(0, 14);
+      if (group.students.length < 14) {
+        var n = 14 - group.students.length;
+        for(var i=0; i<n; i++) {
           group.students.push({
             age: random.int(20, 35)
           })
         }
       }
+      console.log('group.length', group.students.length)
       group.students.forEach(function(student) {
         var pos = layout(index++);
-        this.cells.push(new CellType(student, pos.x, pos.y, pos.width/2, 0.75))
+        this.cells.push(new CellType(student, pos.x, pos.y, pos.width))
       }.bind(this));
     }.bind(this));
-    //this.cells = this.cells.slice(2, 3);
+
   },
   draw: function() {
     random.seed(0);
@@ -602,11 +611,21 @@ Window.create({
 
     this.crayon.clear().fill([40, 40, 50, 255]).rect(0, 0, this.width, this.height);
 
+    if (this.saveFrame) {
+      this.canvas.drawColor(255, 0,0, 0, this.paint.kClearMode);
+    }
+
     //crayon.save();
     //crayon.scale(1, 1);
     this.cells.forEach(function(cell) {
       cell.draw(this.crayon);
     }.bind(this));
+
+    if (this.saveFrame) {
+      this.saveFrame = false;
+      this.canvas.writeImage('png', Date.now() + '.png');
+    }
+
     //crayon.restore();
   }
 });
