@@ -1,6 +1,6 @@
 {
   "name": "ucc_organism",
-  "version": "1.0.0",
+  "version": "0.8.0",
   "private": true,
   "dependencies": {
     "bluebird": "^2.3.10",

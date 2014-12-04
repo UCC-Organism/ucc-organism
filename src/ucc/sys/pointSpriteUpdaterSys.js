@@ -18,7 +18,7 @@ function pointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
     var image = Platform.isPlask ? '../assets/agents_3.png' : 'assets/agents_3.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
-    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 25 * state.DPI, texture: Texture2D.load(image), texSize: new Vec2(1/14, 1/8), texOffset: new Vec2(1/14, 1/8) });
+    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 30 * state.DPI, texture: Texture2D.load(image), texSize: new Vec2(1/14, 1/8), texOffset: new Vec2(1/14, 1/8) });
     state.pointSpriteMeshEntity = {
       mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }

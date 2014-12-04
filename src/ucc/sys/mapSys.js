@@ -494,11 +494,11 @@ function rebuildCells(state) {
 
   //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
-  state.entities.unshift({ map: true, bio: true, addon: true, mesh: edgeMesh });
+  state.entities.unshift({ map: true, addon: true, mesh: edgeMesh });
 
   ///Color.fromHSL(0.5, 0.8, 0.15, 0.19)
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
-  state.entities.unshift({ map: true, bio: true, addon: true, mesh: pointsMesh });
+  state.entities.unshift({ map: true, addon: true, mesh: pointsMesh });
 
   //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
   //state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });

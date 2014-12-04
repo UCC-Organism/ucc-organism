@@ -73,7 +73,7 @@ var state = {
   DPI: Platform.isPlask ? 2 : 2,
   //scene
   camera: null,
-  cameraPosZ: 0.530,
+  cameraPosZ: 0.30,
   arcball: null,
 
   //entities
@@ -96,7 +96,7 @@ var state = {
   clearBg: true,
   animateCells: false,
 
-  numRandomStudents: 250,
+  numRandomStudents: 100,
 
   //ui
   showGUI: false,
@@ -246,8 +246,8 @@ sys.Window.create({
         case 'L': this.gui.load(config.settingsFile); break;
       }
       switch(e.keyCode) {
-        case VK_LEFT: state.map.setPrevFloor(); break;
-        case VK_RIGHT: state.map.setNextFloor(); break;
+        case VK_LEFT: state.map.setPrevFloor(); this.killAllAgents(); break;
+        case VK_RIGHT: state.map.setNextFloor(); this.killAllAgents(); break;
       }
     }.bind(this));
   },
