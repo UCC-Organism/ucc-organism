@@ -13,7 +13,7 @@ var MapStore = {
   roomsById: {},
   selectedNodes: [],
   floors: [],
-  currentFloor: 1,
+  currentFloor: -1,
   dirty: true,
   init: function() {
     console.log('MapStore.init');
@@ -36,6 +36,27 @@ var MapStore = {
         //Neighbor index to node reference
         node.neighbors = R.map(R.rPartial(R.prop, this.nodes), node.neighbors);
       }.bind(this));
+
+      //this.nodes = this.nodes.filter(function(node) {
+      //  return node.floor == 1 || node.floor == 2 || node.floor == 3 || node.floor == 4 || node.floor == 5;
+      //})
+
+      this.nodes.forEach(function(node) {
+        if (node.floor == 1) {
+          node.position.y -= 0.5;
+        }
+        if (node.floor == 3) {
+          node.position.x += 0.25;
+        }
+        if (node.floor == 6) {
+          node.position.x += 0.45;
+          node.position.y += 0.15;
+        }
+        if (node.floor == 7) {
+          node.position.x -= 0.45;
+          node.position.y -= 0.15;
+        }
+      })
 
       //Find unique floor ids
       this.floors = this.nodes.map(R.prop('floor'));

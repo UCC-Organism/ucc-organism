@@ -73,7 +73,7 @@ var state = {
   DPI: Platform.isPlask ? 2 : 1,
   //scene
   camera: null,
-  cameraPosZ: 0.30,
+  cameraPosZ: 0.930,
   arcball: null,
 
   //entities
