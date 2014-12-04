@@ -312,6 +312,7 @@ sys.Window.create({
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
+      mapSys(state);
       agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
@@ -320,9 +321,7 @@ sys.Window.create({
 
       glu.enableDepthReadAndWrite(false);
       //glu.enableAlphaBlending(true);
-
       //glu.enableAlphaBlending();
-      mapSys(state);
       meshRendererSys(state);
     }
 

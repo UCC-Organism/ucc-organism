@@ -12,7 +12,7 @@ function spawnStudents(state, agents) {
 
   var studentsToSpawn = R.difference(currentStudentsIds, aliveStudentsIds);
 
-  if (state.verbose) console.log('spawnStudents', 'aliveStudentsIds:', aliveStudentsIds.length, 'currentStudentsIds:', currentStudentsIds.length, 'studentsToSpawn:', studentsToSpawn.length);
+  if (state.verbose)console.log('spawnStudents', 'aliveStudentsIds:', aliveStudentsIds.length, 'currentStudentsIds:', currentStudentsIds.length, 'studentsToSpawn:', studentsToSpawn.length);
 
   var stairsNodes = state.map.selectedNodes.filter(function(node) {
     return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
@@ -23,10 +23,10 @@ function spawnStudents(state, agents) {
   stairsNodes = stairsNodes.filter(R.where({floor:1}));
 
   if (!stairsNodes.length) {
-    stairsNodes = state.selectedNodes;
+    stairsNodes = state.map.selectedNodes;
   }
 
-  studentsToSpawn = studentsToSpawn.slice(0, 10)
+  studentsToSpawn = studentsToSpawn.slice(0, 10);
 
   if (studentsToSpawn.length == 0) {
     if (aliveStudentAgents.length < state.numRandomStudents) {

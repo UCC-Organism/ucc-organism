@@ -90,8 +90,9 @@ function centerCamera(state, floorBBox) {
 //-----------------------------------------------------------------------------
 
 function rebuildMap(state) {
+  console.log('rebuildMap');
+
   removeMapEntities(state);
-  rebuildCells(state);
 
   var selectedNodes = state.map.selectedNodes;
   var corridorNodes = selectedNodes.filter(R.where({ room: R.not(R.identity) }));
@@ -157,6 +158,8 @@ function rebuildMap(state) {
   //state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
   centerCamera(state, floorBBox);
+
+  rebuildCells(state);
 }
 
 //-----------------------------------------------------------------------------
@@ -287,6 +290,8 @@ function rebuildCells(state) {
 
   var voronoiCells = voronoi(points2D);
 
+  voronoiCells.points = voronoiCells.points.map(vec2to3);
+
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
     var newPointIndex = voronoiCells.points.length;
@@ -344,6 +349,21 @@ function rebuildCells(state) {
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: Color.Red, pointSize: 5 }), { points: true });
   state.entities.push({ map: true, bio: true, mesh: pointsMesh });
+
+  state.map.selectedNodes = voronoiCells.points.map(function(p, pindex) {
+    return {
+      id: pindex,
+      position: p,
+      neighbors: []
+    }
+  })
+
+  voronoiCells.edges.forEach(function(edge) {
+    state.map.selectedNodes[edge[0]].neighbors.push(state.map.selectedNodes[edge[1]])
+    state.map.selectedNodes[edge[1]].neighbors.push(state.map.selectedNodes[edge[0]])
+  })
+  
+
   return;
 
   //cell blobs
