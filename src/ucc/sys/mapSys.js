@@ -307,7 +307,7 @@ function rebuildCells(state) {
   var boundingRect = Rect.fromPoints(points2D);
   var center = boundingRect.getCenter();
   var size = boundingRect.getSize();
-  var r = Math.max(size.x, size.y) / 2;
+  var r = Math.max(size.x, size.y) / 2 * 1.5;
   for(var i=0; i<30; i++) {
     points2D.push(new Vec2(
       center.x + r * Math.cos(2 * Math.PI * i/30),
