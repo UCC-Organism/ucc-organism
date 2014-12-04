@@ -26,6 +26,7 @@ var state = {
 
 function matrixLayout(w, h, n) {
   var size = w / n;
+  console.log('size', size);
   return function(i) {
     var cx = i % n;
     var cy = Math.floor(i / n);
@@ -215,7 +216,7 @@ FysCell.prototype.draw = function(crayon) {
   crayon.restore();
 }
 
-function PaedCell(student, x, y, size) {
+function PaedCell(student, x, y, size, scale) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -226,6 +227,7 @@ function PaedCell(student, x, y, size) {
   this.baseX = x;
   this.baseY = y;
   this.size = size;
+  this.scale = scale;
   this.seed = Math.random();
   //this.path = new plask.SkPath();
 }
@@ -243,6 +245,7 @@ PaedCell.prototype.draw = function(crayon) {
   crayon.save();
   crayon.translate(this.x, this.y);
   crayon.rotate(t * 50 * (seed - 0.5));
+  crayon.scale(this.scale, this.scale);
 
   var x = Math.cos(seed * Math.PI * 2) * r*0.3;
   var y = Math.sin(seed * Math.PI * 2) * r*0.3;
@@ -543,12 +546,12 @@ Window.create({
     var index = 0;
 
     var cellTypes = [
-      SimpleCell,
-      TeacherCell,
-      FysCell,
+      //SimpleCell,
+      //TeacherCell,
+      //FysCell,
       PaedCell,
-      PaedCell2,
-      PaedCell3
+      //PaedCell2,
+      //PaedCell3
     ];
 
     exampleGroups.forEach(function(group, groupIndex) {
@@ -563,10 +566,10 @@ Window.create({
       }
       group.students.forEach(function(student) {
         var pos = layout(index++);
-        this.cells.push(new CellType(student, pos.x, pos.y, pos.width))
+        this.cells.push(new CellType(student, pos.x, pos.y, pos.width/2, 0.75))
       }.bind(this));
     }.bind(this));
-
+    //this.cells = this.cells.slice(2, 3);
   },
   draw: function() {
     random.seed(0);

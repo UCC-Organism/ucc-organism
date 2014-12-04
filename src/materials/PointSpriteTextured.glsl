@@ -6,15 +6,18 @@ uniform float pointSize;
 attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
+attribute vec2 texCoord;
 
 varying vec3 vNormal;
 varying vec4 vColor;
+varying vec2 vTexCoord;
 
 void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   gl_PointSize = pointSize;
   vNormal = normal;
   vColor = color;
+  vTexCoord = texCoord;
 }
 
 #endif
@@ -30,7 +33,7 @@ uniform vec2 texOffset;
 
 varying vec3 vNormal;
 varying vec4 vColor;
-
+varying vec2 vTexCoord;
 
 //http://www.cg.info.hiroshima-cu.ac.jp/~miyazaki/knowledge/teche31.html
 mat2 rotate2(float angle) {
@@ -50,7 +53,7 @@ void main() {
   texCoord = rotate2(rot) * texCoord;
   texCoord += vec2(0.5, 0.5);
   texCoord *= texSize;
-  texCoord += texOffset;
+  texCoord += texOffset * vTexCoord;
 
   gl_FragColor = texture2D(texture, texCoord);
   gl_FragColor.rgb *= vColor.rgb;

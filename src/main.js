@@ -73,7 +73,7 @@ var state = {
   DPI: Platform.isPlask ? 2 : 1,
   //scene
   camera: null,
-  cameraPosZ: 0.40,
+  cameraPosZ: 0.30,
   arcball: null,
 
   //entities
@@ -92,10 +92,11 @@ var state = {
   agentSpeed: Platform.isPlask ? 0.02 : 0.02,
   debug: true,
   bio: true,
+  addon: true,
   clearBg: true,
   animateCells: false,
 
-  numRandomStudents: 50,
+  numRandomStudents: 150,
 
   //ui
   showSchedule: false,
@@ -237,6 +238,7 @@ sys.Window.create({
         case 'd': state.debug = !state.debug; break;
         case 'g': this.gui.enabled = !this.gui.enabled; break;
         case 'b': state.bio = !state.bio; break;
+        case 'a': state.addon = !state.addon; break;
         case 'c': state.clearBg = !state.clearBg; break;
         case ' ': this.killAllAgents(); break;
         case 'S': this.gui.save(config.settingsFile); break;

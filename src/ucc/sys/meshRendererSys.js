@@ -17,6 +17,13 @@ var bioFilter = function(bioMode) {
   }
 }
 
+var addonFilter = function(addonMode) {
+  return function(o) {
+    if (typeof o.addon == 'undefined') return true;
+    else return o.addon == addonMode;
+  }
+}
+
 var enabledFilter = function() {
   return function(o) {
     if (typeof o.enabled == 'undefined') return true;
@@ -31,6 +38,7 @@ function meshRendererSys(state) {
   var visibleEntities = state.entities
     .filter(debugFilter(state.debug))
     .filter(bioFilter(state.bio))
+    .filter(addonFilter(state.addon))
     .filter(enabledFilter());
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 

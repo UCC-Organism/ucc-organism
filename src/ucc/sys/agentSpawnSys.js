@@ -40,7 +40,8 @@ function spawnStudents(state, agents) {
   studentsToSpawn.forEach(function(studentId, studentIndex) {
     random.seed(Date.now() + studentIndex);
     var position = random.element(stairsNodes).position;
-    var color = Color.Yellow;
+    var hues = [0, 0.4, 0.6];
+    var color = Color.fromHSL(random.element(hues), 0.8, 0.7);
 
     if (aliveStudentAgents.length < state.maxAgentCount) {
       var studentAgent = {
