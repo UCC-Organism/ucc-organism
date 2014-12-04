@@ -26,7 +26,7 @@ var ShowColors        = materials.ShowColors;
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 
-var EPSILON = 0.001;
+var EPSILON = 0.0001;
 
 //-----------------------------------------------------------------------------
 
@@ -85,6 +85,34 @@ function centerCamera(state, floorBBox) {
   state.camera.setUp(new Vec3(0, 0, -1));
   state.arcball.setPosition(position);
   state.arcball.setTarget(target);
+}
+
+//-----------------------------------------------------------------------------
+
+function voronoiCellsToEdges(cells) {
+  var edges = R.unnest(cells.map(function(cell) {
+    return cell.map(function(i, index) {
+      return [i, cell[(index + 1) % cell.length ]].sort();
+    })
+  }))
+
+  //finding unique edges
+
+  //first sort by edge indices
+  edges.sort(function(a, b) {
+    if (a[0] > b[0]) return 1;
+    if (a[0] < b[0]) return -1;
+    else return a[1] - b[1];
+  })
+
+  //skip edge if the previous edge is the same
+  edges = edges.filter(function(edge, index, list) {
+    if (index == 0) return true;
+    if (list[index-1][0] == edge[0] && list[index-1][1] == edge[1]) return false;
+    return true;
+  })
+
+  return edges;
 }
 
 //-----------------------------------------------------------------------------
@@ -292,10 +320,38 @@ function rebuildCells(state) {
 
   voronoiCells.points = voronoiCells.points.map(vec2to3);
 
+  //reject edge cells
+
+  /*
+  //if you reject cells you need to rebuild points too
+  var boundingRect = Rect.fromPoints(voronoiCells.points);
+  for(var i=0; i<voronoiCells.cells.length; i++) {
+    var rejectCell = false;
+    var cell = voronoiCells.cells[i];
+    for(var j=0; j<cell.length; j++) {
+      var p = voronoiCells.points[cell[j]];
+      if (Math.abs(p.x - boundingRect.min.x) < EPSILON
+      ||  Math.abs(p.x - boundingRect.max.x) < EPSILON
+      ||  Math.abs(p.y - boundingRect.min.y) < EPSILON
+      ||  Math.abs(p.y - boundingRect.max.y) < EPSILON) {
+        rejectCell = true;
+        break;
+      }
+    }
+    if (rejectCell) {
+      voronoiCells.cells.splice(i, 1);
+      --i;
+    }
+  }
+  //console.log(points2D.length, voronoiCells.cells.length);
+  //voronoiCells.cells = voronoiCells.cells.slice(0, voronoiCells.cells.length - 30);
+  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+  */
+
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
     var newPointIndex = voronoiCells.points.length;
-    voronoiCells.points.push(p);
+    voronoiCells.points.push(vec2to3(p));
     voronoiCells.cells[cellIndex].forEach(function(cellPointIndex) {
       voronoiCells.edges.push([cellPointIndex, newPointIndex]);
     })
@@ -362,7 +418,6 @@ function rebuildCells(state) {
     state.map.selectedNodes[edge[0]].neighbors.push(state.map.selectedNodes[edge[1]])
     state.map.selectedNodes[edge[1]].neighbors.push(state.map.selectedNodes[edge[0]])
   })
-  
 
   return;
 
