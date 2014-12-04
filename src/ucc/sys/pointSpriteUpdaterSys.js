@@ -16,9 +16,9 @@ var Time                = sys.Time;
 
 function pointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
-    var image = Platform.isPlask ? '../assets/agents_2.png' : 'assets/agents_2.png';
+    var image = Platform.isPlask ? '../assets/agents_3.png' : 'assets/agents_3.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
-    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 20 * state.DPI, texture: Texture2D.load(image), texSize: new Vec2(1/14, 1/8), texOffset: new Vec2(1/14, 1/8) });
+    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 25 * state.DPI, texture: Texture2D.load(image), texSize: new Vec2(1/14, 1/8), texOffset: new Vec2(1/14, 1/8) });
     state.pointSpriteMeshEntity = {
       mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }
@@ -46,7 +46,7 @@ function pointSpriteUpdaterSys(state) {
     if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 14), random.int(0, 8));
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
-    var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 10;
+    var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;
     normals[entityIndex].x = (normals[entityIndex].x * 5 + agentRotation) / 6;
   });
 

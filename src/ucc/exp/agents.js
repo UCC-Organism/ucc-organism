@@ -471,7 +471,7 @@ PaedCell3.prototype.draw = function(crayon) {
 Window.create({
   settings: {
     width: 1280,
-    height: 720,
+    height: 731,
     type: '2d',
     highdpi: 1,
     fullscreen: Platform.isBrowser ? true : false,

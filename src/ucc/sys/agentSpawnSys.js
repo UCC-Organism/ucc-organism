@@ -12,7 +12,7 @@ function spawnStudents(state, agents) {
 
   var studentsToSpawn = R.difference(currentStudentsIds, aliveStudentsIds);
 
-  if (state.verbose)console.log('spawnStudents', 'aliveStudentsIds:', aliveStudentsIds.length, 'currentStudentsIds:', currentStudentsIds.length, 'studentsToSpawn:', studentsToSpawn.length);
+  //console.log('spawnStudents', 'aliveStudentsIds:', aliveStudentsIds.length, 'currentStudentsIds:', currentStudentsIds.length, 'studentsToSpawn:', studentsToSpawn.length);
 
   var stairsNodes = state.map.selectedNodes.filter(function(node) {
     return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
@@ -28,14 +28,14 @@ function spawnStudents(state, agents) {
 
   studentsToSpawn = studentsToSpawn.slice(0, 10);
 
-  if (studentsToSpawn.length == 0) {
+  //if (studentsToSpawn.length == 0) {
     if (aliveStudentAgents.length < state.numRandomStudents) {
       var position = random.element(stairsNodes).position;
       studentsToSpawn = R.range(0, 10).map(function() {
         return 'temp' + random.int(0, 999999999);
       })
     }
-  }
+  //}
 
   studentsToSpawn.forEach(function(studentId, studentIndex) {
     random.seed(Date.now() + studentIndex);

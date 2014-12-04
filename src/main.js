@@ -73,7 +73,7 @@ var state = {
   DPI: Platform.isPlask ? 2 : 2,
   //scene
   camera: null,
-  cameraPosZ: 0.930,
+  cameraPosZ: 0.530,
   arcball: null,
 
   //entities
@@ -84,7 +84,7 @@ var state = {
 
   //map config
   minNodeDistance: 0.001,
-  maxAgentCount: Platform.isPlask ? 100 : 500,
+  maxAgentCount: Platform.isPlask ? 500 : 500,
 
   //state
   currentTime: 0,
@@ -96,7 +96,7 @@ var state = {
   clearBg: true,
   animateCells: false,
 
-  numRandomStudents: 150,
+  numRandomStudents: 250,
 
   //ui
   showGUI: false,
@@ -332,8 +332,8 @@ sys.Window.create({
       pointSpriteUpdaterSys(state);
 
       glu.enableDepthReadAndWrite(false);
-      //glu.enableAlphaBlending(true);
-      //glu.enableAlphaBlending();
+      glu.enableAlphaBlending(true);
+      //glu.enableAdditiveBlending();
       meshRendererSys(state);
     }
 
