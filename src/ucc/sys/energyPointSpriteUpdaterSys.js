@@ -30,6 +30,8 @@ function energyPointSpriteUpdaterSys(state) {
   var vertices = state.energyPointSpriteMeshEntity.mesh.geometry.vertices;
   var colors = state.energyPointSpriteMeshEntity.mesh.geometry.colors;
 
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = 1 * state.DPI * state.zoom;
+
   vertices.length = 0;
   colors.length = 0;
 

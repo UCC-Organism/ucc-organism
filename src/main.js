@@ -45,6 +45,7 @@ var state = {
   camera: null,
   cameraPosZ: 0.30,
   arcball: null,
+  zoom: 1,
 
   //entities
   entities: [],
@@ -253,6 +254,8 @@ sys.Window.create({
     var verbose = false;
 
     this.updateFake();
+
+    state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
 
     //this.updateUI();
 
