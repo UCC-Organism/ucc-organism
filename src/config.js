@@ -37,7 +37,7 @@ var EnergyTypes = {
   'social': { color: Color.Red },
   'knowledge': { color: Color.Green },
   'economic': { color: Color.Blue },
-  'dirt': { color: Color.fromHSL(0.2, 0.8, 0.2) }
+  'dirt': { color: Color.fromHSL(0.1, 0.8, 0.4) }
 };
 
 var Config = {
@@ -45,6 +45,7 @@ var Config = {
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
   programmeColors: ProgrammeColors,
+  energyTypes: EnergyTypes,
 
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",

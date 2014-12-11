@@ -298,9 +298,9 @@ sys.Window.create({
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
       mapSys(state);
       energySys(state);
-      //agentSpawnSys(state);
-      //agentTargetNodeUpdaterSys(state);
-      //agentTargetNodeFollowerSys(state);
+      agentSpawnSys(state);
+      agentTargetNodeUpdaterSys(state);
+      agentTargetNodeFollowerSys(state);
       //agentDebugInfoUpdaterSys(state);
       pointSpriteUpdaterSys(state);
       energyPointSpriteUpdaterSys(state);
@@ -315,10 +315,6 @@ sys.Window.create({
 
     //glu.enableAlphaBlending();
     //state.ui.draw();
-
-    if (state.energyPointSpriteMeshEntity) {
-      state.energyPointSpriteMeshEntity.mesh.draw(state.camera);
-    }
 
     if (state.showGUI) {
       this.gui.draw();
