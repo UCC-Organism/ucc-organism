@@ -9,6 +9,8 @@ var R                 = require('ramda');
 //CES
 var meshRendererSys               = require('./ucc/sys/meshRendererSys');
 var mapSys                        = require('./ucc/sys/mapSys');
+var energySys                     = require('./ucc/sys/energySys');
+var energyPointSpriteUpdaterSys   = require('./ucc/sys/energyPointSpriteUpdaterSys');
 var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys');
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
@@ -35,39 +37,6 @@ var GUI               = gui.GUI;
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
-
-//var Cube = gen.Cube;
-//var Mesh = glu.Mesh;
-//var ShowNormals = materials.ShowNormals;
-//var SolidColor = materials.SolidColor;
-//var ShowColors = materials.ShowColors;
-//var Color = color.Color;
-//var Platform = sys.Platform;
-//var IO = sys.IO;
-//var Geometry = geom.Geometry;
-//var Vec3 = geom.Vec3;
-//var LineBuilder = gen.LineBuilder;
-//var BoundingBox = geom.BoundingBox;
-//
-//
-//var ScreenImage = glu.ScreenImage;
-//var Texture2D = glu.Texture2D;
-//var PointSpriteTextured = require('./materials/PointSpriteTextured')
-
-//
-//var notNull = R.identity;
-
-//var Style = {
-//  groupColors: {
-//    'default': new Color(1,1,1,1),
-//    'spl'    : new Color(1,1,1,1),
-//    'pmu'    : new Color(1,1,1,1),
-//    'fys'    : new Color(1,1,1,1),
-//    'nor'    : new Color(1,1,1,1),
-//    'PE1'    : new Color(1,1,1,1),
-//    'PNE'    : new Color(1,1,1,1)
-//  }
-//}
 
 var state = {
   DPI: Platform.isPlask ? 2 : 2,
@@ -328,20 +297,28 @@ sys.Window.create({
 
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
       mapSys(state);
-      agentSpawnSys(state);
-      agentTargetNodeUpdaterSys(state);
-      agentTargetNodeFollowerSys(state);
+      energySys(state);
+      //agentSpawnSys(state);
+      //agentTargetNodeUpdaterSys(state);
+      //agentTargetNodeFollowerSys(state);
       //agentDebugInfoUpdaterSys(state);
       pointSpriteUpdaterSys(state);
+      energyPointSpriteUpdaterSys(state);
 
       glu.enableDepthReadAndWrite(false);
       glu.enableAlphaBlending(true);
       //glu.enableAdditiveBlending();
       meshRendererSys(state);
+
+      state.map.dirty = false;
     }
 
     //glu.enableAlphaBlending();
     //state.ui.draw();
+
+    if (state.energyPointSpriteMeshEntity) {
+      state.energyPointSpriteMeshEntity.mesh.draw(state.camera);
+    }
 
     if (state.showGUI) {
       this.gui.draw();

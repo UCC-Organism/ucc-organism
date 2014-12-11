@@ -53,7 +53,6 @@ Vec3.prototype.setLength = function(len) {
   return this;
 }
 
-
 //-----------------------------------------------------------------------------
 
 function pointsToMesh(points, color) {
@@ -85,6 +84,25 @@ function centerCamera(state, floorBBox) {
   state.camera.setUp(new Vec3(0, 0, -1));
   state.arcball.setPosition(position);
   state.arcball.setTarget(target);
+}
+
+//-----------------------------------------------------------------------------
+
+function indexFinder(list) {
+  return function(o) {
+    return list.indexOf(o);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+function inRect(rect, accuracy) {
+  return function(p) {
+    return Math.abs(p.x - rect.min.x) < accuracy
+       ||  Math.abs(p.x - rect.max.x) < accuracy
+       ||  Math.abs(p.y - rect.min.y) < accuracy
+       ||  Math.abs(p.y - rect.max.y) < accuracy;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -323,25 +341,14 @@ function rebuildCells(state) {
 
   //reject edge cells - cells that are touching the bounding box edge
   var boundingRect = Rect.fromPoints(voronoiCells.points);
-  for(var i=0; i<voronoiCells.cells.length; i++) {
-    var isTouchingBBoxEdge = false;
-    var cell = voronoiCells.cells[i];
-    for(var j=0; j<cell.length; j++) {
-      var p = voronoiCells.points[cell[j]];
-      if (Math.abs(p.x - boundingRect.min.x) < EPSILON
-      ||  Math.abs(p.x - boundingRect.max.x) < EPSILON
-      ||  Math.abs(p.y - boundingRect.min.y) < EPSILON
-      ||  Math.abs(p.y - boundingRect.max.y) < EPSILON) {
-        isTouchingBBoxEdge = true;
-        break;
-      }
-    }
-    var isRoom = i < cellsRoomIds.length;
-    if (isTouchingBBoxEdge && !isRoom) {
-      voronoiCells.cells.splice(i, 1);
-      --i;
-    }
-  }
+  var borderPoints = voronoiCells.points.filter(inRect(boundingRect, EPSILON));
+  var borderPointsIndices = borderPoints.map(indexFinder(voronoiCells.points));
+
+  voronoiCells.cells = voronoiCells.cells.filter(function(cell, cellIndex) {
+    var isRoom = cellIndex < cellsRoomIds.length;
+    return isRoom || R.intersection(cell, borderPointsIndices).length == 0;
+  })
+
   //if you reject cells you need to rebuild points too
   //voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
@@ -569,7 +576,6 @@ function update(state) {
 
   if (!MapSys.ready || state.map.dirty) {
     MapSys.ready = true;
-    state.map.dirty = false;
     rebuildMap(state);
   }
   else {

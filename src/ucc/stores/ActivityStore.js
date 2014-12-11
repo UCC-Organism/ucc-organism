@@ -4,8 +4,10 @@ var Config  = require('../../config');
 var R       = require('ramda');
 var moment  = require('moment');
 
-var weekStart = moment().day(1-7).hours(0).minutes(0).seconds(0).toDate().getTime(); //prev monday
-var weekEnd   = moment().day(8-7).hours(0).minutes(0).seconds(0).toDate().getTime(); //next monday
+var weekStartDate = Config.scheduleStartDate ? moment(Config.scheduleStartDate) : moment().day(1-14).hours(0).minutes(0).seconds(0);
+var weekEndDate = Config.scheduleEndDate ? moment(Config.scheduleEndDate).add(1, 'days') : moment().day(1-14).hours(0).minutes(0).seconds(0);
+var weekStart = weekStartDate.toDate().getTime(); //prev monday
+var weekEnd   = weekEndDate.toDate().getTime(); //next monday
 
 var ActivityStore = {
   all: [],
