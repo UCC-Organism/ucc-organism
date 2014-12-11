@@ -13,7 +13,7 @@ var MapStore = {
   roomsById: {},
   selectedNodes: [],
   floors: [],
-  currentFloor: 1,
+  currentFloor: -1,
   dirty: true,
   init: function() {
     console.log('MapStore.init');

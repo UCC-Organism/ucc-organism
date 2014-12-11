@@ -72,6 +72,7 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var state = {
   DPI: Platform.isPlask ? 2 : 2,
   //scene
+  initFloor: 5,
   camera: null,
   cameraPosZ: 0.30,
   arcball: null,
@@ -199,6 +200,8 @@ sys.Window.create({
       GroupStore.init()
     ])
     .spread(function(map, activities, groups) {
+      map.setFloor(state.initFloor);
+
       state.map = map;
       state.activities = activities;
       state.groups = groups;
