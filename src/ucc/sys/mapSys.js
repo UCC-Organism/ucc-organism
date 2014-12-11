@@ -321,12 +321,10 @@ function rebuildCells(state) {
 
   voronoiCells.points = voronoiCells.points.map(vec2to3);
 
-  //reject edge cells
-
-  //if you reject cells you need to rebuild points too
+  //reject edge cells - cells that are touching the bounding box edge
   var boundingRect = Rect.fromPoints(voronoiCells.points);
   for(var i=0; i<voronoiCells.cells.length; i++) {
-    var rejectCell = false;
+    var isTouchingBBoxEdge = false;
     var cell = voronoiCells.cells[i];
     for(var j=0; j<cell.length; j++) {
       var p = voronoiCells.points[cell[j]];
@@ -334,19 +332,18 @@ function rebuildCells(state) {
       ||  Math.abs(p.x - boundingRect.max.x) < EPSILON
       ||  Math.abs(p.y - boundingRect.min.y) < EPSILON
       ||  Math.abs(p.y - boundingRect.max.y) < EPSILON) {
-        rejectCell = true;
+        isTouchingBBoxEdge = true;
         break;
       }
     }
     var isRoom = i < cellsRoomIds.length;
-    if (rejectCell && !isRoom) {
+    if (isTouchingBBoxEdge && !isRoom) {
       voronoiCells.cells.splice(i, 1);
       --i;
     }
   }
-  //console.log(points2D.length, voronoiCells.cells.length);
-  //voronoiCells.cells = voronoiCells.cells.slice(0, voronoiCells.cells.length - 30);
-  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+  //if you reject cells you need to rebuild points too
+  //voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
