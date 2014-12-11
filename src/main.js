@@ -131,6 +131,10 @@ sys.Window.create({
     this.gui.addParam('Toilet', config, 'toiletColor', {}, this.onColorChange.bind(this))
     this.gui.addParam('Toilet Center', config, 'toiletCenterColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Toilet Edge', config, 'toiletEdgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Social Energy', config.energyTypes.social, 'color').setPosition(350 * state.DPI, 10 * state.DPI);
+    this.gui.addParam('Knowledge Energy', config.energyTypes.knowledge, 'color');
+    this.gui.addParam('Economic Energy', config.energyTypes.economic, 'color');
+    this.gui.addParam('Dirt Energy', config.energyTypes.dirt, 'color');
 
     this.gui.addParam('Corridor', config, 'corridorColor');
 
