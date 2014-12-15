@@ -41,7 +41,9 @@ var MapStore = {
       //  return node.floor == 1 || node.floor == 2 || node.floor == 3 || node.floor == 4 || node.floor == 5;
       //})
 
+      //flatten whole map
       this.nodes.forEach(function(node) {
+        node.position.z = 0;
         if (node.floor == 1) {
           node.position.y -= 0.5;
         }
