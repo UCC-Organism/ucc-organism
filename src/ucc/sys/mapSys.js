@@ -197,11 +197,8 @@ function rebuildMap(state) {
   })
 
   //add new entities
-  //state.entities.push({ map: true, debug: true, mesh: mapPointsMesh });
-  //state.entities.push({ map: true, debug: true, mesh: entrancePointsMesh });
   state.entities.push({ map: true, debug: true, mesh: stairsPointsMesh });
   state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-  //state.entities.push({ map: true, debug: true, mesh: floorBBoxHelper });
 
   centerCamera(state, floorBBox);
 
@@ -365,47 +362,6 @@ function rebuildCells(state) {
     })
   })
 
-  /*
-
-  var pointsCount = 0;
-  var uniquePoints = new PointSet3();
-  cells = cells.map(function(cell, cellIndex) {
-    cell.forEach(function(edge) {
-      edge[0] = uniquePoints.add(vec2to3(edge[0]));
-      edge[1] = uniquePoints.add(vec2to3(edge[1]));
-      edge[0].roomIds = [];
-      edge[1].roomIds = [];
-      edge[0].basePos = edge[0].dup();
-      edge[1].basePos = edge[1].dup();
-      pointsCount += 2;
-    });
-
-    return orderEdges(cell);
-  });
-
-  var cellsRoomIds = cells.map(function(cell, cellIndex) {
-    var cellPoint = points[cellIndex];
-    var roomIndex = roomCenterPoints.indexOf(cellPoint);
-    if (roomIndex != -1) {
-      return Object.keys(cellGroups).filter(R.identity)[roomIndex];
-    }
-    return -1;
-  });
-
-  var edgesVertices = R.flatten(cells);
-  var edgesEdges = R.unnest(cells.map(function(cell, cellIndex) {
-    return cell.map(function(edge) {
-      var a = edge[0];
-      var b = edge[1];
-      a.roomIds.push(cellsRoomIds[cellIndex])
-      b.roomIds.push(cellsRoomIds[cellIndex])
-      return [edgesVertices.indexOf(a), edgesVertices.indexOf(b)]
-    });
-  }));
-
-  //voronoi edges / corridors
-  */
-
   //override map
 
   state.map.selectedNodes = voronoiCells.points.map(function(p, pindex) {
@@ -500,25 +456,11 @@ function rebuildCells(state) {
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
 
-  //var edgeMesh = new Mesh(new Geometry({ vertices: edgesVertices, edges: edgesEdges}), new SolidColor({ color: Color.fromHSV(0.4, 0.2, 0.9) }), { lines: true });
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
   state.entities.unshift({ map: true, plan: true, mesh: edgeMesh });
 
-  ///Color.fromHSL(0.5, 0.8, 0.15, 0.19)
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, plan: true, mesh: pointsMesh });
-
-  //state.entities.push({ map: true, mesh: pointsToMesh(cellPoints3) });
-  //state.entities.push({ map: true, bio: true, mesh: pointsToMesh(roomCenterPoints, Color.Yellow) });
-  //state.entities.push({ map: true, mesh: pointsToMesh(points, Color.Yellow) });
-
-  //MapSys.edgeMesh = edgeMesh;
-  //MapSys.cellMesh = cellMesh;
-  //MapSys.cellEdgeMesh = cellEdgeMesh;
-  //MapSys.cells = cells;
-  //MapSys.points = points;
-  //MapSys.cellsRoomIds = cellsRoomIds;
-  //MapSys.roomCenterPoints = roomCenterPoints;
 }
 
 function updateMap(state) {
@@ -530,7 +472,6 @@ function updateMap(state) {
     var roomId = MapSys.cellsRoomIds[i];
     if (roomId != -1) {
       roomValue = state.selectedRooms[roomId];
-      //if (roomValue != 0) console.log(i, roomId, roomValue)
       if (roomValue !== undefined) {
         for(var j=0; j<cell.length; j++) {
           var edge = cell[j];
