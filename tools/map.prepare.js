@@ -38,6 +38,7 @@ nodesData.rooms.forEach(function(room) {
 
   if (room.id === 'undefined') {
     roomId = 'room_' + nextRoomId++;
+    room.id = roomId;
     console.log('Room without id, generating new one', roomId);
   }
 

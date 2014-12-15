@@ -66,7 +66,10 @@ var Config = {
   otherRoomEdgeColor: Color.fromHex('#FFFFFF'),
   toiletColor: Color.fromHex('#FFFFFF'),
   toiletCenterColor: Color.fromHex('#FFFFFF'),
-  toiletEdgeColor: Color.fromHex('#FFFFFF')
+  toiletEdgeColor: Color.fromHex('#FFFFFF'),
+  emptyColor: Color.fromHex('#FF0000'),
+  emptyCenterColor: Color.fromHex('#FF0000'),
+  emptyEdgeColor: Color.fromHex('#DD0000')
 }
 
 module.exports = Config;

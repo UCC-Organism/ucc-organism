@@ -41,7 +41,7 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var state = {
   DPI: Platform.isPlask ? 2 : 2,
   //scene
-  initFloor: 5,
+  initFloor: 7,
   camera: null,
   cameraPosZ: 0.30,
   arcball: null,
@@ -61,11 +61,11 @@ var state = {
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
   agentSpeed: Platform.isPlask ? 0.02 : 0.02,
-  debug: false,
-  showCells: true,
+  debug: true,
+  showCells: false,
   showPlan: true,
-  showAgents: true,
-  showEnergy: true,
+  showAgents: false,
+  showEnergy: false,
   clearBg: true,
   animateCells: false,
 
@@ -99,6 +99,7 @@ sys.Window.create({
     type: '3d',
     fullscreen: Platform.isBrowser ? true : false,
     highdpi: state.DPI,
+    borderless: true
   },
   bla: 0,
   init: function() {

@@ -355,6 +355,14 @@ function rebuildCells(state) {
 
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
+    var roomId = cellsRoomIds[cellIndex] || -1;
+    var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
+
+    //skip empty cells
+    if (roomType == 'empty') {
+      return;
+    }
+
     var newPointIndex = voronoiCells.points.length;
     voronoiCells.points.push(vec2to3(p));
     voronoiCells.cells[cellIndex].forEach(function(cellPointIndex) {
@@ -396,18 +404,24 @@ function rebuildCells(state) {
     var isRoom = roomId != -1;
     var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
 
+    //skip empty cells
+    if (roomType == 'empty') {
+      return;
+    }
+
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
     var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 3);
 
     var center = GeomUtils.centroid(splinePoints);
-    //cell.center = center;
+
+    var cellCloseness = roomType != 'none' ? config.cellCloseness / 2 : config.cellCloseness;
 
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
       var np = splinePoints[(i+1)%splinePoints.length];
-      var p2 = p.dup().add(center.dup().sub(p).setLength(config.cellCloseness));
-      var np2 = np.dup().add(center.dup().sub(np).setLength(config.cellCloseness));
+      var p2 = p.dup().add(center.dup().sub(p).setLength(cellCloseness));
+      var np2 = np.dup().add(center.dup().sub(np).setLength(cellCloseness));
       var vidx = cellVertices.length;
       var eidx = cellEdgeVertices.length;
 
@@ -425,6 +439,11 @@ function rebuildCells(state) {
           cellColor = config.toiletColor;
           cellCenterColor = config.toiletCenterColor;
           cellEdgeColor = config.toiletEdgeColor;
+        }
+        else  if (roomType == 'empty') {
+          cellColor = config.emptyColor;
+          cellCenterColor = config.emptyCenterColor;
+          cellEdgeColor = config.emptyEdgeColor;
         }
         else {
           cellColor = config.otherRoomColor;
