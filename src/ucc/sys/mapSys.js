@@ -306,7 +306,11 @@ function makeSpring(start, end) {
 function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
 
-  var points = selectedNodes.map(R.prop('position'));
+  //all points
+  //var points = selectedNodes.map(R.prop('position'));
+
+  //only room points
+  var points = selectedNodes.filter(R.where({ room: R.identity })).map(R.prop('position'));
 
   //room centers
   var cellGroups = fn.groupBy(state.map.selectedNodes, 'room');
