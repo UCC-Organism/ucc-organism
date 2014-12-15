@@ -39,7 +39,7 @@ function energyPointSpriteUpdaterSys(state) {
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, texCoords: true });
     var pointSpriteMaterial = new ShowColorsWithNoise({ pointSize: 1 * state.DPI });
     state.energyPointSpriteMeshEntity = {
-      name: 'energyPointSpriteMeshEntity', energyPointSpriteMeshEntity: true, mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
+      name: 'energyPointSpriteMeshEntity', energyPointSpriteMeshEntity: true, energyMesh: true, mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }
     state.entities.unshift(state.energyPointSpriteMeshEntity);
   }

@@ -62,8 +62,10 @@ var state = {
   timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
   agentSpeed: Platform.isPlask ? 0.02 : 0.02,
   debug: false,
-  bio: true,
-  addon: true,
+  showCells: true,
+  showPlan: true,
+  showAgents: true,
+  showEnergy: true,
   clearBg: true,
   animateCells: false,
 
@@ -215,9 +217,11 @@ sys.Window.create({
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
         case 'g': state.showGUI = !state.showGUI; break;
-        case 'b': state.bio = !state.bio; break;
-        case 'a': state.addon = !state.addon; break;
-        case 'c': state.clearBg = !state.clearBg; break;
+        case 'c': state.showCells = !state.showCells; break;
+        case 'p': state.showPlan = !state.showPlan; break;
+        case 'a': state.showAgents = !state.showAgents; break;
+        case 'e': state.showEnergy = !state.showEnergy; break;
+        case 'b': state.clearBg = !state.clearBg; break;
         case ' ': this.killAllAgents(); break;
         case 'S': this.gui.save(config.settingsFile); break;
         case 'L': this.gui.load(config.settingsFile); break;

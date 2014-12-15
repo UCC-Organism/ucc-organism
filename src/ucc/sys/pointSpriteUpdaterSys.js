@@ -20,7 +20,7 @@ function pointSpriteUpdaterSys(state) {
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
     var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 30 * state.DPI, texture: Texture2D.load(image), texSize: new Vec2(1/14, 1/8), texOffset: new Vec2(1/14, 1/8) });
     state.pointSpriteMeshEntity = {
-      mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
+      agentMesh: true, mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }
     state.entities.push(state.pointSpriteMeshEntity);
   }

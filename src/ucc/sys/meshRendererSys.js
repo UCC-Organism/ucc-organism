@@ -3,31 +3,10 @@ var glu = require('pex-glu');
 
 var Context = glu.Context;
 
-var debugFilter = function(debugMode) {
+function makeFilter(property, value) {
   return function(o) {
-    if (typeof o.debug == 'undefined') return true;
-    else return o.debug == debugMode;
-  }
-}
-
-var bioFilter = function(bioMode) {
-  return function(o) {
-    if (typeof o.bio == 'undefined') return true;
-    else return o.bio == bioMode;
-  }
-}
-
-var addonFilter = function(addonMode) {
-  return function(o) {
-    if (typeof o.addon == 'undefined') return true;
-    else return o.addon == addonMode;
-  }
-}
-
-var enabledFilter = function() {
-  return function(o) {
-    if (typeof o.enabled == 'undefined') return true;
-    else return o.enabled;
+    if (typeof o[property] == 'undefined') return true;
+    else return o[property] == value;
   }
 }
 
@@ -36,10 +15,13 @@ function meshRendererSys(state) {
   var gl = Context.currentContext;
 
   var visibleEntities = state.entities
-    .filter(debugFilter(state.debug))
-    .filter(bioFilter(state.bio))
-    .filter(addonFilter(state.addon))
-    .filter(enabledFilter());
+    .filter(makeFilter('debug', state.debug))
+    .filter(makeFilter('cell', state.showCells))
+    .filter(makeFilter('plan', state.showPlan))
+    .filter(makeFilter('agentMesh', state.showAgents))
+    .filter(makeFilter('energyMesh', state.showEnergy))
+    .filter(makeFilter('plan', state.showPlan))
+    .filter(makeFilter('enabled', true));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
   entitiesWithMesh.forEach(function(entity) {
