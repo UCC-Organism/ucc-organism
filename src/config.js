@@ -41,7 +41,7 @@ var EnergyTypes = {
 };
 
 var Config = {
-  settingsFile: 'settings.json',
+  settingsFile: __dirname + '/settings.json',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
   programmeColors: ProgrammeColors,

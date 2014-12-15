@@ -31,10 +31,11 @@ function rebuildEnergyPaths(state) {
     var start = random.element(selectedNodes);
     var end = random.element(selectedNodes);
     var path = graph.findShortestPath(start, end);
+    if (!path || path.length == 0) return;
     var pathPoints = R.pluck('position')(path);
     var spline = new Spline3D(pathPoints);
     var g = new LineBuilder();
-    g.addPath(spline, Color.Red, 50);
+    g.addPath(spline, Color.Red, 0);
     //var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
     //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
     var energyType = config.energyTypes[random.element(Object.keys(config.energyTypes))];

@@ -350,7 +350,7 @@ function rebuildCells(state) {
   })
 
   //if you reject cells you need to rebuild points too
-  //voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
