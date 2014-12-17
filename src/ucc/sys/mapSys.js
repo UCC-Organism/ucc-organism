@@ -429,27 +429,10 @@ function rebuildCells(state) {
       var cellCenterColor = config.cellCenterColor;
       var cellEdgeColor = config.cellEdgeColor;
 
-      if (isRoom) {
-        if (roomType == 'classroom') {
-          cellColor = config.classroomColor;
-          cellCenterColor = config.classroomCenterColor;
-          cellEdgeColor = config.classroomEdgeColor;
-        }
-        else if (roomType == 'toilet') {
-          cellColor = config.toiletColor;
-          cellCenterColor = config.toiletCenterColor;
-          cellEdgeColor = config.toiletEdgeColor;
-        }
-        else  if (roomType == 'empty') {
-          cellColor = config.emptyColor;
-          cellCenterColor = config.emptyCenterColor;
-          cellEdgeColor = config.emptyEdgeColor;
-        }
-        else {
-          cellColor = config.otherRoomColor;
-          cellCenterColor = config.otherRoomCenterColor;
-          cellEdgeColor = config.otherRoomEdgeColor;
-        }
+      if (isRoom && roomType && roomType != 'none') {
+        cellColor = config.roomTypes[roomType].color;
+        cellCenterColor = config.roomTypes[roomType].centerColor;
+        cellEdgeColor = config.roomTypes[roomType].edgeColor;
       }
 
       cellVertices.push(p2);
@@ -476,10 +459,10 @@ function rebuildCells(state) {
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
-  state.entities.unshift({ map: true, plan: true, mesh: edgeMesh });
+  state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh });
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
-  state.entities.unshift({ map: true, plan: true, mesh: pointsMesh });
+  state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
 }
 
 function updateMap(state) {

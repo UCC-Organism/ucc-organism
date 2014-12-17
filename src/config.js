@@ -19,7 +19,7 @@ var RoomIdMap = {
   'Brikserum C.125' : 'C.125',
   //'Ude af huset',
   'Brikserum C.129' : 'C.129'
-}
+};
 
 var ProgrammeColors = {
   'default'                               : { primary: Color.fromHSL(0.0, 0, 0.5), secondary: Color.fromHSL(0, 1, 1) },
@@ -31,7 +31,7 @@ var ProgrammeColors = {
   'DIV - Diverse aktiviteter'             : { primary: Color.fromHSL(0.9, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
   'Diplom S - Diplomuddannelse - Sundhed' : { primary: Color.fromHSL(0.75, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
   'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) }
-}
+};
 
 var EnergyTypes = {
   'social': { color: Color.Red },
@@ -39,6 +39,20 @@ var EnergyTypes = {
   'economic': { color: Color.Blue },
   'dirt': { color: Color.fromHSL(0.1, 0.8, 0.4) }
 };
+
+var RoomTypes = {
+  ''         : { label: 'Other'    , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
+  'classroom': { label: 'Classroom', color: '#00FF00', centerColor: '#00FF00', edgeColor: '#00FF00' },
+  'toilet'   : { label: 'Toilet'   , color: '#0055DD', centerColor: '#0055DD', edgeColor: '#0055DD' },
+  'research' : { label: 'Research' , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
+  'admin'    : { label: 'Admin'    , color: '#6666FF', centerColor: '#6666FF', edgeColor: '#6666FF' },
+  'closet'   : { label: 'Closet'   , color: '#996600', centerColor: '#996600', edgeColor: '#996600' },
+  'food'     : { label: 'Food'     , color: '#FFAA00', centerColor: '#FFAA00', edgeColor: '#FFAA00' },
+  'knowledge': { label: 'Knowledge', color: '#00DDAA', centerColor: '#00DDAA', edgeColor: '#00DDAA' },
+  'exit'     : { label: 'Exit'     , color: '#FF0000', centerColor: '#FF0000', edgeColor: '#FF0000' },
+  'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' },
+  'cell'     : { label: 'Cell'     , color: '#696E98', centerColor: '#696E98', edgeColor: '#FF00FF' }
+}
 
 var Config = {
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
@@ -50,26 +64,22 @@ var Config = {
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",
 
-  //look
   cellCloseness: 0.0035,
   cellEdgeWidth: 1,
-  bgColor: Color.fromHex('#312D2D'),
   cellColor: Color.fromHex('#696E98'),
   cellCenterColor: Color.fromHex('#696E98'),
   cellEdgeColor: Color.fromHex('#FF00FF'),
+  bgColor: Color.fromHex('#312D2D'),
   corridorColor: Color.fromHex('#FFFF00'),
-  classroomColor: Color.fromHex('#FFFFFF'),
-  classroomCenterColor: Color.fromHex('#FFFFFF'),
-  classroomEdgeColor: Color.fromHex('#FFFFFF'),
-  otherRoomColor: Color.fromHex('#FFFFFF'),
-  otherRoomCenterColor: Color.fromHex('#FFFFFF'),
-  otherRoomEdgeColor: Color.fromHex('#FFFFFF'),
-  toiletColor: Color.fromHex('#FFFFFF'),
-  toiletCenterColor: Color.fromHex('#FFFFFF'),
-  toiletEdgeColor: Color.fromHex('#FFFFFF'),
-  emptyColor: Color.fromHex('#FF0000'),
-  emptyCenterColor: Color.fromHex('#FF0000'),
-  emptyEdgeColor: Color.fromHex('#DD0000')
-}
+
+  roomTypes: RoomTypes
+};
+
+Object.keys(Config.roomTypes).forEach(function(type) {
+  var roomType = Config.roomTypes[type];
+  roomType.color = Color.fromHex(roomType.color);
+  roomType.centerColor = Color.fromHex(roomType.centerColor);
+  roomType.edgeColor = Color.fromHex(roomType.edgeColor);
+});
 
 module.exports = Config;

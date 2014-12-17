@@ -61,11 +61,12 @@ var state = {
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
   agentSpeed: Platform.isPlask ? 0.02 : 0.02,
-  debug: true,
-  showCells: false,
-  showPlan: true,
-  showAgents: false,
-  showEnergy: false,
+  debug: false,
+  showCells: true,
+  showCorridors: true,
+  showNodes: true,
+  showAgents: true,
+  showEnergy: true,
   clearBg: true,
   animateCells: false,
 
@@ -91,15 +92,14 @@ var state = {
   selectedRooms: {}
 };
 
-
 sys.Window.create({
   settings: {
-    width: 1280 * state.DPI,
-    height: 720 * state.DPI,
+    width: 1600 * state.DPI,
+    height: 900 * state.DPI,
     type: '3d',
     fullscreen: Platform.isBrowser ? true : false,
     highdpi: state.DPI,
-    borderless: true
+    borderless: true,
   },
   bla: 0,
   init: function() {
@@ -114,34 +114,38 @@ sys.Window.create({
     Time.verbose = true;
 
     this.gui = new GUI(this);
-    this.gui.addLabel('UI');
+    this.gui.addHeader('UI');
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
     this.gui.addParam('Animate cells', state, 'animateCells', false);
-    this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 1 });
+    this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 0.1 });
     this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
-    this.gui.addLabel('Look');
+    this.gui.addHeader('Global Colors');
     this.gui.addParam('Cell Edge Width', config, 'cellEdgeWidth', { min: 0.5, max: 5 });
     this.gui.addParam('BgColor', config, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Corridor', config, 'corridorColor');
     this.gui.addParam('Cell', config, 'cellColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Center', config, 'cellCenterColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Edge', config, 'cellEdgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Classroom', config, 'classroomColor', {}, this.onColorChange.bind(this)).setPosition(180 * state.DPI, 10 * state.DPI);;
-    this.gui.addParam('Classroom Center', config, 'classroomCenterColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Classroom Edge', config, 'classroomEdgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Other room', config, 'otherRoomColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Other room Center', config, 'otherRoomCenterColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Other room Edge', config, 'otherRoomEdgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Toilet', config, 'toiletColor', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Toilet Center', config, 'toiletCenterColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Toilet Edge', config, 'toiletEdgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Social Energy', config.energyTypes.social, 'color').setPosition(350 * state.DPI, 10 * state.DPI);
+    this.gui.addHeader('Room colors').setPosition(180 * state.DPI, 10 * state.DPI);
+    this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Classroom Edge',   config.roomTypes.classroom, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Other room',       config.roomTypes[''], 'color', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Other room Center',config.roomTypes[''], 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Other room Edge',  config.roomTypes[''], 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Toilet',           config.roomTypes.toilet, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Toilet Center',    config.roomTypes.toilet, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Toilet Edge',      config.roomTypes.toilet, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Exit',           config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Exit Center',    config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Exit Edge',      config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addHeader('Energy colors').setPosition(350 * state.DPI, 10 * state.DPI);
+    this.gui.addParam('Social Energy',    config.energyTypes.social, 'color');
     this.gui.addParam('Knowledge Energy', config.energyTypes.knowledge, 'color');
-    this.gui.addParam('Economic Energy', config.energyTypes.economic, 'color');
-    this.gui.addParam('Dirt Energy', config.energyTypes.dirt, 'color');
-
-    this.gui.addParam('Corridor', config, 'corridorColor');
-
+    this.gui.addParam('Economic Energy',  config.energyTypes.economic, 'color');
+    this.gui.addParam('Dirt Energy',      config.energyTypes.dirt, 'color');
+    this.gui.addHeader('Programme colors')
     Object.keys(config.programmeColors).forEach(function(programme, programmeIndex) {
       if (programme != 'default') {
         var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
@@ -219,7 +223,7 @@ sys.Window.create({
         case 'd': state.debug = !state.debug; break;
         case 'g': state.showGUI = !state.showGUI; break;
         case 'c': state.showCells = !state.showCells; break;
-        case 'p': state.showPlan = !state.showPlan; break;
+        case 'p': state.showCorridors = !state.showCorridors; state.showNodes = !state.showNodes; break;
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'b': state.clearBg = !state.clearBg; break;
@@ -290,9 +294,7 @@ sys.Window.create({
     }
   },
   onColorChange: function() {
-    console.log('onColorChange');
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), state.entities);
-    console.log('entitiesWithMesh', entitiesWithMesh.length)
     entitiesWithMesh.forEach(function(entity) {
       if (entity.mesh.geometry.colors) {
         entity.mesh.geometry.colors.dirty = true;

@@ -17,10 +17,10 @@ function meshRendererSys(state) {
   var visibleEntities = state.entities
     .filter(makeFilter('debug', state.debug))
     .filter(makeFilter('cell', state.showCells))
-    .filter(makeFilter('plan', state.showPlan))
     .filter(makeFilter('agentMesh', state.showAgents))
     .filter(makeFilter('energyMesh', state.showEnergy))
-    .filter(makeFilter('plan', state.showPlan))
+    .filter(makeFilter('corridor', state.showCorridors))
+    .filter(makeFilter('node', state.showNodes))
     .filter(makeFilter('enabled', true));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
