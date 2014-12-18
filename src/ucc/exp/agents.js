@@ -19,6 +19,38 @@ var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball           = glu.Arcball;
 var Color             = color.Color;
 var GUI               = gui.GUI;
+var settings          = require('../../settings');
+
+
+function prepareSettingsColor(name) {
+  //settings[name] = new Color(settings[name].r, settings[name].g, settings[name].b, settings[name].a);
+  settings[name] = [
+    Math.floor(255*settings[name].r),
+    Math.floor(255*settings[name].g),
+    Math.floor(255*settings[name].b),
+    Math.floor(255*settings[name].a)
+  ];
+  return settings[name];
+}
+
+var cellStyle = {
+
+}
+
+var cellColors = {
+  bg: prepareSettingsColor("BgColor"),
+  cellBorderEdge : [ 255*0.5561439022429832, 255*0.10527327716561674, 255*0.853888654652565, 255*1.0 ],
+  cellBorder: [ 222-30, 200-30, 39-0, 255 ],
+  cellWhite: [ 255, 255, 255, 150 ],
+  teacher: [39, 178, 128, 255],
+  simple: [239, 105, 108, 255],
+  teacher: [ 255, 255, 255, 150 ],
+  simple: [ 255, 255, 255, 150 ],
+  //simple: [ 255, 50, 10, 255 ],
+  //teacher: [ 255, 50, 10, 255 ],
+  //paed: [ 255, 50, 10, 255 ]
+  paed: [ 255, 255, 255, 150 ]
+};
 
 var state = {
 
@@ -40,6 +72,7 @@ function matrixLayout(w, h, n) {
   }
 }
 
+//
 function SimpleCell(student, x, y, size) {
   this.student = student;
   this.x = x;
@@ -76,21 +109,25 @@ SimpleCell.prototype.draw = function(crayon) {
   var x2 = x + Math.cos(seed * Math.PI * 2) * r;
   var y2 = y + Math.sin(seed * Math.PI * 2) * r;
 
-  crayon.fill([240, 255, 255, 50])
+  crayon.fill(cellColors.cellBorderEdge)
+    .circle(x, y, r + 6)
+    .circle(x2, y2, r2 + 6);
+
+  crayon.fill(cellColors.cellBorder)
     .circle(x, y, r + 5)
     .circle(x2, y2, r2 + 5);
 
-  crayon.fill([239, 105, 108, 255])
+  crayon.fill(cellColors.simple)
     .circle(x, y, r)
     .circle(x2, y2, r2);
 
   crayon
-    .fill([233, 178, 128, 255])
+    .fill(cellColors.cellWhite)
     .circle(x2, y2,  Math.max(1, r2 - 4));
 
   for(var i=0; i<seed * 5; i++) {
     crayon
-    .fill([255, 255, 255, 255])
+    .fill(cellColors.cellWhite)
     .circle(x2 + (Math.random()-0.5) * r/3, y2 + (Math.random()-0.5) * r/3, r/10)
   }
 
@@ -131,22 +168,29 @@ TeacherCell.prototype.draw = function(crayon) {
   var x2 = x + Math.cos(seed * Math.PI * 2) * r;
   var y2 = y + Math.sin(seed * Math.PI * 2) * r;
 
-  crayon.fill([240, 255, 255, 50])
-    .circle(x, y, r + 5);
+  crayon.fill(cellColors.cellBorderEdge)
+    .circle(x, y, r + 6);
 
   var n = Math.floor(2 + 5 * seed);
+  for(var i=0; i<n; i++) {
+    crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), r2 + 6);
+  }
+
+  crayon.fill(cellColors.cellBorder)
+    .circle(x, y, r + 5);
+
   for(var i=0; i<n; i++) {
     crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), r2 + 5);
   }
 
-  crayon.fill([39, 178, 128, 255]);
+  crayon.fill(cellColors.teacher);
   crayon.circle(x, y, r);
   var n = Math.floor(2 + 5 * seed);
   for(var i=0; i<n; i++) {
-    crayon.fill([39, 178, 128, 255]);
+    crayon.fill(cellColors.teacher);
     crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), r2);
-    crayon.fill([255, 255, 255, 150]);
-    crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), Math.max(5, r/10));
+    crayon.fill(cellColors.cellWhite);
+    crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), Math.max(3, r/12));
   }
 
   crayon.restore();
@@ -187,7 +231,7 @@ FysCell.prototype.draw = function(crayon) {
   var x2 = x + Math.cos(seed * Math.PI * 2) * r;
   var y2 = y + Math.sin(seed * Math.PI * 2) * r;
 
-  crayon.fill([240, 255, 255, 50]);
+  crayon.fill(cellColors.cellBorder);
   crayon.circle(x, y, r + 5);
 
   //this.path.reset();
@@ -206,7 +250,7 @@ FysCell.prototype.draw = function(crayon) {
   for(var i=0; i<n; i++) {
     crayon.fill([39, 100, 178, 255]);
     crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), r2);
-    crayon.fill([255, 255, 255, 150]);
+    crayon.fill(cellColors.cellWhite);
     crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), Math.max(5, r/10));
   }
 
@@ -227,7 +271,6 @@ function PaedCell(student, x, y, size) {
   this.baseY = y;
   this.size = size;
   this.seed = Math.random();
-  //this.path = new plask.SkPath();
 }
 
 PaedCell.prototype.draw = function(crayon) {
@@ -250,18 +293,22 @@ PaedCell.prototype.draw = function(crayon) {
   var x2 = x + Math.cos(seed * Math.PI * 2) * r;
   var y2 = y + Math.sin(seed * Math.PI * 2) * r;
 
-  crayon.fill([240, 255, 255, 50]);
+  crayon.fill(cellColors.cellBorderEdge);
+  crayon.circle(x, y, r + 6);
+  var n = Math.floor(2 + 5 * seed);
+  for(var i=0; i<n; i++) {
+    crayon.save();
+    crayon.translate(x, y);
+    crayon.rotate(360/n * i);
+    var px = 0;
+    var py = 0;
+    crayon.roundRect(px-11, py + 1, 22, 35, 5, 5);
+    crayon.restore();
+  }
+
+  crayon.fill(cellColors.cellBorder);
   crayon.circle(x, y, r + 5);
 
-  //this.path.reset();
-  //this.path.moveTo(-r, -r);
-  //this.path.lineTo( 0,  r);
-  //this.path.lineTo( r, -r);
-
-  var n = Math.floor(2 + 5 * seed);
-
-  //TODO //crayon.drawPath(paint, this.path);
-  var n = Math.floor(2 + 5 * seed);
   for(var i=0; i<n; i++) {
     crayon.save();
     crayon.translate(x, y);
@@ -272,19 +319,17 @@ PaedCell.prototype.draw = function(crayon) {
     crayon.restore();
   }
   for(var i=0; i<n; i++) {
-    crayon.fill([200, 150, 20, 255]);
-    crayon.fill([255, 255, 255, 150]);
+    crayon.fill(cellColors.cellWhite);
     crayon.save();
     crayon.translate(x, y);
     crayon.rotate(360/n * i)
     var px = 0;
     var py = 20;
     crayon.circle(px, py, 10);
-    //crayon.roundRect(px-2.5, py + 5, 5, 15, 3, 3);
     crayon.restore();
   }
   for(var i=0; i<n; i++) {
-    crayon.fill([200, 150, 20, 255]);
+    crayon.fill(cellColors.cellBorder);
     crayon.save();
     crayon.translate(x, y);
     crayon.rotate(360/n * i)
@@ -293,8 +338,6 @@ PaedCell.prototype.draw = function(crayon) {
     crayon.circle(px, py, 5);
     crayon.restore();
   }
-
-  crayon.fill([255, 0, 0, 255]);
 
   crayon.restore();
 }
@@ -338,7 +381,7 @@ PaedCell2.prototype.draw = function(crayon) {
   var x2 = x + Math.cos(seed * Math.PI * 2) * r;
   var y2 = y + Math.sin(seed * Math.PI * 2) * r;
 
-  crayon.fill([240, 255, 255, 50]);
+  crayon.fill(cellColors.cellBorder);
   crayon.circle(x, y, r + 5);
 
   //this.path.reset();
@@ -361,7 +404,7 @@ PaedCell2.prototype.draw = function(crayon) {
   }
   for(var i=0; i<n; i++) {
     crayon.fill([200, 150, 20, 255]);
-    crayon.fill([255, 255, 255, 150]);
+    crayon.fill(cellColors.cellWhite);
     crayon.save();
     crayon.translate(x, y);
     crayon.rotate(360/n * i)
@@ -421,7 +464,21 @@ PaedCell3.prototype.draw = function(crayon) {
   var x2 = x + Math.cos(seed * Math.PI * 2) * r;
   var y2 = y + Math.sin(seed * Math.PI * 2) * r;
 
-  crayon.fill([240, 255, 255, 50]);
+  var n = Math.floor(3 + 5 * seed);
+
+  crayon.fill(cellColors.cellBorderEdge);
+  crayon.circle(x, y, r + 6);
+  for(var i=0; i<n; i++) {
+    crayon.save();
+    crayon.translate(x, y);
+    crayon.rotate(360/n * i);
+    var px = 0;
+    var py = 0;
+    crayon.roundRect(px-11, py + 11, 22, 25, 5, 5);
+    crayon.restore();
+  }
+
+  crayon.fill(cellColors.cellBorder);
   crayon.circle(x, y, r + 5);
 
   //this.path.reset();
@@ -430,7 +487,6 @@ PaedCell3.prototype.draw = function(crayon) {
   //this.path.lineTo( r, -r);
 
   //TODO//crayon.drawPath(paint, this.path);
-  var n = Math.floor(3 + 5 * seed);
   for(var i=0; i<n; i++) {
     crayon.save();
     crayon.translate(x, y);
@@ -441,9 +497,7 @@ PaedCell3.prototype.draw = function(crayon) {
     crayon.restore();
   }
   for(var i=0; i<n; i++) {
-    crayon.fill([200, 150, 20, 255]);
-    //crayon.circle(x + r * Math.cos(i/(n-1) * Math.PI * 2), y + r * Math.sin(i/(n-1) * Math.PI * 2), r2);
-    crayon.fill([255, 255, 255, 150]);
+    crayon.fill(cellColors.cellWhite);
     crayon.save();
     crayon.translate(x, y);
     crayon.rotate(360/n * i)
@@ -453,7 +507,7 @@ PaedCell3.prototype.draw = function(crayon) {
     crayon.restore();
   }
   for(var i=0; i<n; i++) {
-    crayon.fill([100, 50, 220, 255]);
+    crayon.fill(cellColors.paed);
     crayon.save();
     crayon.translate(x, y);
     crayon.rotate(360/n * i)
@@ -470,8 +524,8 @@ PaedCell3.prototype.draw = function(crayon) {
 
 Window.create({
   settings: {
-    width: 1280,
-    height: 731,
+    width: 1000,
+    height: 1000,
     type: '2d',
     highdpi: 1,
     fullscreen: Platform.isBrowser ? true : false,
@@ -609,7 +663,7 @@ Window.create({
 
     var crayon = this.crayon;
 
-    this.crayon.clear().fill([40, 40, 50, 255]).rect(0, 0, this.width, this.height);
+    this.crayon.clear().fill(cellColors.bg).rect(0, 0, this.width, this.height);
 
     if (this.saveFrame) {
       this.canvas.drawColor(255, 0,0, 0, this.paint.kClearMode);
