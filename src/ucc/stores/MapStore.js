@@ -32,7 +32,7 @@ var MapStore = {
       //Transform json data to real objects
       this.nodes.forEach(function(node) {
         //{x, y, z} to Vec3
-        node.position = new Vec3(node.position.x, node.position.y, node.position.z);
+        node.position = new Vec3(node.position.x, -node.position.y, node.position.z);
         //Neighbor index to node reference
         node.neighbors = R.map(R.rPartial(R.prop, this.nodes), node.neighbors);
       }.bind(this));
