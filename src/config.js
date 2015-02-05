@@ -23,14 +23,14 @@ var RoomIdMap = {
 
 var ProgrammeColors = {
   'default'                               : { primary: Color.fromHSL(0.0, 0, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'SPL - Sygeplejerskeuddannelsen'        : { primary: Color.fromHSL(0.0, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'PMU - Psykomotorikuddannelsen'         : { primary: Color.fromHSL(0.1, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'FYS - Fysioterapeutuddannelsen'        : { primary: Color.fromHSL(0.4, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'PÆD - Pædagoguddannelsen'              : { primary: Color.fromHSL(0.6, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'SOC - Socialrådgiveruddannelsen'       : { primary: Color.fromHSL(0.2, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'DIV - Diverse aktiviteter'             : { primary: Color.fromHSL(0.9, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'Diplom S - Diplomuddannelse - Sundhed' : { primary: Color.fromHSL(0.75, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 1, 0.5), secondary: Color.fromHSL(0, 1, 1) }
+  'SPL - Sygeplejerskeuddannelsen'        : { primary: Color.fromHSL(0.0, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'PMU - Psykomotorikuddannelsen'         : { primary: Color.fromHSL(0.1, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'FYS - Fysioterapeutuddannelsen'        : { primary: Color.fromHSL(0.4, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'PÆD - Pædagoguddannelsen'              : { primary: Color.fromHSL(0.6, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'SOC - Socialrådgiveruddannelsen'       : { primary: Color.fromHSL(0.2, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'DIV - Diverse aktiviteter'             : { primary: Color.fromHSL(0.9, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'Diplom S - Diplomuddannelse - Sundhed' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
+  'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) }
 };
 
 var EnergyTypes = {
@@ -52,7 +52,23 @@ var RoomTypes = {
   'exit'     : { label: 'Exit'     , color: '#FF0000', centerColor: '#FF0000', edgeColor: '#FF0000' },
   'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' },
   'cell'     : { label: 'Cell'     , color: '#696E98', centerColor: '#696E98', edgeColor: '#FF00FF' }
-}
+};
+
+var cellStyle = {
+  bg: [ 222, 200, 39, 255 ],
+  cellBorderEdge : [ 255*0.5561439022429832, 255*0.10527327716561674, 255*0.853888654652565, 255*1.0 ],
+  cellBorder: [ 222-30, 200-30, 39-0, 255 ],
+  cellInside: [ 255, 255, 210, 200 ],
+  cellCore: [ 100, 70, 90, 200 ],
+  teacher: [39, 178, 128, 255],
+  simple: [239, 105, 108, 255],
+  teacher: [ 255, 255, 255, 150 ],
+  simple: [ 255, 255, 255, 150 ],
+  //simple: [ 255, 50, 10, 255 ],
+  //teacher: [ 255, 50, 10, 255 ],
+  //paed: [ 255, 50, 10, 255 ]
+  paed: [ 255, 255, 255, 150 ]
+};
 
 var Config = {
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
@@ -72,7 +88,12 @@ var Config = {
   bgColor: Color.fromHex('#312D2D'),
   corridorColor: Color.fromHex('#FFFF00'),
 
-  roomTypes: RoomTypes
+  roomTypes: RoomTypes,
+
+  cellStyle: cellStyle,
+
+  minStudentAge: 18,
+  maxStudentAge: 40
 };
 
 Object.keys(Config.roomTypes).forEach(function(type) {

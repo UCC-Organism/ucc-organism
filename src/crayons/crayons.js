@@ -73,12 +73,42 @@ SkCanvasCrayon.prototype.circle = function(x, y, r) {
   return this;
 };
 
+SkCanvasCrayon.prototype.circle = function(x, y, r) {
+  this.canvas.drawCircle(this.currentStyle, x, y, r);
+  return this;
+};
+
+//TODO: SkCanvasCrayon.drawEllipse
+
 SkCanvasCrayon.prototype.text = function(str, x, y) {
   this.canvas.drawText(this.currentStyle, str, x, y);
 }
 
 SkCanvasCrayon.prototype.line = function(x1, y1, x2, y2) {
   this.canvas.drawLine(this.currentStyle, x1, y1, x2, y2);
+  return this;
+};
+
+SkCanvasCrayon.prototype.beginPath = function() {
+  if (!this.currentPath) this.currentPath = new this.plask.SkPath();
+  this.currentPath.reset();
+  return this;
+};
+
+SkCanvasCrayon.prototype.moveTo = function(x, y) {
+  this.currentPath.moveTo(x, y);
+  return this;
+};
+
+SkCanvasCrayon.prototype.lineTo = function(x, y) {
+  this.currentPath.lineTo(x, y);
+  return this;
+};
+
+SkCanvasCrayon.prototype.endPath = function() {
+  if (!this.currentPath) throw 'No current path';
+  this.currentPath.close();
+  this.canvas.drawPath(this.currentStyle, this.currentPath);
   return this;
 };
 
@@ -89,22 +119,27 @@ SkCanvasCrayon.prototype.clear = function(transparent) {
 
 SkCanvasCrayon.prototype.translate = function(x, y) {
   this.canvas.translate(x, y);
+  return this;
 }
 
 SkCanvasCrayon.prototype.scale = function(x, y) {
   this.canvas.scale(x, y);
+  return this;
 }
 
 SkCanvasCrayon.prototype.rotate = function(a) {
   this.canvas.rotate(a);
+  return this;
 }
 
 SkCanvasCrayon.prototype.save = function() {
   this.canvas.save();
+  return this;
 }
 
 SkCanvasCrayon.prototype.restore = function() {
   this.canvas.restore();
+  return this;
 }
 
 if (typeof document === 'undefined') {
