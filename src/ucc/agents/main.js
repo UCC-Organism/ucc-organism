@@ -223,7 +223,7 @@ Window.create({
       }.bind(this));
     }
 
-     this.cells.forEach(function(cell) {
+    this.cells.forEach(function(cell) {
         cell.vx *= 0.9;
         cell.vy *= 0.9;
         cell.vx += cell.fx;
