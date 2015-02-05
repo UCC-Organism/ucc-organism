@@ -27,6 +27,8 @@ function pointSpriteUpdaterSys(state) {
 
   var entitiesWithPointSprite = R.filter(R.where({ pointSize: R.identity }), state.entities);
 
+  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = 10 * state.DPI * state.zoom;
+
   var vertices = state.pointSpriteMeshEntity.mesh.geometry.vertices;
   var colors = state.pointSpriteMeshEntity.mesh.geometry.colors;
   var normals = state.pointSpriteMeshEntity.mesh.geometry.normals;

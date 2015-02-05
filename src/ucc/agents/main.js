@@ -187,7 +187,7 @@ Window.create({
       group.students = group.students.slice(0, 10);
       group.students.forEach(function(student) {
         var pos = layout(index++);
-        this.cells.push(new CellType(student, pos.x, pos.y, pos.width, color))
+        this.cells.push(new CellType(student, pos.x, pos.y, pos.width*0.7, color))
       }.bind(this));
 
     }.bind(this));
@@ -258,6 +258,7 @@ Window.create({
     if (this.saveFrame) {
       this.saveFrame = false;
       this.canvas.writeImage('png', Date.now() + '.png');
+      this.canvas.writeImage('png', '../../../assets/agents_5.png');
     }
 
     //crayon.restore();
