@@ -13,8 +13,10 @@ var energySys                     = require('./ucc/sys/energySys');
 var energyPointSpriteUpdaterSys   = require('./ucc/sys/energyPointSpriteUpdaterSys');
 var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys');
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
+var agentFlockingSys              = require('./ucc/sys/agentFlockingSys');
+var agentPositionUpdaterSys       = require('./ucc/sys/agentPositionUpdaterSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
-var pointSpriteUpdaterSys         = require('./ucc/sys/pointSpriteUpdaterSys');
+var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
 
 //Stores
@@ -310,13 +312,15 @@ sys.Window.create({
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.activities && state.groups && state.map.selectedNodes) {
+      agentDebugInfoUpdaterSys(state);
       mapSys(state);
       energySys(state);
       agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
-      //agentDebugInfoUpdaterSys(state);
-      pointSpriteUpdaterSys(state);
+      agentPositionUpdaterSys(state);
+      agentFlockingSys(state);
+      agentPointSpriteUpdaterSys(state);
       energyPointSpriteUpdaterSys(state);
 
       glu.enableDepthReadAndWrite(false);

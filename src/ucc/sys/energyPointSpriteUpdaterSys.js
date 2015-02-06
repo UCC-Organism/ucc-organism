@@ -68,7 +68,7 @@ function energyPointSpriteUpdaterSys(state) {
       if (p) {
         vertices.push(p);
         colors.push(entity.color)
-        texCoords.push(new Vec2(t, i/50));
+        texCoords.push(new Vec2(t, i/5));
       }
     }
   })

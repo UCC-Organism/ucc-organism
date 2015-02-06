@@ -15,7 +15,7 @@ var Mesh                = glu.Mesh;
 var Platform            = sys.Platform;
 var Time                = sys.Time;
 
-function pointSpriteUpdaterSys(state) {
+function agentPointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
     var image = Platform.isPlask ? __dirname + '/../../../assets/agents_5.png' : 'assets/agents_5.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
@@ -28,7 +28,7 @@ function pointSpriteUpdaterSys(state) {
 
   var entitiesWithPointSprite = R.filter(R.where({ pointSize: R.identity }), state.entities);
 
-  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.agentPointSpriteSize * state.DPI * state.zoom;
+  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.agentSpriteSize * state.DPI * state.zoom;
 
   var vertices = state.pointSpriteMeshEntity.mesh.geometry.vertices;
   var colors = state.pointSpriteMeshEntity.mesh.geometry.colors;
@@ -46,7 +46,7 @@ function pointSpriteUpdaterSys(state) {
     if (colors[entityIndex]) colors[entityIndex].copy(entity.color || Color.White);
     else colors[entityIndex] = entity.color ? entity.color.clone() : Color.White;
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
-    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 14), random.int(0, 8));
+    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 10), random.int(0, 8));
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
     var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;
@@ -59,4 +59,4 @@ function pointSpriteUpdaterSys(state) {
   texCoords.dirty = true;
 }
 
-module.exports = pointSpriteUpdaterSys;
+module.exports = agentPointSpriteUpdaterSys;

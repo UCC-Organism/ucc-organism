@@ -1,6 +1,7 @@
 var R       = require('ramda');
 var random  = require('pex-random');
 var color   = require('pex-color');
+var Vec3    = require('pex-geom').Vec3;
 
 var Color   = color.Color;
 
@@ -50,6 +51,8 @@ function spawnStudents(state, agents) {
         agent: true,
         position: position.dup(),
         prevPosition: position.dup(),
+        velocity: new Vec3(0, 0, 0),
+        force: new Vec3(0, 0, 0),
         color: color,
         targetNode: null,
         studentId: studentId,

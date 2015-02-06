@@ -96,7 +96,7 @@ var Config = {
   maxStudentAge: 40,
 
   energySpriteSize: 0.5,
-  agentPointSpriteSize: 10,
+  agentSpriteSize: 10,
 };
 
 Object.keys(Config.roomTypes).forEach(function(type) {
