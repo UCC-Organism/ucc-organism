@@ -190,6 +190,9 @@ sys.Window.create({
       state.groups = groups;
       this.checkMissingRooms(state);
 
+      state.width = this.width;
+      state.height = this.height;
+
       activities.locations.forEach(function(roomId) {
         state.selectedRooms[roomId] = 1;
       })
