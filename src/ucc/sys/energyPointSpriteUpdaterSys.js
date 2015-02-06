@@ -7,6 +7,7 @@ var Color               = require('pex-color').Color;
 var Cube                = require('pex-gen').Cube;
 
 var ShowColorsWithNoise = require('../../materials/ShowColorsWithNoise');
+var Config              = require('../../config');
 
 var Geometry            = geom.Geometry;
 var Vec3                = geom.Vec3;
@@ -48,7 +49,7 @@ function energyPointSpriteUpdaterSys(state) {
   var colors = state.energyPointSpriteMeshEntity.mesh.geometry.colors;
   var texCoords = state.energyPointSpriteMeshEntity.mesh.geometry.texCoords;
 
-  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = 0.35 * state.DPI * state.zoom;
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * state.zoom;
 
   vertices.length = 0;
   colors.length = 0;

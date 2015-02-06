@@ -93,7 +93,10 @@ var Config = {
   cellStyle: cellStyle,
 
   minStudentAge: 18,
-  maxStudentAge: 40
+  maxStudentAge: 40,
+
+  energySpriteSize: 0.5,
+  agentPointSpriteSize: 10,
 };
 
 Object.keys(Config.roomTypes).forEach(function(type) {

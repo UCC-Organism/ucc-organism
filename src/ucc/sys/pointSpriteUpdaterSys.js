@@ -4,7 +4,8 @@ var glu                 = require('pex-glu');
 var random              = require('pex-random');
 var sys                 = require('pex-sys');
 
-var PointSpriteTextured = require('../../materials/PointSpriteTextured')
+var PointSpriteTextured = require('../../materials/PointSpriteTextured');
+var Config              = require('../../config');
 
 var Geometry            = geom.Geometry;
 var Vec3                = geom.Vec3;
@@ -27,7 +28,7 @@ function pointSpriteUpdaterSys(state) {
 
   var entitiesWithPointSprite = R.filter(R.where({ pointSize: R.identity }), state.entities);
 
-  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = 10 * state.DPI * state.zoom;
+  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.agentPointSpriteSize * state.DPI * state.zoom;
 
   var vertices = state.pointSpriteMeshEntity.mesh.geometry.vertices;
   var colors = state.pointSpriteMeshEntity.mesh.geometry.colors;
