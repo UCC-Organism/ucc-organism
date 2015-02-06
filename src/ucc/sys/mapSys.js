@@ -353,6 +353,8 @@ function rebuildCells(state) {
   //if you reject cells you need to rebuild points too
   voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
+  var voronoiPointsMeta = [];
+
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
@@ -364,7 +366,12 @@ function rebuildCells(state) {
     }
 
     var newPointIndex = voronoiCells.points.length;
-    voronoiCells.points.push(vec2to3(p));
+
+    //map central node to room id and type so we can reach it later
+    var p3 = vec2to3(p);
+    p3.roomId = roomId;
+    p3.roomType = roomType;
+    voronoiCells.points.push(p3);
     voronoiCells.cells[cellIndex].forEach(function(cellPointIndex) {
       voronoiCells.edges.push([cellPointIndex, newPointIndex]);
     })
@@ -375,6 +382,8 @@ function rebuildCells(state) {
   state.map.selectedNodes = voronoiCells.points.map(function(p, pindex) {
     return {
       id: pindex,
+      roomId: p.roomId,
+      roomType: p.roomType,
       position: p,
       neighbors: []
     }
@@ -396,6 +405,12 @@ function rebuildCells(state) {
   var cellEdgeVertices = cellEdgeGeometry.vertices;
   var cellEdgeEdges = cellEdgeGeometry.edges;
   var cellEdgeColors = cellEdgeGeometry.colors;
+
+  var debugNodesVertices = voronoiCells.points;
+  var debugNodesColors = debugNodesVertices.map(function(p) {
+    return p.roomId ? Color.Red : Color.Black;
+  });
+  var debugNodesGeometry = new Geometry({ vertices: debugNodesVertices, colors: debugNodesColors });
 
   //var lineBuilder = new LineBuilder();
 
@@ -454,9 +469,11 @@ function rebuildCells(state) {
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({ }), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
+  var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
+  state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh });
@@ -465,6 +482,7 @@ function rebuildCells(state) {
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
 }
 
+//map animation
 function updateMap(state) {
   return;
   var count = 0;

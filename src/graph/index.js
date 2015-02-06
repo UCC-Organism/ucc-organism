@@ -38,7 +38,12 @@ function findShortestPath(startNode, endNode) {
     currNode.neighbors.forEach(function(neighborNode) {
       if (depthMap[neighborNode.id] === undefined) {
         depthMap[neighborNode.id] = currNodeDepth + 1;
-        stack.push(neighborNode);
+        if (neighborNode.roomId && neighborNode != startNode && neighborNode != endNode) {
+          depthMap[neighborNode.id] = Infinity;
+        }
+        else {
+          stack.push(neighborNode);
+        }
       }
     });
   }
