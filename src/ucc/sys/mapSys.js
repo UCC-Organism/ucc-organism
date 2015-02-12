@@ -51,6 +51,12 @@ function vec2to3(v) {
 
 //-----------------------------------------------------------------------------
 
+function cloneVert(v) {
+  return v.clone();
+}
+
+//-----------------------------------------------------------------------------
+
 Vec3.prototype.setLength = function(len) {
   this.normalize().scale(len);
   return this;
@@ -529,8 +535,12 @@ function rebuildCells(state) {
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
 
-  MapSys.cellMesh = cellMesh;
+  edgeMesh.geometry.baseVertices = edgeMesh.geometry.vertices.map(cloneVert);
+  cellMesh.geometry.baseVertices = cellMesh.geometry.vertices.map(cloneVert);
+  cellEdgeMesh.geometry.baseVertices = cellEdgeMesh.geometry.vertices.map(cloneVert);
+
   MapSys.edgeMesh = edgeMesh;
+  MapSys.cellMesh = cellMesh;
   MapSys.cellEdgeMesh = cellEdgeMesh;
 }
 
@@ -538,44 +548,30 @@ function rebuildCells(state) {
 function updateMap(state) {
   //console.log('updateMap cells:', MapSys.cells.length);
   var roomValue;
-  for(var i=0; i<MapSys.cells.length; i++) {
-    var cell = MapSys.cells[i];
-    //var roomId = MapSys.cellsRoomIds[i];
-    //if (roomId != -1) {
-    //  roomValue = state.selectedRooms[roomId];
-    var roomValue = 0.9 + 0.125 * Math.sin(Time.seconds + cell.center.x);
-    if (roomValue !== undefined) {
-      for(var j=0; j<cell.vertices.length; j++) {
-        var v = cell.vertices[j];
-        v.setVec3(cell.basePos[j]).lerp(cell.center, 1.0 - roomValue);
+  var diff = new Vec3();
+
+  function distortVertices(geometry) {
+    for(var j=0; j<geometry.vertices.length; j++) {
+      var v = geometry.vertices[j];
+      //var base = cell.basePos[j];
+      var base = geometry.baseVertices[j];
+      if (!state.mouseHit) continue;
+      var dist = v.distance(state.mouseHit);
+      var range = 0.05;
+      if (dist < range) {
+        diff.copy(v).sub(state.mouseHit).scale(1.0 - dist/range).scale(0.1*4); //MB
+        v.add(diff);
       }
+      diff.copy(base).sub(v).scale(0.07*4);
+      v.add(diff);
     }
   }
+
+  distortVertices(MapSys.edgeMesh.geometry);
+  distortVertices(MapSys.cellMesh.geometry);
+  distortVertices(MapSys.cellEdgeMesh.geometry);
+
   MapSys.edgeMesh.geometry.vertices.dirty = true;
-
-  var idx = 0;
-  var lidx = 0;
-  //MapSys.cells.forEach(function(cell, cellIndex) {
-  //  var splinePoints = GeomUtils.smoothCurve(cell.uniquePoints, 0.9, 3);
-//
-  //  var center = GeomUtils.centroid(splinePoints);
-//
-  //  for(var i=0; i<splinePoints.length; i++) {
-  //    var p = splinePoints[i];
-  //    var np = splinePoints[(i+1)%splinePoints.length];
-  //    var p2 = p.dup().add(center.dup().sub(p).setLength(config.cellCloseness));
-  //    var np2 = np.dup().add(center.dup().sub(np).setLength(config.cellCloseness));
-//
-  //    MapSys.cellMesh.geometry.vertices[idx].setVec3(p2);
-  //    MapSys.cellMesh.geometry.vertices[idx+1].setVec3(np2);
-  //    MapSys.cellMesh.geometry.vertices[idx+2].setVec3(center);
-  //    MapSys.cellEdgeMesh.geometry.vertices[lidx].setVec3(p2);
-  //    MapSys.cellEdgeMesh.geometry.vertices[lidx+1].setVec3(np2);
-  //    idx += 3;
-  //    lidx += 2;
-  //  }
-  //})
-
   MapSys.cellMesh.geometry.vertices.dirty = true;
   MapSys.cellMesh.geometry.colors.dirty = true;
   MapSys.cellEdgeMesh.geometry.vertices.dirty = true;

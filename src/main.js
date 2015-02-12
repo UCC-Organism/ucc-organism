@@ -264,8 +264,6 @@ sys.Window.create({
         y: e.y
       }
 
-      console.log(e.x);
-
       var ray = state.camera.getWorldRay(e.x, e.y, this.width, this.height);
       var hit = ray.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
       if (!hit) return;
