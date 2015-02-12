@@ -252,6 +252,8 @@ sys.Window.create({
     var geom = require('pex-geom');
 
     var mouseMesh = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
+    var mouseMesh2 = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
+    var mouseMesh3 = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
 
     var xyPlane = {
       point: new geom.Vec3(0, 0, 0),
@@ -275,11 +277,39 @@ sys.Window.create({
         z: hit.z
       }
 
+      var ray2 = state.camera.getWorldRay(this.width - e.x, this.height - e.y, this.width, this.height);
+      var hit2 = ray2.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
+      mouseMesh2.position.copy(hit2);
+      state.mouseHit2 = {
+        x: hit2.x,
+        y: hit2.y,
+        z: hit2.z
+      }
+
+      var ray3 = state.camera.getWorldRay(e.y, e.x, this.width, this.height);
+      var hit3 = ray3.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
+      mouseMesh3.position.copy(hit3);
+      state.mouseHit3 = {
+        x: hit3.x,
+        y: hit3.y,
+        z: hit3.z
+      }
+
     }.bind(this));
 
     state.entities.push({
       type: 'mouse',
       mesh: mouseMesh
+    })
+
+    state.entities.push({
+      type: 'mouse',
+      mesh: mouseMesh2
+    })
+
+    state.entities.push({
+      type: 'mouse',
+      mesh: mouseMesh3
     })
   },
   killAllAgents: function() {

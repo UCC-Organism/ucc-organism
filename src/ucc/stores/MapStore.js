@@ -12,7 +12,7 @@ var MapStore = {
   rooms: [],
   roomsById: {},
   selectedNodes: [],
-  focusRoomId: 'C.224',
+  focusRoomId: null,//'C.224',
   floors: [],
   currentFloor: -1,
   dirty: true,

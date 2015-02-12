@@ -550,26 +550,32 @@ function updateMap(state) {
   var roomValue;
   var diff = new Vec3();
 
-  function distortVertices(geometry) {
+  function distortVertices(hit, geometry) {
     for(var j=0; j<geometry.vertices.length; j++) {
       var v = geometry.vertices[j];
       //var base = cell.basePos[j];
       var base = geometry.baseVertices[j];
       if (!state.mouseHit) continue;
-      var dist = v.distance(state.mouseHit);
+      var dist = v.distance(hit);
       var range = 0.05;
       if (dist < range) {
-        diff.copy(v).sub(state.mouseHit).scale(1.0 - dist/range).scale(0.1*4); //MB
+        diff.copy(v).sub(hit).scale(1.0 - dist/range).scale(0.1*4); //MB
         v.add(diff);
       }
-      diff.copy(base).sub(v).scale(0.07*4);
+      diff.copy(base).sub(v).scale(0.07);
       v.add(diff);
     }
   }
 
-  distortVertices(MapSys.edgeMesh.geometry);
-  distortVertices(MapSys.cellMesh.geometry);
-  distortVertices(MapSys.cellEdgeMesh.geometry);
+  distortVertices(state.mouseHit, MapSys.edgeMesh.geometry);
+  distortVertices(state.mouseHit, MapSys.cellMesh.geometry);
+  distortVertices(state.mouseHit, MapSys.cellEdgeMesh.geometry);
+  distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
+  distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
+  distortVertices(state.mouseHit2, MapSys.cellEdgeMesh.geometry);
+  distortVertices(state.mouseHit3, MapSys.edgeMesh.geometry);
+  distortVertices(state.mouseHit3, MapSys.cellMesh.geometry);
+  distortVertices(state.mouseHit3, MapSys.cellEdgeMesh.geometry);
 
   MapSys.edgeMesh.geometry.vertices.dirty = true;
   MapSys.cellMesh.geometry.vertices.dirty = true;
