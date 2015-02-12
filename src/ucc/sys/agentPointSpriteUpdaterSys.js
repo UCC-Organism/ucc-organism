@@ -46,7 +46,7 @@ function agentPointSpriteUpdaterSys(state) {
     if (colors[entityIndex]) colors[entityIndex].copy(entity.color || Color.White);
     else colors[entityIndex] = entity.color ? entity.color.clone() : Color.White;
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
-    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 10), random.int(0, 8));
+    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 10), entity.typeIndex); //FIXME: agent type
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
     var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;

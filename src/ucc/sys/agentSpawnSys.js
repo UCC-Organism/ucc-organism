@@ -1,9 +1,10 @@
-var R       = require('ramda');
-var random  = require('pex-random');
-var color   = require('pex-color');
-var Vec3    = require('pex-geom').Vec3;
+var R           = require('ramda');
+var random      = require('pex-random');
+var color       = require('pex-color');
+var Vec3        = require('pex-geom').Vec3;
+var AgentModes  = require('../agents/agentModes');
 
-var Color   = color.Color;
+var Color       = color.Color;
 
 function spawnStudents(state, agents) {
   var aliveStudentAgents = R.filter(R.where({ studentId: R.identity }), agents);
@@ -49,6 +50,8 @@ function spawnStudents(state, agents) {
       var studentAgent = {
         pointSize: 3,
         agent: true,
+        typeIndex: random.int(0, 10),
+        mode: AgentModes.Wander,
         position: position.dup(),
         prevPosition: position.dup(),
         velocity: new Vec3(0, 0, 0),

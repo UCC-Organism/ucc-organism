@@ -5,6 +5,7 @@ var materials         = require('pex-materials');
 var color             = require('pex-color');
 var gen               = require('pex-gen');
 var random            = require('pex-random');
+var sys               = require('pex-sys');
 
 var delaunay          = require('../../geom/delaunay');
 var voronoi           = require('../../geom/voronoi');
@@ -25,13 +26,15 @@ var SolidColor        = materials.SolidColor;
 var ShowColors        = materials.ShowColors;
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
+var Time              = sys.Time;
 
 var EPSILON = 0.0001;
 
 //-----------------------------------------------------------------------------
 
 var MapSys = {
-  ready: false
+  ready: false,
+  cells: []
 };
 
 //-----------------------------------------------------------------------------
@@ -302,6 +305,7 @@ function makeSpring(start, end) {
 
 function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
+  MapSys.cells.length = 0;
 
   //all points
   //var points = selectedNodes.map(R.prop('position'));
@@ -414,6 +418,16 @@ function rebuildCells(state) {
 
   //var lineBuilder = new LineBuilder();
 
+  var focusRoomCenter = null;
+
+  if (state.map.focusRoomId) {
+    var selectedNodes = state.map.selectedNodes;
+    var focusRoomNodes = selectedNodes.filter(R.where({ roomId: state.map.focusRoomId }));
+    if (focusRoomNodes.length > 0) {
+      focusRoomCenter = focusRoomNodes[0].position;
+    }
+  }
+
   voronoiCells.cells.forEach(function(cell, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
     var isRoom = roomId != -1;
@@ -431,6 +445,14 @@ function rebuildCells(state) {
     var center = GeomUtils.centroid(splinePoints);
 
     var cellCloseness = roomType != 'none' ? config.cellCloseness / 2 : config.cellCloseness;
+
+    var cell = {
+      vertices: [],
+      basePos: [],
+      center: center
+    };
+
+    MapSys.cells.push(cell);
 
     for(var i=0; i<splinePoints.length; i++) {
       var p = splinePoints[i];
@@ -450,19 +472,45 @@ function rebuildCells(state) {
         cellEdgeColor = config.roomTypes[roomType].edgeColor;
       }
 
+      var c = Color.fromHSL(0, 1, 0.5);
+      if (focusRoomCenter) {
+        var dist = p.distance(focusRoomCenter);
+        if (dist > 0.12) return; //FIXME: hardcoded
+        dist = Math.floor(dist * 20)/20;
+        c = Color.fromHSL(dist*2, 0.7, 0.5);
+        //cellColors.push(c, c, c);
+        cellColors.push(cellColor);
+        cellColors.push(cellColor);
+        cellColors.push(cellCenterColor);
+      }
+      else {
+        cellColors.push(cellColor);
+        cellColors.push(cellColor);
+        cellColors.push(cellCenterColor);
+      }
+
       cellVertices.push(p2);
       cellVertices.push(np2);
       cellVertices.push(center);
-      cellColors.push(cellColor);
-      cellColors.push(cellColor);
-      cellColors.push(cellCenterColor);
+
       cellFaces.push([vidx, vidx+1, vidx+2]);
 
-      cellEdgeVertices.push(p2.dup().add(new Vec3(0, 0, 0.0001)));
-      cellEdgeVertices.push(np2.dup().add(new Vec3(0, 0, 0.0001)));
+      var e2 = p2.dup().add(new Vec3(0, 0, 0.0001));
+      var ne2 = np2.dup().add(new Vec3(0, 0, 0.0001));
+      cellEdgeVertices.push(e2);
+      cellEdgeVertices.push(ne2);
       cellEdgeColors.push(cellEdgeColor);
       cellEdgeColors.push(cellEdgeColor);
       cellEdgeEdges.push([eidx, eidx+1]);
+
+      cell.vertices.push(p2);
+      cell.vertices.push(np2);
+      cell.vertices.push(e2);
+      cell.vertices.push(ne2);
+      cell.basePos.push(p2.dup());
+      cell.basePos.push(np2.dup());
+      cell.basePos.push(e2.dup());
+      cell.basePos.push(ne2.dup());
     }
   })
 
@@ -480,24 +528,26 @@ function rebuildCells(state) {
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
+
+  MapSys.cellMesh = cellMesh;
+  MapSys.edgeMesh = edgeMesh;
+  MapSys.cellEdgeMesh = cellEdgeMesh;
 }
 
 //map animation
 function updateMap(state) {
-  return;
-  var count = 0;
+  //console.log('updateMap cells:', MapSys.cells.length);
   var roomValue;
   for(var i=0; i<MapSys.cells.length; i++) {
     var cell = MapSys.cells[i];
-    var roomId = MapSys.cellsRoomIds[i];
-    if (roomId != -1) {
-      roomValue = state.selectedRooms[roomId];
-      if (roomValue !== undefined) {
-        for(var j=0; j<cell.length; j++) {
-          var edge = cell[j];
-          edge[0].setVec3(edge[0].basePos).lerp(cell.center, 1.0 - roomValue);
-          edge[1].setVec3(edge[1].basePos).lerp(cell.center, 1.0 - roomValue);
-        }
+    //var roomId = MapSys.cellsRoomIds[i];
+    //if (roomId != -1) {
+    //  roomValue = state.selectedRooms[roomId];
+    var roomValue = 0.9 + 0.125 * Math.sin(Time.seconds + cell.center.x);
+    if (roomValue !== undefined) {
+      for(var j=0; j<cell.vertices.length; j++) {
+        var v = cell.vertices[j];
+        v.setVec3(cell.basePos[j]).lerp(cell.center, 1.0 - roomValue);
       }
     }
   }
@@ -505,26 +555,26 @@ function updateMap(state) {
 
   var idx = 0;
   var lidx = 0;
-  MapSys.cells.forEach(function(cell, cellIndex) {
-    var splinePoints = GeomUtils.smoothCurve(cell.uniquePoints, 0.9, 3);
-
-    var center = GeomUtils.centroid(splinePoints);
-
-    for(var i=0; i<splinePoints.length; i++) {
-      var p = splinePoints[i];
-      var np = splinePoints[(i+1)%splinePoints.length];
-      var p2 = p.dup().add(center.dup().sub(p).setLength(config.cellCloseness));
-      var np2 = np.dup().add(center.dup().sub(np).setLength(config.cellCloseness));
-
-      MapSys.cellMesh.geometry.vertices[idx].setVec3(p2);
-      MapSys.cellMesh.geometry.vertices[idx+1].setVec3(np2);
-      MapSys.cellMesh.geometry.vertices[idx+2].setVec3(center);
-      MapSys.cellEdgeMesh.geometry.vertices[lidx].setVec3(p2);
-      MapSys.cellEdgeMesh.geometry.vertices[lidx+1].setVec3(np2);
-      idx += 3;
-      lidx += 2;
-    }
-  })
+  //MapSys.cells.forEach(function(cell, cellIndex) {
+  //  var splinePoints = GeomUtils.smoothCurve(cell.uniquePoints, 0.9, 3);
+//
+  //  var center = GeomUtils.centroid(splinePoints);
+//
+  //  for(var i=0; i<splinePoints.length; i++) {
+  //    var p = splinePoints[i];
+  //    var np = splinePoints[(i+1)%splinePoints.length];
+  //    var p2 = p.dup().add(center.dup().sub(p).setLength(config.cellCloseness));
+  //    var np2 = np.dup().add(center.dup().sub(np).setLength(config.cellCloseness));
+//
+  //    MapSys.cellMesh.geometry.vertices[idx].setVec3(p2);
+  //    MapSys.cellMesh.geometry.vertices[idx+1].setVec3(np2);
+  //    MapSys.cellMesh.geometry.vertices[idx+2].setVec3(center);
+  //    MapSys.cellEdgeMesh.geometry.vertices[lidx].setVec3(p2);
+  //    MapSys.cellEdgeMesh.geometry.vertices[lidx+1].setVec3(np2);
+  //    idx += 3;
+  //    lidx += 2;
+  //  }
+  //})
 
   MapSys.cellMesh.geometry.vertices.dirty = true;
   MapSys.cellMesh.geometry.colors.dirty = true;

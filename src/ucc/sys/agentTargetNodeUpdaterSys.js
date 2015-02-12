@@ -1,7 +1,8 @@
-var R      = require('ramda');
-var graph  = require('../../graph');
-var random = require('pex-random');
-var config = require('../../config');
+var R           = require('ramda');
+var graph       = require('../../graph');
+var random      = require('pex-random');
+var config      = require('../../config');
+var AgentModes  = require('../agents/AgentModes');
 
 function agentTargetNodeUpdaterSys(state) {
   //var selectedNodes = State.selectedNodes;
@@ -58,11 +59,33 @@ function agentTargetNodeUpdaterSys(state) {
 
   //agents with nothing to do anymore, they should go out and dissapear
   var studentAgentsWithNoTarget2 = agents.filter(R.not(R.prop('targetNode')));
+  var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
+
   studentAgentsWithNoTarget2.forEach(function(agent, agentIndex) {
     random.seed(Date.now() + agentIndex);
-    var targetNode = random.element(state.map.selectedNodes);
+    var targetNode;
+
+    var path;
+
+    if (agent.mode == AgentModes.Wander) {
+      targetNode = random.element(state.map.selectedNodes);
+    }
+    else if (agent.mode == AgentModes.Classroom) {
+      targetNode = rooms[agent.typeIndex];
+      if (targetNode.position.distance(agent.position) < 0.1) {
+        agent.mode = AgentModes.Study;
+      }
+    }
+    else if (agent.mode == AgentModes.Study) {
+      targetNode = { position: rooms[agent.typeIndex].position.dup() };
+      targetNode.position.x += random.float(-0.01, 0.01);
+      targetNode.position.y += random.float(-0.01, 0.01);
+
+      path = [ targetNode ];
+    }
+
     var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
-    var path = graph.findShortestPath(closestNode, targetNode);
+    if (!path && targetNode) path = graph.findShortestPath(closestNode, targetNode);
 
     if (!path) {
       //No path found, try next time

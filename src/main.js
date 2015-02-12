@@ -17,6 +17,7 @@ var agentFlockingSys              = require('./ucc/sys/agentFlockingSys');
 var agentPositionUpdaterSys       = require('./ucc/sys/agentPositionUpdaterSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
+var agentScheduleUpdaterSys       = require('./ucc/sys/agentScheduleUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
 
 //Stores
@@ -29,6 +30,7 @@ var ActivityTimeline  = require('./ucc/ui/ActivityTimeline');
 
 //Config
 var config            = require('./config');
+var AgentModes        = require('./ucc/agents/AgentModes');
 
 var Platform          = sys.Platform;
 var Time              = sys.Time;
@@ -111,6 +113,7 @@ sys.Window.create({
     this.initScene();
     this.initStores();
     this.initKeys();
+    this.initMouse();
   },
   initGUI: function() {
     Time.verbose = true;
@@ -232,7 +235,8 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'b': state.clearBg = !state.clearBg; break;
-        case ' ': this.killAllAgents(); break;
+        //case ' ': this.killAllAgents(); break;
+        case ' ': this.toggleClass(); break;
         case 'S': this.gui.save(config.settingsFile); break;
         case 'L': this.gui.load(config.settingsFile); break;
       }
@@ -241,6 +245,44 @@ sys.Window.create({
         case VK_RIGHT: state.map.setNextFloor(); this.killAllAgents(); break;
       }
     }.bind(this));
+  },
+  initMouse: function() {
+    var gen = require('pex-gen');
+    var materials = require('pex-materials');
+    var geom = require('pex-geom');
+
+    var mouseMesh = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
+
+    var xyPlane = {
+      point: new geom.Vec3(0, 0, 0),
+      normal: new geom.Vec3(0, 0, 1)
+    }
+
+    this.on('mouseMoved', function(e) {
+      state.mousePos = {
+        x: e.x,
+        y: e.y
+      }
+
+      console.log(e.x);
+
+      var ray = state.camera.getWorldRay(e.x, e.y, this.width, this.height);
+      var hit = ray.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
+      if (!hit) return;
+      mouseMesh.position.copy(hit);
+
+      state.mouseHit = {
+        x: hit.x,
+        y: hit.y,
+        z: hit.z
+      }
+
+    }.bind(this));
+
+    state.entities.push({
+      type: 'mouse',
+      mesh: mouseMesh
+    })
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
@@ -256,6 +298,20 @@ sys.Window.create({
   //    state.uiTexture.update(state.canvas);
   //  }
   //},
+  toggleClass: function() {
+    console.log('toggleClass');
+    var agents = R.filter(R.where({ agent: R.identity }), state.entities);
+    agents.forEach(function(agent) {
+      agent.targetNodeList.length = 0;
+      agent.targetNode = null;
+      if (agent.mode == AgentModes.Wander) {
+        agent.mode = AgentModes.Classroom;
+      }
+      else {
+        agent.mode = AgentModes.Wander;
+      }
+    })
+  },
   updateFake: function() {
     if (state.animateCells) {
       Object.keys(state.selectedRooms).forEach(function(roomId, roomIndex) {
@@ -319,6 +375,7 @@ sys.Window.create({
       mapSys(state);
       energySys(state);
       agentSpawnSys(state);
+      agentScheduleUpdaterSys(state);
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);

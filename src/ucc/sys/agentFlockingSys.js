@@ -3,6 +3,7 @@ var sys         = require('pex-sys');
 var geom        = require('pex-geom');
 var Color       = require('pex-color').Color;
 var Config      = require('../../config');
+var AgentModes  = require('../agents/AgentModes');
 
 var Time  = sys.Time;
 var Vec3  = geom.Vec3;
@@ -25,7 +26,16 @@ function agentFlockingSys(state) {
         var dist = Math.sqrt(distSqr);
         if (dist > 0) {
           tmpDir.copy(agent.position).sub(anotherAgent.position);
-          agent.force.add(tmpDir.scale(0.001));
+          if (agent.mode == AgentModes.Study) {
+            //tmpDir.normalize().cross(up).scale(0.00001);
+            //agent.force.add(tmpDir);
+            //anotherAgent.force.add(tmpDir.scale(-2));
+            agent.force.add(tmpDir.scale(0.001));
+          }
+          else {
+            //normal repulsion
+            agent.force.add(tmpDir.scale(0.001));
+          }
           debugLineBuilder.addLine(agent.position, anotherAgent.position, Color.Red);
         }
       }
