@@ -275,7 +275,7 @@ sys.Window.create({
         x: hit.x,
         y: hit.y,
         z: hit.z
-      }
+      };
 
       var ray2 = state.camera.getWorldRay(this.width - e.x, this.height - e.y, this.width, this.height);
       var hit2 = ray2.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
@@ -284,7 +284,7 @@ sys.Window.create({
         x: hit2.x,
         y: hit2.y,
         z: hit2.z
-      }
+      };
 
       var ray3 = state.camera.getWorldRay(e.y, e.x, this.width, this.height);
       var hit3 = ray3.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
@@ -293,8 +293,7 @@ sys.Window.create({
         x: hit3.x,
         y: hit3.y,
         z: hit3.z
-      }
-
+      };
     }.bind(this));
 
     state.entities.push({
@@ -394,6 +393,13 @@ sys.Window.create({
   },
   draw: function() {
     this.update();
+
+    var agents = R.filter(R.where({ agent: true }), state.entities);
+    //if (agents[0] && agents[0].position) {
+    //  state.mouseHit = agents[0].position.dup();
+    //  state.mouseHit2 = agents[1].position.dup();
+    //  state.mouseHit3 = agents[2].position.dup();
+    //}
 
     if (state.clearBg) glu.clearColorAndDepth(config.bgColor);
     glu.enableDepthReadAndWrite(true);

@@ -558,10 +558,11 @@ function updateMap(state) {
       if (!state.mouseHit) continue;
       var dist = v.distance(hit);
       var range = 0.05;
-      if (dist < range) {
-        diff.copy(v).sub(hit).scale(1.0 - dist/range).scale(0.1*4); //MB
+      //if (dist < range) {
+        //diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(0.4); //MB
+        diff.copy(v).sub(hit).scale(range/dist*range/dist).scale(0.4); //MB
         v.add(diff);
-      }
+      //}
       diff.copy(base).sub(v).scale(0.07);
       v.add(diff);
     }
@@ -570,12 +571,12 @@ function updateMap(state) {
   distortVertices(state.mouseHit, MapSys.edgeMesh.geometry);
   distortVertices(state.mouseHit, MapSys.cellMesh.geometry);
   distortVertices(state.mouseHit, MapSys.cellEdgeMesh.geometry);
-  distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
-  distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
-  distortVertices(state.mouseHit2, MapSys.cellEdgeMesh.geometry);
-  distortVertices(state.mouseHit3, MapSys.edgeMesh.geometry);
-  distortVertices(state.mouseHit3, MapSys.cellMesh.geometry);
-  distortVertices(state.mouseHit3, MapSys.cellEdgeMesh.geometry);
+  //distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
+  //distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
+  //distortVertices(state.mouseHit2, MapSys.cellEdgeMesh.geometry);
+  //distortVertices(state.mouseHit3, MapSys.edgeMesh.geometry);
+  //distortVertices(state.mouseHit3, MapSys.cellMesh.geometry);
+  //distortVertices(state.mouseHit3, MapSys.cellEdgeMesh.geometry);
 
   MapSys.edgeMesh.geometry.vertices.dirty = true;
   MapSys.cellMesh.geometry.vertices.dirty = true;
