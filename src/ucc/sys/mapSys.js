@@ -558,12 +558,11 @@ function updateMap(state) {
       if (!state.mouseHit) continue;
       var dist = v.distance(hit);
       var range = 0.05;
-      //if (dist < range) {
-        //diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(0.4); //MB
-        diff.copy(v).sub(hit).scale(range/dist*range/dist).scale(0.4); //MB
+      if (dist < range) {
+        diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(-0.4); //MB
         v.add(diff);
-      //}
-      diff.copy(base).sub(v).scale(0.07);
+      }
+      diff.copy(base).sub(v).scale(0.27);
       v.add(diff);
     }
   }
