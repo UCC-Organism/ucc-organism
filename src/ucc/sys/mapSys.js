@@ -497,7 +497,7 @@ function rebuildCells(state) {
 
       cellVertices.push(p2);
       cellVertices.push(np2);
-      cellVertices.push(center);
+      cellVertices.push(center.dup());
 
       cellFaces.push([vidx, vidx+1, vidx+2]);
 
@@ -550,7 +550,7 @@ function updateMap(state) {
   var roomValue;
   var diff = new Vec3();
 
-  function distortVertices(hit, geometry) {
+  function distortVertices(hit, geometry, roomPotential) {
     for(var j=0; j<geometry.vertices.length; j++) {
       var v = geometry.vertices[j];
       //var base = cell.basePos[j];
@@ -559,7 +559,8 @@ function updateMap(state) {
       var dist = v.distance(hit);
       var range = 0.05;
       if (dist < range) {
-        diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(-0.4); //MB
+        //diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(10*roomPotential); //MB
+        diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(10*roomPotential); //MB
         v.add(diff);
       }
       diff.copy(base).sub(v).scale(0.27);
@@ -567,9 +568,16 @@ function updateMap(state) {
     }
   }
 
-  distortVertices(state.mouseHit, MapSys.edgeMesh.geometry);
-  distortVertices(state.mouseHit, MapSys.cellMesh.geometry);
-  distortVertices(state.mouseHit, MapSys.cellEdgeMesh.geometry);
+  var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
+  rooms.forEach(function(room, roomIndex) {
+    //console.log('room', roomIndex, room);
+    var strength = 1;
+    distortVertices(room.position, MapSys.edgeMesh.geometry, state.roomPotential * strength);
+    distortVertices(room.position, MapSys.cellMesh.geometry, state.roomPotential * strength);
+    distortVertices(room.position, MapSys.cellEdgeMesh.geometry, state.roomPotential * strength);
+  })
+  //console.log('rooms', rooms.length);
+
   //distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
   //distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
   //distortVertices(state.mouseHit2, MapSys.cellEdgeMesh.geometry);

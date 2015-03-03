@@ -74,6 +74,8 @@ var state = {
   clearBg: true,
   animateCells: false,
 
+  roomPotential: 0,
+
   numRandomStudents: 100,
 
   //ui
@@ -155,7 +157,9 @@ sys.Window.create({
       if (programme != 'default') {
         var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
-    }.bind(this))
+    }.bind(this));
+    this.gui.addHeader('Rooms');
+    this.gui.addParam('Potential', state, 'roomPotential', { min: -1, max: 1})
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
