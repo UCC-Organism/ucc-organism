@@ -34,9 +34,9 @@ var ProgrammeColors = {
 };
 
 var EnergyTypes = {
-  'social': { color: Color.Red },
-  'knowledge': { color: Color.Green },
-  'economic': { color: Color.Blue },
+  'social': { color: Color.Red.clone() },
+  'knowledge': { color: Color.Green.clone() },
+  'economic': { color: Color.Blue.clone() },
   'dirt': { color: Color.fromHSL(0.1, 0.8, 0.4) }
 };
 
@@ -54,7 +54,7 @@ var RoomTypes = {
   'cell'     : { label: 'Cell'     , color: '#696E98', centerColor: '#696E98', edgeColor: '#FF00FF' }
 };
 
-var cellStyle = {
+var CellStyle = {
   bg: [ 222, 200, 39, 255 ],
   cellBorderEdge : [ 255*0.5561439022429832, 255*0.10527327716561674, 255*0.853888654652565, 255*1.0 ],
   cellBorder: [ 222-30, 200-30, 39-0, 255 ],
@@ -69,6 +69,17 @@ var cellStyle = {
   //paed: [ 255, 50, 10, 255 ]
   paed: [ 255, 255, 255, 150 ]
 };
+
+var Floors = [
+  'All', //0
+  'A 0', //1
+  'A 1', //2
+  'B 0', //3
+  'B 1', //4
+  'C 0', //5
+  'C 1', //6
+  'C 2' //7
+];
 
 var Config = {
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
@@ -90,7 +101,7 @@ var Config = {
 
   roomTypes: RoomTypes,
 
-  cellStyle: cellStyle,
+  cellStyle: CellStyle,
 
   minStudentAge: 18,
   maxStudentAge: 40,

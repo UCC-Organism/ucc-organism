@@ -12,7 +12,7 @@ var MapStore = {
   rooms: [],
   roomsById: {},
   selectedNodes: [],
-  focusRoomId: null,//'C.224',
+  focusRoomId: 'C.216',
   floors: [],
   currentFloor: -1,
   dirty: true,
@@ -28,6 +28,12 @@ var MapStore = {
       this.rooms.forEach(function(room) {
         this.roomsById[room.id] = room;
       }.bind(this))
+      this.nodes.forEach(function(node) {
+        if (node.room) {
+          this.roomsById[node.room].floor = node.floor;
+        }
+      }.bind(this))
+
       console.log('MapStore.init nodes:' + this.nodes.length + ' rooms:' + this.rooms.length);
 
       //Transform json data to real objects
@@ -89,6 +95,11 @@ var MapStore = {
     }
     console.log('MapStore.setFloor', this.currentFloor)
     this.dirty = true;
+  },
+  setFocusRoom: function(roomId) {
+    this.focusRoomId = roomId;
+    var room = this.roomsById[roomId];
+    this.setFloor(room.floor);
   },
   setPrevFloor: function() {
     var floorIndex = this.floors.indexOf(this.currentFloor);

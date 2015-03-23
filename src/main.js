@@ -79,7 +79,7 @@ var state = {
   numRandomStudents: 100,
 
   //ui
-  showGUI: false,
+  showGUI: true,
   showSchedule: false,
 
   //graph: null,
@@ -158,14 +158,23 @@ sys.Window.create({
         var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this));
-    this.gui.addHeader('Rooms');
-    this.gui.addParam('Potential', state, 'roomPotential', { min: -1, max: 1})
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
     this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
 
     this.gui.load(config.settingsFile);
+  },
+  initRoomsGUI: function() {
+    this.gui.addHeader('Rooms').setPosition(this.width - 170 * state.DPI, 10 * state.DPI);
+    this.gui.addParam('Potential', state, 'roomPotential', { min: -1, max: 1})
+    var classrooms = R.filter(R.where({type:'classroom'}), state.map.rooms);
+    var roomList = classrooms.map(function(classroom) {
+      return { name: classroom.id + ' / ' + classroom.floor, value: classroom.id };
+    })
+    this.gui.addRadioList('Room', state, 'focusedRoom', roomList, function(roomId) {
+      state.map.setFocusRoom(roomId);
+    })
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
@@ -203,6 +212,8 @@ sys.Window.create({
       activities.locations.forEach(function(roomId) {
         state.selectedRooms[roomId] = 1;
       })
+
+      this.initRoomsGUI();
     }.bind(this))
     .catch(function(e) {
       console.log(e.stack)

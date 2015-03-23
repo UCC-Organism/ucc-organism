@@ -317,10 +317,11 @@ function rebuildCells(state) {
   //var points = selectedNodes.map(R.prop('position'));
 
   //only room points
-  var points = selectedNodes.filter(R.where({ room: R.identity })).map(R.prop('position'));
+  var roomNodes = selectedNodes.filter(R.where({ room: R.identity }));
+  var points = R.pluck('position', roomNodes);
 
   //room centers
-  var cellGroups = fn.groupBy(state.map.selectedNodes, 'room');
+  var cellGroups = fn.groupBy(selectedNodes, 'room');
   var cellsRoomIds = Object.keys(cellGroups).filter(R.identity);
   var roomCenterPoints = cellsRoomIds.map(function(roomId) {
     return GeomUtils.centroid(R.pluck('position', cellGroups[roomId]));
@@ -368,7 +369,9 @@ function rebuildCells(state) {
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
-    var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
+    var room = state.map.roomsById[roomId];
+    var roomType = room ? room.type : 'none';
+    var roomFloor = room ? room.floor : -1;
 
     //skip empty cells
     if (roomType == 'empty') {
@@ -478,6 +481,11 @@ function rebuildCells(state) {
         cellEdgeColor = config.roomTypes[roomType].edgeColor;
       }
 
+      if (roomId == state.map.focusRoomId) {
+        cellCenterColor = Color.Red;
+        cellColor = Color.Red;
+      }
+
       var c = Color.fromHSL(0, 1, 0.5);
       if (focusRoomCenter) {
         var dist = p.distance(focusRoomCenter);
@@ -569,6 +577,9 @@ function updateMap(state) {
   }
 
   var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
+
+  //state.map.roomNodes = rooms;
+
   rooms.forEach(function(room, roomIndex) {
     //console.log('room', roomIndex, room);
     var strength = 1;
@@ -577,7 +588,6 @@ function updateMap(state) {
     distortVertices(room.position, MapSys.cellEdgeMesh.geometry, state.roomPotential * strength);
   })
   //console.log('rooms', rooms.length);
-
   //distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
   //distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
   //distortVertices(state.mouseHit2, MapSys.cellEdgeMesh.geometry);
