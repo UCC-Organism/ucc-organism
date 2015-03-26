@@ -449,7 +449,7 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 3);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 10);
 
     var center = GeomUtils.centroid(splinePoints);
 
@@ -529,7 +529,7 @@ function rebuildCells(state) {
   })
 
 
-  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({ }), { lines: true });
+  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
 
