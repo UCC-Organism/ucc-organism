@@ -1,4 +1,30 @@
-# Build
+# UCC Organism
+
+UCC Organism is the client visualization showing UCC as an organism
+
+# Build for local testing
+
+Install and build the client
+```
+git clone https://github.com/UCC-Organism/ucc-organism
+cd ucc-organism
+npm install
+//this will go into build.sh at some point
+mkdir build
+cp static/index.html build/index.html
+cp src/settings.json build/settings.json
+cp -r assets build/assets
+cp -r data build/data
+```
+
+Start the test server as described below
+
+Run the client
+```
+npm run watch
+```
+
+# Build for Odroid
 
 ```
 python make_apk.py --package=dk.ucc.organism --enable-remote-debugging --manifest=/Users/vorg/Workspace/var-uccorganism/ucc-organism/build/manifest.json --extensions=extensions/ucc_extension
