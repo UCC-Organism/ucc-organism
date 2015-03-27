@@ -91,7 +91,7 @@ var Config = {
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",
 
-  cellCloseness: 0.00135,
+  cellCloseness: 0.00155,
   cellEdgeWidth: 1,
   cellColor: Color.fromHex('#696E98'),
   cellCenterColor: Color.fromHex('#696E98'),

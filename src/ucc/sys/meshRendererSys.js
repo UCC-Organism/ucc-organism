@@ -25,16 +25,25 @@ function meshRendererSys(state) {
     .filter(makeFilter('enabled', true));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
+  var agents = R.filter(R.where({ agent: true }), visibleEntities);
+
   entitiesWithMesh.forEach(function(entity) {
     if (entity.mesh.geometry.vertices.length == 0) {
       return;
     }
 
-    if (entity.mesh.material.program.uniforms["distortPoints[0]"] && state.mouseHit)
+    if (entity.mesh.material.program.uniforms["distortPoints[0]"])
     {
-      console.log("yeah!");
+
+      //console.log(agents.length);
       //entity.mesh.material.uniforms.distortPoints = [state.mouseHit.x, state.mouseHit.y, 0.0];
-      entity.mesh.material.uniforms["distortPoints[0]"] = new Vec3(state.mouseHit.x, state.mouseHit.y, 0.0);
+
+      for (var i = 0; i < agents.length; i++)
+      {
+         entity.mesh.material.uniforms["distortPoints[" + i + "]"] = agents[i].position;
+      }
+     
+      //entity.mesh.material.uniforms["distortPoints[1]"] = agents[1].position;
     }
     else
     {
