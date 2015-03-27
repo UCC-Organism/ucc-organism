@@ -1,5 +1,6 @@
 var R = require('ramda');
 var glu = require('pex-glu');
+var Vec3 = require('pex-geom').Vec3;
 
 var Context = glu.Context;
 
@@ -28,6 +29,18 @@ function meshRendererSys(state) {
     if (entity.mesh.geometry.vertices.length == 0) {
       return;
     }
+
+    if (entity.mesh.material.program.uniforms["distortPoints[0]"] && state.mouseHit)
+    {
+      console.log("yeah!");
+      //entity.mesh.material.uniforms.distortPoints = [state.mouseHit.x, state.mouseHit.y, 0.0];
+      entity.mesh.material.uniforms["distortPoints[0]"] = new Vec3(state.mouseHit.x, state.mouseHit.y, 0.0);
+    }
+    else
+    {
+      //console.log("no");
+    }
+    
     if (entity.lineWidth) {
       gl.lineWidth(entity.lineWidth);
     }

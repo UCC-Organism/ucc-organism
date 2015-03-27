@@ -79,7 +79,7 @@ var state = {
   numRandomStudents: 100,
 
   //ui
-  showGUI: true,
+  showGUI: false,
   showSchedule: false,
 
   //graph: null,
@@ -100,7 +100,7 @@ var state = {
 
 sys.Window.create({
   settings: {
-    width: 1600 * state.DPI,
+    width: 1400 * state.DPI,
     height: 900 * state.DPI,
     type: '3d',
     fullscreen: Platform.isBrowser ? true : false,
@@ -311,6 +311,7 @@ sys.Window.create({
       };
     }.bind(this));
 
+    /*
     state.entities.push({
       type: 'mouse',
       mesh: mouseMesh
@@ -325,6 +326,7 @@ sys.Window.create({
       type: 'mouse',
       mesh: mouseMesh3
     })
+*/
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);

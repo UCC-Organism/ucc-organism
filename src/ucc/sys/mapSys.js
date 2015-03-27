@@ -22,8 +22,8 @@ var BoundingBox       = geom.BoundingBox;
 var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
 var Mesh              = glu.Mesh;
-var SolidColor        = materials.SolidColor;
-var ShowColors        = materials.ShowColors;
+var SolidColor        = require('../../materials/SolidColor');
+var ShowColors        = require('../../materials/ShowColors');
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 var Time              = sys.Time;
@@ -449,7 +449,7 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 10);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 20);
 
     var center = GeomUtils.centroid(splinePoints);
 
@@ -580,6 +580,7 @@ function updateMap(state) {
 
   //state.map.roomNodes = rooms;
 
+  /*
   rooms.forEach(function(room, roomIndex) {
     //console.log('room', roomIndex, room);
     var strength = 1;
@@ -587,6 +588,7 @@ function updateMap(state) {
     distortVertices(room.position, MapSys.cellMesh.geometry, state.roomPotential * strength);
     distortVertices(room.position, MapSys.cellEdgeMesh.geometry, state.roomPotential * strength);
   })
+*/
   //console.log('rooms', rooms.length);
   //distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
   //distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
