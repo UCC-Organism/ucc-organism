@@ -12,7 +12,7 @@ var MapStore = {
   rooms: [],
   roomsById: {},
   selectedNodes: [],
-  focusRoomId: 'C.216',
+  focusRoomId: null,//'C.216',
   floors: [],
   currentFloor: -1,
   dirty: true,
@@ -111,6 +111,13 @@ var MapStore = {
     var nextFloorIndex = (floorIndex + 1) % this.floors.length;
     this.setFloor(this.floors[nextFloorIndex]);
   },
+  getRoomById: function(id) {
+    var room = this.roomsById[id];
+    if (!room) {
+      room = this.roomsById[Config.roomIdMap[id]];
+    }
+    return room;
+  }
 }
 
 module.exports = MapStore;

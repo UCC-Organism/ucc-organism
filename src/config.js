@@ -82,6 +82,7 @@ var Floors = [
 ];
 
 var Config = {
+  serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
@@ -91,7 +92,7 @@ var Config = {
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",
 
-  cellCloseness: 0.0035,
+  cellCloseness: 0.00135,
   cellEdgeWidth: 1,
   cellColor: Color.fromHex('#696E98'),
   cellCenterColor: Color.fromHex('#696E98'),

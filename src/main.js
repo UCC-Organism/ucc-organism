@@ -22,15 +22,15 @@ var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys'
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
-var ActivityStore     = require('./ucc/stores/ActivityStore');
-var GroupStore        = require('./ucc/stores/GroupStore');
-
-//UI
-var ActivityTimeline  = require('./ucc/ui/ActivityTimeline');
+var AgentStore        = require('./ucc/stores/AgentStore')
 
 //Config
 var config            = require('./config');
 var AgentModes        = require('./ucc/agents/AgentModes');
+
+
+//Data
+var Client            = require('./ucc/data/Client');
 
 var Platform          = sys.Platform;
 var Time              = sys.Time;
@@ -76,7 +76,7 @@ var state = {
 
   roomPotential: 0,
 
-  numRandomStudents: 100,
+  numRandomStudents: 0,
 
   //ui
   showGUI: true,
@@ -110,6 +110,7 @@ sys.Window.create({
   bla: 0,
   init: function() {
     this.initGUI();
+    this.initDataClient();
     this.initWatchdog();
     this.initLibs();
     this.initScene();
@@ -161,9 +162,10 @@ sys.Window.create({
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
-    this.activityTimeline = new ActivityTimeline(this, 180 * state.DPI, 10 * state.DPI, this.width - 190 * state.DPI, 150 * state.DPI);
-
     this.gui.load(config.settingsFile);
+  },
+  initDataClient: function() {
+    this.client = new Client(config.serverUrl);
   },
   initRoomsGUI: function() {
     this.gui.addHeader('Rooms').setPosition(this.width - 170 * state.DPI, 10 * state.DPI);
@@ -195,49 +197,22 @@ sys.Window.create({
   initStores: function() {
     Promise.all([
       MapStore.init(),
-      ActivityStore.init(),
-      GroupStore.init()
+      AgentStore.init()
     ])
-    .spread(function(map, activities, groups) {
+    .spread(function(map, agents) {
       map.setFloor(state.initFloor);
 
       state.map = map;
-      state.activities = activities;
-      state.groups = groups;
-      this.checkMissingRooms(state);
+      state.agents = agents;
 
       state.width = this.width;
       state.height = this.height;
-
-      activities.locations.forEach(function(roomId) {
-        state.selectedRooms[roomId] = 1;
-      })
 
       this.initRoomsGUI();
     }.bind(this))
     .catch(function(e) {
       console.log(e.stack)
     })
-  },
-  checkMissingRooms: function() {
-    var roomsOnTheMap = R.uniq(R.pluck('id', state.map.rooms));
-    var activityLocations = state.activities.locations;
-
-    var missingRooms = R.difference(activityLocations, roomsOnTheMap);
-    if (missingRooms.length > 0) {
-      //console.log('roomsOnTheMap', roomsOnTheMap);
-      //console.log('activityLocations', activityLocations);
-      var str = missingRooms.map(function(roomId) {
-        var roomActivities = state.activities.all.filter(function(activity) {
-          return activity.locations.indexOf(roomId) != -1;
-        });
-        roomActivities = R.uniq(R.pluck('subject', roomActivities));
-        return ' - ' +  roomId + ' ' + JSON.stringify(roomActivities);
-      }).join('\n');
-
-      str = 'Main.missingRooms ' + missingRooms.length + '\n' + str;
-      console.log(str);
-    }
   },
   initKeys: function() {
     this.on('keyDown', function(e) {
@@ -333,13 +308,6 @@ sys.Window.create({
       state.entities.splice(state.entities.indexOf(agent), 1);
     })
   },
-  //updateUI: function() {
-  //  if (Time.frameNumber % 2 == 0) {
-  //    var x = remap(state.currentTime, state.activtiesStartTime, state.activtiesEndTime, 0, state.crayon.canvas.width);
-  //    state.crayon.fill([255, 255, 255, 255]).rect(x, 0, 2, 5 * DPI);
-  //    state.uiTexture.update(state.canvas);
-  //  }
-  //},
   toggleClass: function() {
     console.log('toggleClass');
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
@@ -368,33 +336,6 @@ sys.Window.create({
     this.updateFake();
 
     state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
-
-    //this.updateUI();
-
-    if (state.activities && state.activities.all) {
-      state.activities.current = state.activities.all.filter(function(activity) {
-        return (activity.startTime <= state.currentTime && activity.endTime >= state.currentTime);
-      })
-
-      state.activities.currentLocations =  R.uniq(R.flatten(state.activities.current.map(R.prop('locations'))));
-      state.activities.currentGroups =  R.uniq(R.flatten(state.activities.current.map(R.prop('groups'))));
-      state.activities.currentStudents =  R.uniq(R.flatten(state.activities.currentGroups.map(function(groupId) {
-        var group = state.groups.byId[groupId];
-        if (group) {
-          return group.students;
-        }
-        else {
-          if (verbose) console.log('Main.update group', groupId, 'is missing');
-          return [];
-        }
-      })));
-      if (verbose) console.log('Main.update current',
-        'activities:', state.activities.current.length,
-        'locations:', state.activities.currentLocations.length,
-        'groups:', state.activities.currentGroups.length,
-        'students:', state.activities.currentStudents.length
-      );
-    }
   },
   onColorChange: function() {
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), state.entities);
@@ -419,14 +360,14 @@ sys.Window.create({
     if (state.clearBg) glu.clearColorAndDepth(config.bgColor);
     glu.enableDepthReadAndWrite(true);
 
-    if (state.map && state.activities && state.groups && state.map.selectedNodes) {
+    if (state.map && state.map.selectedNodes) {
       agentDebugInfoUpdaterSys(state);
       mapSys(state);
       energySys(state);
       agentSpawnSys(state);
-      agentScheduleUpdaterSys(state);
-      agentTargetNodeUpdaterSys(state);
-      agentTargetNodeFollowerSys(state);
+      //agentScheduleUpdaterSys(state);
+      //agentTargetNodeUpdaterSys(state);
+      //agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);
       agentFlockingSys(state);
       agentPointSpriteUpdaterSys(state);
@@ -445,9 +386,6 @@ sys.Window.create({
 
     if (state.showGUI) {
       this.gui.draw();
-    }
-    if (state.showSchedule) {
-      this.activityTimeline.draw(state);
     }
   }
 });
