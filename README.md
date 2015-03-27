@@ -22,6 +22,7 @@ Start the test server as described below
 Run the client
 ```
 npm run watch
+//the browser should open at http://localhost:3001
 ```
 
 # Build for Odroid
