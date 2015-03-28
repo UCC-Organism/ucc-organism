@@ -12,6 +12,7 @@ function agentPositionUpdaterSys(state) {
   agents.forEach(function(followerEntity, idx) {
     followerEntity.prevPosition.copy(followerEntity.position);
     followerEntity.velocity.scale(0.9);
+    followerEntity.force.limit(state.agentSpeed * Time.delta / 10);
     followerEntity.velocity.add(followerEntity.force);
     followerEntity.position.add(followerEntity.velocity);
     followerEntity.force.scale(0);

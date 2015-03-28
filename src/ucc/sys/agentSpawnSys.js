@@ -12,7 +12,7 @@ function makeAgentEntity(props) {
   var studentAgent = {
     agent: true,
     pointSize: 3,
-    typeIndex: random.int(0, 10),
+    typeIndex: 0,
     mode: AgentModes.Wander,
     position: props.position.dup(),
     prevPosition: props.position.dup(),
@@ -64,6 +64,8 @@ function spawnAgents(state) {
         if ((room.floor == state.map.currentFloor) || (state.map.currentFloor == -1)) {
           //position = R.find(R.where({ roomId: room.id }), state.map.selectedNodes).position;
           agent.entity = makeAgentEntity({ position: position, id: agent.id, state: agent })
+          if (agent.type == 'student') agent.entity.typeIndex = 1;
+          if (agent.type == 'teacher') agent.entity.typeIndex = 8;
           state.entities.push(agent.entity);
         }
       }

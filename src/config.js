@@ -33,6 +33,21 @@ var ProgrammeColors = {
   'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) }
 };
 
+var AgentGroups = [
+  'SPL - Sygeplejerskeuddannelsen',           //0
+  'PMU - Psykomotorikuddannelsen',            //1
+  'FYS - Fysioterapeutuddannelsen',           //2
+  'SOC - Socialrådgiveruddannelsen',          //3
+  'PÆD - Pædagoguddannelsen',                 //4
+  'DIV - Diverse aktiviteter',                //5
+  'Diplom S - Diplomuddannelse - Sundhed',    //6
+  'Diplom L - Diplomuddannelse - Ledelse',    //7
+  'Teacher',                                  //8
+  'Researcher',                               //9
+  'Janitor',                                  //10
+  'Cook'                                      //11
+];
+
 var EnergyTypes = {
   'social': { color: Color.Red.clone() },
   'knowledge': { color: Color.Green.clone() },

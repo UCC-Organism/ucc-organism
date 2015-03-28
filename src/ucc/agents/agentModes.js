@@ -1,7 +1,7 @@
 module.exports = {
   None: null,
   Away: 'away',
-  Wander: 'wander',
+  Roaming: 'roaming',
   Toilet: 'toilet',
   Study: 'study',
   Classroom: 'classrom',

@@ -60,7 +60,7 @@ Client.prototype.updateCurrentState = function() {
 
     console.log('Client.updateCurrentState', AgentStore.all.length);
 
-    //this.subscribeToEvents();
+    this.subscribeToEvents();
   }.bind(this));
 }
 
@@ -73,12 +73,21 @@ Client.prototype.onEvent = function(e) {
       return;
     }
     if (e.description == 'away') {
+      console.log('Client.onEvent', agentId, 'is going away')
       agent.targetMode = AgentModes.Away;
     }
+    if (e.description == 'roaming') {
+      console.log('Client.onEvent', agentId, 'is going roaming')
+      agent.targetMode = AgentModes.Roaming;
+    }
     else if (e.location) {
+      console.log('Client.onEvent', agentId, 'is going from', agent.targetLocation, 'to', e.location);
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = e.location;
     }
+    //else {
+    //  console.log('Client.onEvent', agentId, e);
+    //}
   })
 }
 
