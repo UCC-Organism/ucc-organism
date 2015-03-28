@@ -21,7 +21,7 @@ function makeAgentEntity(props) {
     color: Color.White,
     targetNode: null,
     agentId: props.id,
-    state: props.state
+    state: props.state,
   };
   return studentAgent;
 }
@@ -34,7 +34,8 @@ function spawnAgents(state) {
       return sameFloorSoFar && (neighborNode.floor == node.floor);
     }, true)
   });
-  stairsNodes = stairsNodes.filter(R.where({floor:1}));
+
+  var exitNodes = state.map.selectedNodes.filter(R.where({roomType:'exit'}));
 
   if (!stairsNodes.length) {
     stairsNodes = state.map.selectedNodes;
@@ -50,8 +51,8 @@ function spawnAgents(state) {
   //             entities add agent
   var missingRooms = [];
   state.agents.all.forEach(function(agent) {
-    if (!agent.entity) {
-      var position = random.element(stairsNodes).position;
+    if (!agent.entity && random.chance(0.1)) {
+      var position = random.element(exitNodes).position;
       if (agent.targetLocation) {
         var room = state.map.getRoomById(agent.targetLocation);
         if (!room) {
