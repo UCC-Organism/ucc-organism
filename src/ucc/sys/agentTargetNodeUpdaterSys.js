@@ -8,8 +8,6 @@ function agentTargetNodeUpdaterSys(state) {
   var agents = R.filter(R.where({ agent: R.identity }), state.entities);
   var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
 
-  console.log('agentTargetNodeUpdaterSys', agents.length)
-
   agents.forEach(function(agent, idx) {
     //if (idx == 0) console.log(agent)
     if (agent.state.targetMode) {
