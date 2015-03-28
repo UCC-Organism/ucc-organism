@@ -15,7 +15,7 @@ function agentTargetNodeFollowerSys(state) {
   targetFollowers.forEach(function(followerEntity, idx) {
     tmpDir.copy(followerEntity.targetNode.position).sub(followerEntity.position);
     var tmpDirLen = tmpDir.length();
-    var speed = state.agentSpeed;
+    var speed = state.agentSpeed * followerEntity.speed;
     if (followerEntity.mode == AgentModes.Classroom) {
       speed *= 2;
     }

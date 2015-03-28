@@ -22,6 +22,7 @@ function makeAgentEntity(props) {
     targetNode: null,
     agentId: props.id,
     state: props.state,
+    speed: random.float(0.3, 1)
   };
   return studentAgent;
 }
