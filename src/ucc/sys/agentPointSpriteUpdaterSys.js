@@ -19,7 +19,7 @@ function agentPointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
     var image = Platform.isPlask ? __dirname + '/../../../assets/agents_5.png' : 'assets/agents_5.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
-    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 30 * state.DPI, texture: Texture2D.load(image), texSize: new Vec2(1/10, 1/10), texOffset: new Vec2(1/10, 1/10) });
+    var pointSpriteMaterial = new PointSpriteTextured({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/10, 1/15), texOffset: new Vec2(1/10, 1/10) });
     state.pointSpriteMeshEntity = {
       agentMesh: true, mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }

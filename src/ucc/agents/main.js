@@ -9,8 +9,6 @@ var remap             = require('re-map');
 var plask             = require('plask');
 
 var config            = require('../../config');
-var GroupStore        = require('../stores/GroupStore');
-var ActivityStore     = require('../stores/ActivityStore');
 var Crayons           = require('../../crayons/crayons');
 var Window            = sys.Window;
 var Platform          = sys.Platform;
@@ -52,8 +50,8 @@ function matrixLayout(w, h, n, lineHeight) {
 Window.create({
   settings: {
     width: 1280*1,
-    //height: 1280*1.5,
-    height: 1280,
+    height: 1280*1.5,
+    //height: 1280,
     type: '2d3d',
     highdpi: 2,
     fullscreen: Platform.isBrowser ? true : false,
@@ -93,46 +91,15 @@ Window.create({
   },
   initStores: function() {
     Promise.all([
-      ActivityStore.init(),
-      GroupStore.init()
     ])
-    .spread(function(activities, groups) {
-      state.groups = groups;
-      state.activities = activities;
-      this.initAgents(activities, groups);
+    .spread(function() {
+      this.initAgents();
     }.bind(this))
     .catch(function(e) {
       console.log(e.stack)
     })
   },
-  initAgents: function(activities, groups) {
-    var programmes = R.uniq(R.map(R.prop('programme'), groups.all));
-
-    console.log('len', groups.all.length)
-    console.log('departments', R.uniq(R.map(R.prop('department'), groups.all)))
-    console.log('programmes', programmes);
-    console.log('groups', groups.all.length, R.uniq(R.map(R.prop('id'), groups.all)).length);
-    console.log('students', R.uniq(R.map(R.prop('id'), R.flatten(R.map(R.prop('students'), groups.all)))).length);
-    console.log('teachers', R.uniq(R.flatten(R.map(R.prop('teachers'), activities.all))).length);
-
-    exampleGroups = groups.all;
-
-    //var exampleGroups = programmes.map(function(programme) {
-    //  var programmeGroups = groups.all.filter(R.where({ programme: programme }));
-    //  var notEmptyGroups = programmeGroups.filter(function(group) {
-    //    return group.students.length  > 0;
-    //  });
-    //  var group = {};
-    //  if (notEmptyGroups.length > 0) {
-    //    group = notEmptyGroups[0];
-    //  }
-    //  else {
-    //    group.students = [];
-    //  }
-    //  console.log(programme, group.students.length)
-    //  return group;
-    //});
-
+  initAgents: function() {
     var layout = matrixLayout(this.width, this.height, 10, lineHeight);
     var index = 0;
 
@@ -166,26 +133,25 @@ Window.create({
       'Cook'
     ];
 
-    console.log('exampleGroups', exampleGroups.length)
-
     function notEmpty(list) {
       return list.students.length > 0;
     }
 
     var groupIndex = 0;
     cellTypes.forEach(function(CellType, cellTypeIndex) {
-      var group = exampleGroups[groupIndex++];
-      while(group && group.students && group.students.length < 10) {
-        group = exampleGroups[groupIndex++];
-      }
       var programmeName = programmeLabels[cellTypeIndex];
       var programmeColor = config.programmeColors[programmeName];
       var color = config.cellStyle.cellBorder;
       if (programmeColor) {
         color = [ Math.floor(255*programmeColor.primary.r), Math.floor(255*programmeColor.primary.g), Math.floor(255*programmeColor.primary.b), Math.floor(255*programmeColor.primary.a)];
       }
-      group.students = group.students.slice(0, 10);
-      group.students.forEach(function(student) {
+      students = R.range(0, 10).map(function() {
+        return {
+          age: 25,
+          gender: 0
+        }
+      })
+      students.forEach(function(student) {
         var pos = layout(index++);
         this.cells.push(new CellType(student, pos.x, pos.y, pos.width*0.7, color))
       }.bind(this));
