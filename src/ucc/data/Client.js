@@ -39,10 +39,20 @@ Client.prototype.updateCurrentState = function() {
 
     AgentStore.all = [];
     agentIds.forEach(function(agentId) {
-      var agent = agentsState[agentId];
-      agent.id = agentId;
+      var agentState = agentsState[agentId];
+      var agent = {
+        id: agentId
+      }
       if (agentId.match(/^student/)) agent.type = 'student';
       if (agentId.match(/^teacher/)) agent.type = 'teacher';
+
+      if (agentState.description == 'away') {
+        agent.targetMode = AgentModes.Away;
+      }
+      else if (agentState.location) {
+        agent.targetMode = AgentModes.Classroom;
+        agent.targetLocation = agentState.location;
+      }
 
       //if (agent.)
       AgentStore.all.push(agent);

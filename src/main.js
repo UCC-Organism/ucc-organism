@@ -365,9 +365,8 @@ sys.Window.create({
       mapSys(state);
       energySys(state);
       agentSpawnSys(state);
-      //agentScheduleUpdaterSys(state);
-      //agentTargetNodeUpdaterSys(state);
-      //agentTargetNodeFollowerSys(state);
+      agentTargetNodeUpdaterSys(state);
+      agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);
       agentFlockingSys(state);
       agentPointSpriteUpdaterSys(state);
@@ -375,7 +374,6 @@ sys.Window.create({
 
       glu.enableDepthReadAndWrite(false);
       glu.enableAlphaBlending(true);
-      //glu.enableAdditiveBlending();
       meshRendererSys(state);
 
       state.map.dirty = false;

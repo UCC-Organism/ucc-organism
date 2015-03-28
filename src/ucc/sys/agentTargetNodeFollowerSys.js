@@ -12,7 +12,7 @@ function agentTargetNodeFollowerSys(state) {
   //console.log('agentTargetNodeFollowerSys', 'targetFollowers:', targetFollowers.length);
 
   var tmpDir = new Vec3();
-  targetFollowers.forEach(function(followerEntity) {
+  targetFollowers.forEach(function(followerEntity, idx) {
     tmpDir.copy(followerEntity.targetNode.position).sub(followerEntity.position);
     var tmpDirLen = tmpDir.length();
     var speed = state.agentSpeed;

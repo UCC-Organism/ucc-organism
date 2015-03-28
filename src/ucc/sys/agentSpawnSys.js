@@ -10,8 +10,8 @@ var Color       = color.Color;
 
 function makeAgentEntity(props) {
   var studentAgent = {
-    pointSize: 3,
     agent: true,
+    pointSize: 3,
     typeIndex: random.int(0, 10),
     mode: AgentModes.Wander,
     position: props.position.dup(),
@@ -20,7 +20,8 @@ function makeAgentEntity(props) {
     force: new Vec3(0, 0, 0),
     color: Color.White,
     targetNode: null,
-    agentId: props.id
+    agentId: props.id,
+    state: props.state
   };
   return studentAgent;
 }
@@ -51,16 +52,16 @@ function spawnAgents(state) {
   state.agents.all.forEach(function(agent) {
     if (!agent.entity) {
       var position = random.element(stairsNodes).position;
-      if (agent.location) {
-        var room = state.map.getRoomById(agent.location);
+      if (agent.targetLocation) {
+        var room = state.map.getRoomById(agent.targetLocation);
         if (!room) {
-          missingRooms.push(agent.location);
+          missingRooms.push(agent.targetLocation);
           return;
         }
 
         if ((room.floor == state.map.currentFloor) || (state.map.currentFloor == -1)) {
           //position = R.find(R.where({ roomId: room.id }), state.map.selectedNodes).position;
-          agent.entity = makeAgentEntity({ position: position, id: agent.id })
+          agent.entity = makeAgentEntity({ position: position, id: agent.id, state: agent })
           state.entities.push(agent.entity);
         }
       }
