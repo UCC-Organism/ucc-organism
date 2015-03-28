@@ -368,6 +368,14 @@ sys.Window.create({
       agentTargetNodeUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);
+
+      //speed up x3
+      agentTargetNodeFollowerSys(state);
+      agentPositionUpdaterSys(state);
+      agentTargetNodeFollowerSys(state);
+      agentPositionUpdaterSys(state);
+      //end of speedup
+
       agentFlockingSys(state);
       agentPointSpriteUpdaterSys(state);
       energyPointSpriteUpdaterSys(state);
