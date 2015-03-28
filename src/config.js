@@ -33,7 +33,7 @@ var ProgrammeColors = {
   'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) }
 };
 
-var AgentGroups = [
+var AgentTypeGroups = [
   'SPL - Sygeplejerskeuddannelsen',           //0
   'PMU - Psykomotorikuddannelsen',            //1
   'FYS - Fysioterapeutuddannelsen',           //2
@@ -103,6 +103,8 @@ var Config = {
   roomIdMap: RoomIdMap,
   programmeColors: ProgrammeColors,
   energyTypes: EnergyTypes,
+
+  agentTypeGroups: AgentTypeGroups,
 
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",

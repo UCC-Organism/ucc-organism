@@ -4,7 +4,7 @@ var color       = require('pex-color');
 var Vec3        = require('pex-geom').Vec3;
 var AgentModes  = require('../agents/agentModes');
 var Config      = require('../../config');
-var Log      = require('../../utils/log');
+var Log         = require('../../utils/log');
 
 var Color       = color.Color;
 
@@ -52,7 +52,16 @@ function spawnAgents(state) {
   //             entities add agent
   var missingRooms = [];
   state.agents.all.forEach(function(agent) {
-    if (!agent.entity && random.chance(0.1)) {
+    if (!agent.entity) {
+      if (!agent.programme) {
+        if (!agent.programmeRequest) {
+          agent.programmeRequest = true;
+          state.client.getAgentInfo(agent.id).then(function(agentInfo) {
+            agent.programme = agentInfo.programme;
+          })
+        }
+        return;
+      }
       var position = random.element(exitNodes).position;
       if (agent.targetLocation) {
         var room = state.map.getRoomById(agent.targetLocation);
@@ -64,9 +73,13 @@ function spawnAgents(state) {
         if ((room.floor == state.map.currentFloor) || (state.map.currentFloor == -1)) {
           //position = R.find(R.where({ roomId: room.id }), state.map.selectedNodes).position;
           agent.entity = makeAgentEntity({ position: position, id: agent.id, state: agent })
-          if (agent.type == 'student') agent.entity.typeIndex = 1;
-          if (agent.type == 'teacher') agent.entity.typeIndex = 8;
-          state.entities.push(agent.entity);
+          agent.entity.typeIndex = Config.agentTypeGroups.indexOf(agent.programme);
+          if (agent.entity.typeIndex !== -1) {
+            state.entities.push(agent.entity);
+          }
+          else {
+            console.log('ERR: spawnAgents: Unknown programme: "' + agent.programme + '"')
+          }
         }
       }
     }

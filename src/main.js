@@ -165,7 +165,7 @@ sys.Window.create({
     this.gui.load(config.settingsFile);
   },
   initDataClient: function() {
-    this.client = new Client(config.serverUrl);
+    this.client = state.client = new Client(config.serverUrl);
   },
   initRoomsGUI: function() {
     this.gui.addHeader('Rooms').setPosition(this.width - 170 * state.DPI, 10 * state.DPI);

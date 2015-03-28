@@ -27,7 +27,7 @@ function agentTargetNodeUpdaterSys(state) {
       else if (agent.state.mode == AgentModes.Roaming) {
         targetNode = random.element(state.map.selectedNodes); //TODO: should choose a corridor
       }
-      if (agent.state.mode == AgentModes.Away) {
+      else if (agent.state.mode == AgentModes.Away) {
         targetNode = random.element(exitNodes);
       }
       var path = null;

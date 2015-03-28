@@ -26,6 +26,10 @@ Client.prototype.subscribeToEvents = function() {
   this.fayeClient.subscribe('/events', this.onEvent.bind(this));
 }
 
+Client.prototype.getAgentInfo = function(agentId) {
+  return this.getJSON(this.serverUrl + '/agent/' + agentId);
+}
+
 Client.prototype.updateCurrentState = function() {
   this.getJSON(this.serverUrl + '/current-state').then(function(agentsState) {
     var agentIds = Object.keys(agentsState);
