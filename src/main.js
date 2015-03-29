@@ -250,6 +250,7 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'b': state.clearBg = !state.clearBg; break;
+        case 'q': config.bgColor = Color.fromHex('#FF0000'); config.cellColor = Color.fromHex('#FF0000'); this.onColorChange(); break;
         //case ' ': this.killAllAgents(); break;
         case ' ': this.toggleClass(); break;
         case 'S': this.gui.save(config.settingsFile); break;
