@@ -835,6 +835,40 @@ CookCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
+function UnknownCell(student, x, y, size, color) {
+  this.student = student;
+  this.color = color;
+  this.x = x;
+  this.y = y;
+  this.vx = 0;
+  this.vy = 0;
+  this.fx = 0;
+  this.fy = 0;
+  this.baseX = x;
+  this.baseY = y;
+  this.size = size * 0.75;
+  this.seed = Math.random();
+}
+
+UnknownCell.prototype.draw = function(crayon) {
+  var r = this.size * 0.4;
+  var x = this.x;
+  var y = this.y;
+
+  crayon.fill(style.cellBorderEdge)
+    .circle(x, y, r + 6)
+
+  crayon.fill(this.color)
+    .circle(x, y, r + 5)
+
+  crayon.fill(style.cellInside)
+    .circle(x, y, r)
+
+  crayon.restore();
+}
+
+//-----------------------------------------------------------------------------
+
 module.exports.SplCell          = SplCell;
 module.exports.PmuCell          = PmuCell;
 module.exports.FysCell          = FysCell;
@@ -847,3 +881,4 @@ module.exports.TeacherCell      = TeacherCell;
 module.exports.ResearcherCell   = ResearcherCell;
 module.exports.JanitorCell      = JanitorCell;
 module.exports.CookCell         = CookCell;
+module.exports.UnknownCell      = UnknownCell;
