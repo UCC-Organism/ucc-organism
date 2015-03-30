@@ -449,7 +449,9 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 20);
+    // TODO: Make subdivision length dependentant on map overall complexity
+    // On the biggest most complex maps too much subdivision will make total number of vertices exceed limit
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 20, true, 0.001);
 
     var center = GeomUtils.centroid(splinePoints);
 
