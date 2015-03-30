@@ -2,6 +2,10 @@
 
 UCC Organism is the client visualization showing UCC as an organism
 
+Credits:
+Marcin Ignac
+BG Staal
+
 # Build for local testing
 
 1. Install and build the client
@@ -60,6 +64,5 @@ That should open a server at [http://localhost:8080]()
 ## Static Data requests
 
 [/current-state](http://localhost:8080/current-state)
-
 
 We use library called *faye*.
