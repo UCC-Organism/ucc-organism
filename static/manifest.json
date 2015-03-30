@@ -1,0 +1,13 @@
+{
+  "name": "ucc_organism",
+  "version": "11",
+  "app": {
+    "launch":{
+      "local_path": "index.html"
+    }
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "fullscreen": "true"
+}

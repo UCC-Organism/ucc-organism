@@ -8,7 +8,7 @@ BG Staal
 
 # Build for local testing
 
-1. Install and build the client
+1 Install and build the client
 ```
 git clone https://github.com/UCC-Organism/ucc-organism
 cd ucc-organism
@@ -16,14 +16,16 @@ npm install
 #this will go into build.sh at some point
 mkdir build
 cp static/index.html build/index.html
+cp static/manifest.json build/manifest.json
+cp static/package.json build/package.json
 cp src/settings.json build/settings.json
 cp -r assets build/assets
 cp -r data build/data
 ```
 
-2. Start the test server as described below
+2 Start the test server as described below
 
-3. Run the client
+3 Run the client
 ```
 npm run watch
 #the browser should open at http://localhost:3001
@@ -31,13 +33,10 @@ npm run watch
 
 # Build for Odroid
 
-WIP
-
 ```
-python make_apk.py --package=dk.ucc.organism --enable-remote-debugging --manifest=/Users/vorg/Workspace/var-uccorganism/ucc-organism/build/manifest.json --extensions=extensions/ucc_extension
+cd /Users/vorg/Dev/crosswalk-odroid/
+python make_apk.py --enable-auto-update --enable-remote-debugging --package=dk.ucc.organism --manifest=/Users/vorg/Workspace/var-uccorganism/ucc-organism/build/manifest.json
 ```
-
-python make_apk.py --manifest=/Users/vorg/Workspace/var-uccorganism/ucc-organism/build/manifest.json
 
 # Data
 
