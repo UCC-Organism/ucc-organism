@@ -13,19 +13,12 @@ BG Staal
 git clone https://github.com/UCC-Organism/ucc-organism
 cd ucc-organism
 npm install
-#this will go into build.sh at some point
-mkdir build
-cp static/index.html build/index.html
-cp static/manifest.json build/manifest.json
-cp static/package.json build/package.json
-cp src/settings.json build/settings.json
-cp -r assets build/assets
-cp -r data build/data
+./build.sh
 ```
 
 2 Start the test server as described below
 
-3 Run the client
+3 Run the client with continuous compilation on source code change
 ```
 npm run watch
 #the browser should open at http://localhost:3001
