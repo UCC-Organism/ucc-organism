@@ -62,7 +62,9 @@ function spawnAgents(state) {
         }
         return;
       }
-      var position = random.element(exitNodes).position;
+      var spawnNode = random.element(exitNodes);
+      if (!spawnNode) spawnNode = random.element(state.map.selectedNodes)
+      var position = spawnNode.position;
       if (agent.targetLocation) {
         var room = state.map.getRoomById(agent.targetLocation);
         if (!room) {

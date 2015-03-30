@@ -21,8 +21,8 @@ function agentTargetNodeUpdaterSys(state) {
 
     if (!agent.targetNode) {
       var targetNode = null;
-      if (agent.state.targetLocation) {
-        targetNode = R.find(R.where({ roomId: agent.state.targetLocation }), state.map.selectedNodes);
+      if (agent.state.mode == AgentModes.Classroom && agent.state.targetLocation) {
+        targetNode = state.map.getSelectedNodeByRoomId(agent.state.targetLocation);
         agent.state.targetLocation = null;
       }
       else if (agent.state.mode == AgentModes.Roaming) {
@@ -40,6 +40,13 @@ function agentTargetNodeUpdaterSys(state) {
         else {
           agent.state.mode = AgentModes.Roaming;
         }
+      }
+      else if (agent.state.mode == AgentModes.Lunch) {
+        targetNode = state.map.getSelectedNodeByRoomId(agent.state.targetLocation);
+        if (!targetNode) {
+          targetNode = random.element(exitNodes);
+        }
+        agent.state.mode = AgentModes.Dead;
       }
       var path = null;
 

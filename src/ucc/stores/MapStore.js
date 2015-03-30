@@ -117,6 +117,13 @@ var MapStore = {
       room = this.roomsById[Config.roomIdMap[id]];
     }
     return room;
+  },
+  getSelectedNodeByRoomId: function(id) {
+    targetNode = R.find(R.where({ roomId: id }), this.selectedNodes);
+    if (!targetNode) {
+      targetNode = R.find(R.where({ roomId: Config.roomIdMap[id] }), this.selectedNodes);
+    }
+    return targetNode;
   }
 }
 

@@ -307,6 +307,7 @@ sys.Window.create({
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
 
     agents.forEach(function(agent) {
+      agent.state.entity = null;
       state.entities.splice(state.entities.indexOf(agent), 1);
     })
   },

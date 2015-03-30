@@ -69,7 +69,7 @@ Client.prototype.updateCurrentState = function() {
 }
 
 Client.prototype.onEvent = function(e) {
-  console.log('Client.onEvent', e);
+  console.log('Client.onEvent', e.description);
   e.agents.forEach(function(agentId) {
     var agent = AgentStore.getAgentById(agentId);
     if (!agent) {
@@ -80,9 +80,18 @@ Client.prototype.onEvent = function(e) {
       //console.log('Client.onEvent', agentId, 'is going away')
       agent.targetMode = AgentModes.Away;
     }
-    if (e.description == 'roaming') {
+    else if (e.description == 'roaming') {
       //console.log('Client.onEvent', agentId, 'is going roaming')
       agent.targetMode = AgentModes.Roaming;
+    }
+    else if (e.description == 'random toilet') {
+      agent.targetMode = AgentModes.Toilet;
+      agent.targetLocation = e.location;
+    }
+    else if (e.description == 'random lunch') {
+      agent.targetMode = AgentModes.Lunch;
+      agent.targetLocation = e.location;
+      console.log(e);
     }
     else if (e.location) {
       //console.log('Client.onEvent', agentId, 'is going from', agent.targetLocation, 'to', e.location);

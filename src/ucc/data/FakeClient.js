@@ -60,7 +60,46 @@ var rooms = [
 ];
 
 function FakeClient() {
-  this.genStudents();
+  //this.genStudents();
+  this.genLunchOnAnotherFloor();
+}
+
+FakeClient.prototype.genLunchOnAnotherFloor = function() {
+  students.forEach(function(id) {
+    AgentStore.all.push({
+      id: id,
+      programme: Config.agentTypeGroups[0],
+      end: "2018-01-31 00:00:00.0000000",
+      gender: 0,
+      age: 25,
+      targetMode: AgentModes.Classroom,
+      targetLocation: 'C.230'
+    })
+  })
+  //add teacher
+  AgentStore.all.push({
+    id: 'teacher01',
+    programme: Config.agentTypeGroups[9],
+    end: "2018-01-31 00:00:00.0000000",
+    gender: 0,
+    age: 25,
+    targetMode: AgentModes.Classroom,
+    targetLocation: 'C.230'
+  })
+
+  setTimeout(function() {
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Classroom;
+      agent.targetLocation = 'C.216';
+    })
+  }, 10000)
+
+  setTimeout(function() {
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Lunch;
+      agent.targetLocation = 'Kantine';
+    })
+  }, 20000)
 }
 
 FakeClient.prototype.genStudents = function() {
