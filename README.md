@@ -8,12 +8,12 @@ BG Staal
 
 # Build for local testing
 
-1 Install and build the client
+1 Install and prepare the client build
 ```
 git clone https://github.com/UCC-Organism/ucc-organism
 cd ucc-organism
 npm install
-./build.sh
+./bundle.sh
 ```
 
 2 Start the test server as described below
