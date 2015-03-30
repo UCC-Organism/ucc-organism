@@ -9,6 +9,7 @@ function agentTargetNodeUpdaterSys(state) {
   var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
 
   var exitNodes = state.map.selectedNodes.filter(R.where({roomType:'exit'}));
+  var toiletNodes = state.map.selectedNodes.filter(R.where({roomType:'toilet'}));
 
   agents.forEach(function(agent, idx) {
     //if (idx == 0) console.log(agent)
@@ -30,10 +31,22 @@ function agentTargetNodeUpdaterSys(state) {
       else if (agent.state.mode == AgentModes.Away) {
         targetNode = random.element(exitNodes);
       }
+      else if (agent.state.mode == AgentModes.Toilet) {
+        if (toiletNodes.length > 0) {
+          console.log('looking for toilets', toiletNodes.length)
+          targetNode = random.element(toiletNodes);
+          agent.state.mode = AgentModes.None;
+        }
+        else {
+          agent.state.mode = AgentModes.Roaming;
+        }
+      }
       var path = null;
 
-      var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
-      if (!path && targetNode) path = graph.findShortestPath(closestNode, targetNode);
+      if (!path && targetNode) {
+        var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
+        path = graph.findShortestPath(closestNode, targetNode);
+      }
       if (!path) {
         //TODO: print warnign and change mode to wander
         //No path found, try next time
