@@ -31,6 +31,7 @@ var AgentModes        = require('./ucc/agents/AgentModes');
 
 //Data
 var Client            = require('./ucc/data/Client');
+var FakeClient        = require('./ucc/data/FakeClient');
 
 var Platform          = sys.Platform;
 var Time              = sys.Time;
@@ -165,7 +166,8 @@ sys.Window.create({
     this.gui.load(config.settingsFile);
   },
   initDataClient: function() {
-    this.client = state.client = new Client(config.serverUrl);
+    //this.client = state.client = new Client(config.serverUrl);
+    this.client = state.client = new FakeClient(config.serverUrl);
   },
   initRoomsGUI: function() {
     this.gui.addHeader('Rooms').setPosition(this.width - 170 * state.DPI, 10 * state.DPI);
