@@ -67,14 +67,44 @@ FakeClient.prototype.genStudents = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[1],
-      "end": "2018-01-31 00:00:00.0000000",
+      programme: Config.agentTypeGroups[0],
+      end: "2018-01-31 00:00:00.0000000",
       gender: 0,
       age: 25,
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.216'
     })
   })
+  //add teacher
+  AgentStore.all.push({
+    id: 'teacher01',
+    programme: Config.agentTypeGroups[9],
+    end: "2018-01-31 00:00:00.0000000",
+    gender: 0,
+    age: 25,
+    targetMode: AgentModes.Classroom,
+    targetLocation: 'C.216'
+  })
+
+  setTimeout(function() {
+    AgentStore.all.slice(0, 6).forEach(function(agent) {
+      agent.targetMode = AgentModes.Toilet;
+      agent.targetLocation = 'toilet';
+    })
+  }, 10000)
+
+  setTimeout(function() {
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Roaming;
+    })
+  }, 20000)
+
+  setTimeout(function() {
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Classroom;
+      agent.targetLocation = 'C.216';
+    })
+  }, 25000)
 }
 
 module.exports = FakeClient;
