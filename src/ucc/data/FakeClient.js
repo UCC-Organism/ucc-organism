@@ -35,6 +35,35 @@ var students = [
   "student1091"
 ];
 
+var students2 = [
+  "student2663",
+  "student2142",
+  "student2145",
+  "student2106",
+  "student2640",
+  "student21058",
+  "student2112",
+  "student288",
+  "student21072",
+  "student2103",
+  "student21081",
+  "student2105",
+  "student21057",
+  "student285",
+  "student21059",
+  "student21062",
+  "student286",
+  "student2647",
+  "student21071",
+  "student21073",
+  "student2662",
+  "student21083",
+  "student2131",
+  "student21088",
+  "student21090",
+  "student21091"
+];
+
 var teachers = [
   "teacher1",
   "teacher2",
@@ -61,7 +90,8 @@ var rooms = [
 
 function FakeClient() {
   //this.genStudents();
-  this.genLunchOnAnotherFloor();
+  this.genStudents2();
+  //this.genLunchOnAnotherFloor();
 }
 
 FakeClient.prototype.genLunchOnAnotherFloor = function() {
@@ -144,6 +174,65 @@ FakeClient.prototype.genStudents = function() {
       agent.targetLocation = 'C.216';
     })
   }, 25000)
+}
+
+FakeClient.prototype.genStudents2 = function() {
+  students.forEach(function(id) {
+    AgentStore.all.push({
+      id: id,
+      programme: Config.agentTypeGroups[0],
+      end: "2018-01-31 00:00:00.0000000",
+      gender: 0,
+      age: 25,
+      targetMode: AgentModes.Classroom,
+      targetLocation: 'C.216'
+    })
+  })
+  //add teacher
+  AgentStore.all.push({
+    id: 'teacher01',
+    programme: Config.agentTypeGroups[9],
+    end: "2018-01-31 00:00:00.0000000",
+    gender: 0,
+    age: 25,
+    targetMode: AgentModes.Classroom,
+    targetLocation: 'C.216'
+  })
+
+  students2.forEach(function(id) {
+    AgentStore.all.push({
+      id: id,
+      programme: Config.agentTypeGroups[2],
+      end: "2018-01-31 00:00:00.0000000",
+      gender: 1,
+      age: 30,
+      targetMode: AgentModes.Classroom,
+      targetLocation: 'C.230'
+    })
+  })
+  //add teacher
+  AgentStore.all.push({
+    id: 'teacher01',
+    programme: Config.agentTypeGroups[9],
+    end: "2018-01-31 00:00:00.0000000",
+    gender: 0,
+    age: 25,
+    targetMode: AgentModes.Classroom,
+    targetLocation: 'C.230'
+  })
+
+  setTimeout(function() {
+    AgentStore.all.slice(0, 6).forEach(function(agent) {
+      agent.targetMode = AgentModes.Toilet;
+      agent.targetLocation = 'toilet';
+    })
+  }, 10000)
+
+  setTimeout(function() {
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Roaming;
+    })
+  }, 20000)
 }
 
 module.exports = FakeClient;
