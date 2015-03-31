@@ -19,6 +19,7 @@ var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
 var agentScheduleUpdaterSys       = require('./ucc/sys/agentScheduleUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
+var agentProxyRendererSys         = require('./ucc/sys/agentProxyRendererSys');
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
@@ -43,8 +44,12 @@ var GUI               = gui.GUI;
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
+var DPI = Platform.isPlask ? 2 : 2;
+
 var state = {
-  DPI: Platform.isPlask ? 2 : 2,
+  DPI: DPI,
+  windowWidth: 1600 * DPI,
+  windowHeight: 900 * DPI,
   //scene
   initFloor: 7,
   camera: null,
@@ -101,8 +106,8 @@ var state = {
 
 sys.Window.create({
   settings: {
-    width: 1600 * state.DPI,
-    height: 900 * state.DPI,
+    width: state.windowWidth,
+    height: state.windowHeight,
     type: '3d',
     fullscreen: Platform.isBrowser ? true : false,
     highdpi: state.DPI,
@@ -385,7 +390,8 @@ sys.Window.create({
 
       glu.enableDepthReadAndWrite(false);
       glu.enableAlphaBlending(true);
-      meshRendererSys(state);
+      //meshRendererSys(state);
+      agentProxyRendererSys(state);
 
       state.map.dirty = false;
     }
