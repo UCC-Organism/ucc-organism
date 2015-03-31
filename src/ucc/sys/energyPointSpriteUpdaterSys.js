@@ -38,9 +38,9 @@ function energyPointSpriteUpdaterSys(state) {
 
   if (!state.energyPointSpriteMeshEntity) {
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, texCoords: true });
-    var pointSpriteMaterial = new ShowColorsWithNoise({ pointSize: 1 * state.DPI });
+    state.energyPointSpriteMeshMaterial = new ShowColorsWithNoise({ pointSize: 1 * state.DPI });
     state.energyPointSpriteMeshEntity = {
-      name: 'energyPointSpriteMeshEntity', energyPointSpriteMeshEntity: true, energyMesh: true, mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
+      name: 'energyPointSpriteMeshEntity', energyPointSpriteMeshEntity: true, energyMesh: true, mesh: new Mesh(pointSpriteGeometry, state.energyPointSpriteMeshMaterial, { points: true } )
     }
     state.entities.unshift(state.energyPointSpriteMeshEntity);
   }
@@ -49,6 +49,7 @@ function energyPointSpriteUpdaterSys(state) {
   var colors = state.energyPointSpriteMeshEntity.mesh.geometry.colors;
   var texCoords = state.energyPointSpriteMeshEntity.mesh.geometry.texCoords;
 
+  state.energyPointSpriteMeshEntity.mesh.setMaterial(state.energyPointSpriteMeshMaterial);
   state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * state.zoom;
 
   vertices.length = 0;

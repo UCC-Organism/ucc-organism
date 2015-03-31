@@ -19,7 +19,7 @@ function agentPointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
     var image = Platform.isPlask ? __dirname + '/../../../assets/agents_5.png' : 'assets/agents_5.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
-    var pointSpriteMaterial = new PointSpriteTextured({
+    state.agentPointSpriteMaterial = new PointSpriteTextured({
       pointSize: 30 * state.DPI,
       texture: Texture2D.load(image, { flip: false }),
       texSize: new Vec2(1/10, 1/15),
@@ -27,13 +27,14 @@ function agentPointSpriteUpdaterSys(state) {
     });
     state.pointSpriteMeshEntity = {
       agentMesh: true,
-      mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
+      mesh: new Mesh(pointSpriteGeometry, state.agentPointSpriteMaterial, { points: true } )
     }
     state.entities.push(state.pointSpriteMeshEntity);
   }
 
   var entitiesWithPointSprite = R.filter(R.where({ pointSize: R.identity }), state.entities);
 
+  state.pointSpriteMeshEntity.mesh.setMaterial(state.agentPointSpriteMaterial);
   state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.agentSpriteSize * state.DPI * state.zoom;
 
   var vertices = state.pointSpriteMeshEntity.mesh.geometry.vertices;

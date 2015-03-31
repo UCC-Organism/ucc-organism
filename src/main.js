@@ -38,6 +38,7 @@ var Platform          = sys.Platform;
 var Time              = sys.Time;
 var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball           = glu.Arcball;
+var Texture2D         = glu.Texture2D;
 var Color             = color.Color;
 var GUI               = gui.GUI;
 
@@ -165,6 +166,9 @@ sys.Window.create({
         var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this));
+    this.gui.addHeader('Agent Proxies');
+    state.agentProxyTex = Texture2D.create(1,1);//temp
+    state.agentProxyTexPreview = this.gui.addTexture2D('Preview', state.agentProxyTex);
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
@@ -390,8 +394,10 @@ sys.Window.create({
 
       glu.enableDepthReadAndWrite(false);
       glu.enableAlphaBlending(true);
-      //meshRendererSys(state);
+      meshRendererSys(state);
       agentProxyRendererSys(state);
+
+      state.agentProxyTexPreview.texture = state.agentProxyTex;
 
       state.map.dirty = false;
     }

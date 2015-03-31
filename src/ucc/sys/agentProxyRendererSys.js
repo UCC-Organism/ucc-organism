@@ -21,8 +21,8 @@ function agentProxyRendererSys(state) {
   var gl = Context.currentContext;
 
   if (!state.agentProxyRT) {
+    //TODO: replace this with fx() stage
     state.agentProxyRT = new RenderTarget(state.windowWidth/4, state.windowHeight/4);
-    state.agentProxyTex = state.agentProxyRT.getColorAttachment(0);
     var glowImage = Platform.isPlask ? __dirname + '/../../../assets/glow.png' : 'assets/glow.png';
     state.agentProxyMaterial = new PointSpriteTexturedSimple({ texture: Texture2D.load(glowImage), alpha: 0.1 });
   }
@@ -30,7 +30,6 @@ function agentProxyRendererSys(state) {
   var energyMeshEntity = R.find(R.where({ energyMesh: true }), state.entities);
   var agentMeshEntity = R.find(R.where({ agentMesh: true }), state.entities);
 
-  glu.clearColor(Color.Black);
   state.agentProxyRT.bind();
   glu.viewport(0, 0, state.agentProxyRT.width, state.agentProxyRT.height);
   glu.clearColor(Color.Black);
@@ -44,8 +43,11 @@ function agentProxyRendererSys(state) {
   agentMeshEntity.mesh.draw(camera);
   state.agentProxyRT.unbind();
   glu.viewport(0, 0, state.windowWidth, state.windowHeight);
-  fx().asFXStage(state.agentProxyTex).downsample2().blur5().blur5().blit({ width: state.windowWidth, height: state.windowHeight });
   glu.enableBlending(false);
+  var result = fx().asFXStage(state.agentProxyRT.getColorAttachment(0)).downsample2().blur5().blur5();
+  //result.blit({ width: state.windowWidth, height: state.windowHeight });
+
+  state.agentProxyTex = result.getSourceTexture();
 }
 
 module.exports = agentProxyRendererSys;
