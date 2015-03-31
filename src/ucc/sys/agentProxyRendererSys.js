@@ -37,7 +37,7 @@ function agentProxyRendererSys(state) {
   glu.enableDepthReadAndWrite(false, false);
   energyMeshEntity.mesh.setMaterial(state.agentProxyMaterial);
   energyMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * state.zoom * 6;
-  energyMeshEntity.mesh.draw(camera);
+  //energyMeshEntity.mesh.draw(camera);
   agentMeshEntity.mesh.setMaterial(state.agentProxyMaterial);
   agentMeshEntity.mesh.material.uniforms.pointSize = Config.agentSpriteSize * state.DPI * state.zoom;
   agentMeshEntity.mesh.draw(camera);
@@ -45,6 +45,8 @@ function agentProxyRendererSys(state) {
   glu.viewport(0, 0, state.windowWidth, state.windowHeight);
   glu.enableBlending(false);
   var result = fx().asFXStage(state.agentProxyRT.getColorAttachment(0)).downsample2().blur5().blur5();
+
+  //glu.enableAdditiveBlending(true);
   //result.blit({ width: state.windowWidth, height: state.windowHeight });
 
   state.agentProxyTex = result.getSourceTexture();
