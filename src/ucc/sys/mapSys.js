@@ -16,6 +16,7 @@ var Rect              = require('../../geom/Rect');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
 var config            = require('../../config');
+var ShowColorsDistorted = require('../../materials/ShowColorsDistorted');
 
 var Geometry          = geom.Geometry;
 var BoundingBox       = geom.BoundingBox;
@@ -449,7 +450,7 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 3);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 10);
 
     var center = GeomUtils.centroid(splinePoints);
 
@@ -529,8 +530,8 @@ function rebuildCells(state) {
   })
 
 
-  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({ }), { lines: true });
-  var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
+  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColorsDistorted({ }), { lines: true });
+  var cellMesh = new Mesh(cellGeometry, new ShowColorsDistorted(), { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });

@@ -31,6 +31,7 @@ function meshRendererSys(state) {
     if (entity.lineWidth) {
       gl.lineWidth(entity.lineWidth);
     }
+    entity.mesh.material.agentProxyTex = state.agentProxyTex;
     entity.mesh.draw(camera);
     if (entity.lineWidth) {
       gl.lineWidth(1);
