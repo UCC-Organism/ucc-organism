@@ -18,7 +18,9 @@ var RoomIdMap = {
   'NaturVid. Café C.123' : 'C.123',
   'Brikserum C.125' : 'C.125',
   //'Ude af huset',
-  'Brikserum C.129' : 'C.129'
+  'Brikserum C.129' : 'C.129',
+  'canteen': 'KantineS', //TODO: Fix 'KantineS'
+  'Kantine': 'KantineS'  //TODO: Fix 'KantineS'
 };
 
 var ProgrammeColors = {
