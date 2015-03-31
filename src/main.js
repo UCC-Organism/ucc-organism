@@ -77,9 +77,12 @@ var state = {
   showCorridors: true,
   showNodes: true,
   showAgents: true,
-  showEnergy: true,
+  showEnergy: false,
+  showAgentProxyTex: false,
   clearBg: true,
   animateCells: false,
+
+  distortionStrength: 10,
 
   roomPotential: 0,
 
@@ -169,6 +172,7 @@ sys.Window.create({
     this.gui.addHeader('Agent Proxies');
     state.agentProxyTex = Texture2D.create(1,1);//temp
     state.agentProxyTexPreview = this.gui.addTexture2D('Preview', state.agentProxyTex);
+    this.gui.addParam('distortionStrength', state, 'distortionStrength', { min: 0, max: 20});
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
@@ -236,6 +240,7 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'b': state.clearBg = !state.clearBg; break;
+        case 'x': state.showAgentProxyTex = !state.showAgentProxyTex; break;
         //case ' ': this.killAllAgents(); break;
         case ' ': this.toggleClass(); break;
         case 'S': this.gui.save(config.settingsFile); break;

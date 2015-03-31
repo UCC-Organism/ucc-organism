@@ -35,6 +35,7 @@ function meshRendererSys(state) {
     if (entity.mesh.material.uniforms.windowSize) {
       entity.mesh.material.uniforms.windowSize.x = state.windowWidth;
       entity.mesh.material.uniforms.windowSize.y = state.windowHeight;
+      entity.mesh.material.uniforms.distortionStrength = state.distortionStrength;
     }
     entity.mesh.draw(camera);
     if (entity.lineWidth) {

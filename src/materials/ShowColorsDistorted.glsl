@@ -9,6 +9,7 @@ varying vec4 vColor;
 
 uniform sampler2D agentProxyTex;
 uniform vec2 windowSize;
+uniform float distortionStrength;
 
 void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -23,7 +24,7 @@ void main() {
   float dy = texture2D(agentProxyTex, texCoord + vec2(0.0, 10.0/windowSize.y)).r - d;
 
   vec3 distortion = normalize(vec3(dx, dy, 0.0));
-  float strength = -10.0 * d/1000.0;
+  float strength = -distortionStrength * d/1000.0;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position + strength * distortion, 1.0);
   //float distortionStrength = texture2D(agentProxyTex, texCoord).r;

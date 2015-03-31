@@ -35,9 +35,11 @@ function agentProxyRendererSys(state) {
   glu.clearColor(Color.Black);
   glu.enableAdditiveBlending(true);
   glu.enableDepthReadAndWrite(false, false);
-  energyMeshEntity.mesh.setMaterial(state.agentProxyMaterial);
-  energyMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * state.zoom * 6;
-  //energyMeshEntity.mesh.draw(camera);
+  if (state.showEnergy) {
+    energyMeshEntity.mesh.setMaterial(state.agentProxyMaterial);
+    energyMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * state.zoom * 6;
+    energyMeshEntity.mesh.draw(camera);
+  }
   agentMeshEntity.mesh.setMaterial(state.agentProxyMaterial);
   agentMeshEntity.mesh.material.uniforms.pointSize = Config.agentSpriteSize * state.DPI * state.zoom;
   agentMeshEntity.mesh.draw(camera);
@@ -46,8 +48,9 @@ function agentProxyRendererSys(state) {
   glu.enableBlending(false);
   var result = fx().asFXStage(state.agentProxyRT.getColorAttachment(0)).downsample2().blur5().blur5();
 
-  //glu.enableAdditiveBlending(true);
-  //result.blit({ width: state.windowWidth, height: state.windowHeight });
+  if (state.showAgentProxyTex) {
+    result.blit({ width: state.windowWidth, height: state.windowHeight });
+  }
 
   state.agentProxyTex = result.getSourceTexture();
 }
