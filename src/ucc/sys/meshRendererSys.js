@@ -34,20 +34,13 @@ function meshRendererSys(state) {
 
     if (entity.mesh.material.program.uniforms["distortPoints[0]"])
     {
+      var n = agents.length;
+      if (n > 100) n = 100;
 
-      //console.log(agents.length);
-      //entity.mesh.material.uniforms.distortPoints = [state.mouseHit.x, state.mouseHit.y, 0.0];
-
-      for (var i = 0; i < agents.length; i++)
+      for (var i = 0; i < n; i++)
       {
          entity.mesh.material.uniforms["distortPoints[" + i + "]"] = agents[i].position;
       }
-     
-      //entity.mesh.material.uniforms["distortPoints[1]"] = agents[1].position;
-    }
-    else
-    {
-      //console.log("no");
     }
     
     if (entity.lineWidth) {
