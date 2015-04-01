@@ -58,3 +58,7 @@ That should open a server at [http://localhost:8080]()
 [/current-state](http://localhost:8080/current-state)
 
 We use library called *faye*.
+
+# Key bindings
+
+- `g` show/hide the overlays
