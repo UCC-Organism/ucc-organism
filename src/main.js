@@ -96,7 +96,7 @@ var state = {
   //debug: false,
   //
 
-  guiCurrentFloor: 0,
+  guiCurrentFloor: 7,
 
   selectedRooms: {}
 };
@@ -363,11 +363,6 @@ sys.Window.create({
     this.update();
 
     var agents = R.filter(R.where({ agent: true }), state.entities);
-    //if (agents[0] && agents[0].position) {
-    //  state.mouseHit = agents[0].position.dup();
-    //  state.mouseHit2 = agents[1].position.dup();
-    //  state.mouseHit3 = agents[2].position.dup();
-    //}
 
     if (state.clearBg) glu.clearColorAndDepth(config.bgColor);
     glu.enableDepthReadAndWrite(true);
