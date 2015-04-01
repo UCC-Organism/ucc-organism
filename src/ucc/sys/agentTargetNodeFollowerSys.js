@@ -1,7 +1,7 @@
 var R     = require('ramda');
 var sys   = require('pex-sys');
 var geom  = require('pex-geom');
-var AgentModes = require('../agents/AgentModes');
+var AgentModes = require('../agents/agentModes');
 var Time  = sys.Time;
 var Vec3  = geom.Vec3;
 
@@ -12,10 +12,10 @@ function agentTargetNodeFollowerSys(state) {
   //console.log('agentTargetNodeFollowerSys', 'targetFollowers:', targetFollowers.length);
 
   var tmpDir = new Vec3();
-  targetFollowers.forEach(function(followerEntity) {
+  targetFollowers.forEach(function(followerEntity, idx) {
     tmpDir.copy(followerEntity.targetNode.position).sub(followerEntity.position);
     var tmpDirLen = tmpDir.length();
-    var speed = state.agentSpeed;
+    var speed = state.agentSpeed * followerEntity.speed;
     if (followerEntity.mode == AgentModes.Classroom) {
       speed *= 2;
     }

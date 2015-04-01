@@ -2,99 +2,48 @@ var R           = require('ramda');
 var graph       = require('../../graph');
 var random      = require('pex-random');
 var config      = require('../../config');
-var AgentModes  = require('../agents/AgentModes');
+var AgentModes  = require('../agents/agentModes');
 
 function agentTargetNodeUpdaterSys(state) {
-  //var selectedNodes = State.selectedNodes;
-
   var agents = R.filter(R.where({ agent: R.identity }), state.entities);
-
   var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
-  var studentAgentsWithNoTarget = agentsWithNoTarget.filter(R.prop('studentId'));
 
-  if (state.verbose) console.log('agentTargetNodeUpdaterSys agents:', agents.length, 'studentAgentsWithNoTarget:', studentAgentsWithNoTarget.length);
+  var exitNodes = state.map.selectedNodes.filter(R.where({roomType:'exit'}));
 
-  var studentAgentIdMap = {};
-  studentAgentsWithNoTarget.forEach(function(studentAgent) {
-    studentAgentIdMap[studentAgent.studentId] = studentAgent;
-  });
-
-  state.activities.current.forEach(function(activity) {
-    var location = activity.locations[0];
-    if (!location) return;
-    var activityLocationNodes = state.map.nodes.filter(R.where({ room: location }));
-    activity.groups.forEach(function(groupId) {
-      var group = state.groups.byId[groupId];
-        if (!group) return;
-        group.students.forEach(function(student) {
-          var studentAgent = studentAgentIdMap[student.id];
-
-          if (!studentAgent) return;
-
-          if ( config.programmeColors[group.programme]) {
-            studentAgent.color = config.programmeColors[group.programme].primary;
-          }
-          else {
-            studentAgent.color = config.programmeColors.default.primary;
-          }
-
-          var targetNode = random.element(activityLocationNodes);
-          //targetNode = state.map.selectedNodes[0];
-          var closestNode = graph.findNearestNode(state.map.selectedNodes, studentAgent.position);
-          var path = graph.findShortestPath(closestNode, targetNode);
-
-          if (!path) {
-            //No path found, try next time
-            studentAgent.targetNodeList = [];
-            studentAgent.targetNode = null;
-          }
-          else {
-            studentAgent.targetNodeList = path;
-            studentAgent.targetNode = studentAgent.targetNodeList.shift();
-          }
-
-        })
-    })
-  })
-
-  //agents with nothing to do anymore, they should go out and dissapear
-  var studentAgentsWithNoTarget2 = agents.filter(R.not(R.prop('targetNode')));
-  var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
-
-  studentAgentsWithNoTarget2.forEach(function(agent, agentIndex) {
-    random.seed(Date.now() + agentIndex);
-    var targetNode;
-
-    var path;
-
-    if (agent.mode == AgentModes.Wander) {
-      targetNode = random.element(state.map.selectedNodes);
-    }
-    else if (agent.mode == AgentModes.Classroom) {
-      targetNode = rooms[agent.typeIndex];
-      if (targetNode.position.distance(agent.position) < 0.1) {
-        agent.mode = AgentModes.Study;
-      }
-    }
-    else if (agent.mode == AgentModes.Study) {
-      targetNode = { position: rooms[agent.typeIndex].position.dup() };
-      targetNode.position.x += random.float(-0.01, 0.01);
-      targetNode.position.y += random.float(-0.01, 0.01);
-
-      path = [ targetNode ];
-    }
-
-    var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
-    if (!path && targetNode) path = graph.findShortestPath(closestNode, targetNode);
-
-    if (!path) {
-      //No path found, try next time
-      agent.targetNodeList = [];
+  agents.forEach(function(agent, idx) {
+    //if (idx == 0) console.log(agent)
+    if (agent.state.targetMode) {
+      agent.state.mode = agent.state.targetMode;
+      agent.state.targetMode = AgentModes.None;
       agent.targetNode = null;
     }
-    else {
-      agent.targetNodeList = path;
-      agent.targetNode = agent.targetNodeList.shift();
+
+    if (!agent.targetNode) {
+      var targetNode = null;
+      if (agent.state.targetLocation) {
+        targetNode = R.find(R.where({ roomId: agent.state.targetLocation }), state.map.selectedNodes);
+        agent.state.targetLocation = null;
+      }
+      else if (agent.state.mode == AgentModes.Roaming) {
+        targetNode = random.element(state.map.selectedNodes); //TODO: should choose a corridor
+      }
+      else if (agent.state.mode == AgentModes.Away) {
+        targetNode = random.element(exitNodes);
+      }
+      var path = null;
+
+      var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
+      if (!path && targetNode) path = graph.findShortestPath(closestNode, targetNode);
+      if (!path) {
+        //TODO: print warnign and change mode to wander
+        //No path found, try next time
+        agent.targetNodeList = [];
+        agent.targetNode = null;
+      }
+      else {
+        agent.targetNodeList = path;
+        agent.targetNode = agent.targetNodeList.shift();
+      }
     }
   })
 

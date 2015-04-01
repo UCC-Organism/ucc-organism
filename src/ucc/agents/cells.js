@@ -339,7 +339,7 @@ PaedCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.15, 0.25);
+  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.15, 0.35);
   var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
 
   crayon.save();
@@ -425,7 +425,7 @@ DivCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
+  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.3, 0.5);
   var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
@@ -435,26 +435,48 @@ DivCell.prototype.draw = function(crayon) {
 
   crayon.save();
   crayon.translate(this.x, this.y);
-  crayon.rotate(360 * seed - 0.5);
+  //crayon.rotate(360 * seed - 0.5);
+
+  var num = Math.ceil(random.float(2, 6));
+  var angleStep = 360 / num;
+  var legLength = random.float(16, 24);
 
   crayon.fill(borderColor)
-    .circle(x, y, r + 6)
-    .circle(x2, y2, r2 + 6);
+    .circle(0, 0, r)
 
   crayon.fill(primaryColor)
-    .circle(x, y, r + 5)
-    .circle(x2, y2, r2 + 5);
-
-  crayon.fill(fillColor)
-    .circle(x, y, r)
-    .circle(x2, y2, r2);
-
-  var x3 = x + Math.random()
-
-  var corePos = random.vec2(r - r/4)
+    .circle(0, 0, r-2);
 
   crayon.fill(coreColor)
-    .circle(x + corePos.x, y + corePos.y, r/4)
+    .circle(0, 0, r-12);
+
+  for (var i = 0; i < num; i++)
+  {
+    crayon.save();
+    crayon.rotate(i *  angleStep);
+
+    crayon.fill(borderColor)
+    .roundRect(r-10, -6, legLength, 12, 5);
+
+    crayon.fill(fillColor)
+    .roundRect(r-8, -5, legLength-4, 10, 5);
+
+    crayon.fill(primaryColor)
+    .circle(r, 0, random.float(1, 4));
+
+    var ran = random.float(4, 12);
+    var ran2 = random.float(4, 12);
+    crayon
+      .stroke(borderColor)
+      .line(r - 10 + legLength, 0, r - 10 + legLength + random.float(3, 8), 0)
+
+
+    crayon.restore();
+  }
+  
+
+
+
 
   crayon.restore();
 }

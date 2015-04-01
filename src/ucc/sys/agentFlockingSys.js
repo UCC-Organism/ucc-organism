@@ -3,7 +3,7 @@ var sys         = require('pex-sys');
 var geom        = require('pex-geom');
 var Color       = require('pex-color').Color;
 var Config      = require('../../config');
-var AgentModes  = require('../agents/AgentModes');
+var AgentModes  = require('../agents/agentModes');
 
 var Time  = sys.Time;
 var Vec3  = geom.Vec3;

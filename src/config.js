@@ -33,6 +33,21 @@ var ProgrammeColors = {
   'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) }
 };
 
+var AgentTypeGroups = [
+  'SPL - Sygeplejerskeuddannelsen',           //0
+  'PMU - Psykomotorikuddannelsen',            //1
+  'FYS - Fysioterapeutuddannelsen',           //2
+  'SOC - Socialrådgiveruddannelsen',          //3
+  'PÆD - Pædagoguddannelsen',                 //4
+  'DIV - Diverse aktiviteter',                //5
+  'Diplom S - Diplomuddannelse - Sundhed',    //6
+  'Diplom L - Diplomuddannelse - Ledelse',    //7
+  'Teacher',                                  //8
+  'Researcher',                               //9
+  'Janitor',                                  //10
+  'Cook'                                      //11
+];
+
 var EnergyTypes = {
   'social': { color: Color.Red.clone() },
   'knowledge': { color: Color.Green.clone() },
@@ -82,16 +97,19 @@ var Floors = [
 ];
 
 var Config = {
+  serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
   programmeColors: ProgrammeColors,
   energyTypes: EnergyTypes,
 
+  agentTypeGroups: AgentTypeGroups,
+
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",
 
-  cellCloseness: 0.0035,
+  cellCloseness: 0.00135,
   cellEdgeWidth: 1,
   cellColor: Color.fromHex('#696E98'),
   cellCenterColor: Color.fromHex('#696E98'),

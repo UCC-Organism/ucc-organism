@@ -9,9 +9,10 @@ function agentPositionUpdaterSys(state) {
   var agents = R.filter(R.where({ targetNode: R.identity }), state.entities);
 
   var tmpDir = new Vec3();
-  agents.forEach(function(followerEntity) {
+  agents.forEach(function(followerEntity, idx) {
     followerEntity.prevPosition.copy(followerEntity.position);
     followerEntity.velocity.scale(0.9);
+    followerEntity.force.limit(state.agentSpeed * Time.delta / 10);
     followerEntity.velocity.add(followerEntity.force);
     followerEntity.position.add(followerEntity.velocity);
     followerEntity.force.scale(0);
