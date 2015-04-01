@@ -234,7 +234,7 @@ Window.create({
 
     var crayon = this.crayon;
 
-    this.crayon.clear().fill(config.cellStyle.bg).rect(0, 0, this.width, this.height);
+    this.crayon.clear().fill([100, 100, 100, 255]).rect(0, 0, this.width, this.height);
 
     if (this.saveFrame) {
       this.canvas.drawColor(255, 0,0, 0, this.paint.kClearMode);
