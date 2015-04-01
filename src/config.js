@@ -119,6 +119,8 @@ var Config = {
   bgColor: Color.fromHex('#312D2D'),
   corridorColor: Color.fromHex('#FFFF00'),
 
+  glowColor: Color.fromHex('#FF0000'),
+
   roomTypes: RoomTypes,
   floors: Floors,
 

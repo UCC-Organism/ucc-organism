@@ -4,6 +4,7 @@
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
+uniform vec3 glowColor;
 uniform float pointSize;
 attribute vec3 position;
 attribute vec3 normal;
@@ -32,7 +33,7 @@ void main()
     {
       vec3 dir = normalize(pos - c);
       float rat = pow(1.0 - dist / maxDist, 4.0);
-      vColor.rgb += vec3(1.0, 0.1, 0.1) *  rat * .05;
+      vColor.rgb += glowColor *  rat * .05;
 
       offset += dir * rat * maxDist * .02;
     }
