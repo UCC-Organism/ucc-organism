@@ -895,18 +895,117 @@ function CookCell(student, x, y, size, color) {
 }
 
 CookCell.prototype.draw = function(crayon) {
-  var r = this.size * 0.4;
-  var x = this.x;
-  var y = this.y;
+  var student = this.student;
+  var seed = this.seed;
+  random.seed(seed);
+  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.4, 0.8);
+  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var d = (r + r2)*0.5*0.5;
+  var x = -d;
+  var y = -d;
+  var x2 = d;
+  var y2 = d;
+
+  crayon.save();
+  crayon.translate(this.x, this.y);
+  crayon.rotate(360 * seed - 0.5);
+
+  var num = Math.ceil(random.float(4, 8));
+  var angleStep = 360 / num;
+  var legLength = random.float(16, 24);
 
   crayon.fill(borderColor)
-    .circle(x, y, r + 6)
+    .roundRect(-r/2, -r/2, r, r, 5);
 
   crayon.fill(primaryColor)
-    .circle(x, y, r + 5)
+    .roundRect((-r/2) + 2, (-r/2) + 2, r - 4, r - 4, 5);
+
+  crayon.fill(primaryColor)
+    .circle(0, 0, r / 4);
+
+  crayon.fill(coreColor)
+    .circle(0, 0, 4);
+
+  for (var i = 0; i < num; i++)
+  {
+    crayon.save();
+    crayon.rotate(i *  angleStep);
+
+    crayon.fill(borderColor)
+    .roundRect(r-26, -4, legLength, 8, 5);
+
+    crayon.fill(fillColor)
+    .roundRect(r-24, -3, legLength-4, 6, 5);
+
+    crayon.fill(primaryColor)
+    .circle(r - 30 + legLength, 0, 3);
+
+    crayon.restore();
+  }
+
+  crayon.restore();
+}
+
+function AdminCell(student, x, y, size, color) {
+  this.student = student;
+  this.x = x;
+  this.y = y;
+  this.vx = 0;
+  this.vy = 0;
+  this.fx = 0;
+  this.fy = 0;
+  this.baseX = x;
+  this.baseY = y;
+  this.size = size * 0.75;
+  this.seed = Math.random();
+}
+
+AdminCell.prototype.draw = function(crayon) {
+  var student = this.student;
+  var seed = this.seed;
+  random.seed(seed);
+  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.3, 0.4);
+  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var d = (r + r2)*0.5*0.5;
+  var x = -d;
+  var y = -d;
+  var x2 = d;
+  var y2 = d;
+
+  crayon.save();
+  crayon.translate(this.x, this.y);
+  crayon.rotate(360 * seed - 0.5);
+
+  var num = Math.ceil(random.float(6, 12));
+  var angleStep = 360 / num;
+  var legLength = random.float(16, 24);
+
+  crayon.fill(borderColor)
+    .circle(0, 0, r)
 
   crayon.fill(fillColor)
-    .circle(x, y, r)
+    .circle(0, 0, r-2);
+
+  crayon.fill(fillColor)
+    .circle(0, 0, r-12);
+
+  for (var i = 0; i < num; i++)
+  {
+    crayon.save();
+    crayon.rotate(i *  angleStep);
+
+    crayon.fill(borderColor)
+    .roundRect(r-12, -7, legLength, 14, 5);
+
+    crayon.fill(primaryColor)
+    .roundRect(r-10, -6, legLength-4, 12, 5);
+
+    crayon.fill(fillColor)
+    .circle(r, 0, random.float(1, 4));
+
+
+    crayon.restore();
+  }
 
   crayon.restore();
 }
@@ -992,4 +1091,5 @@ module.exports.TeacherCell      = TeacherCell;
 module.exports.ResearcherCell   = ResearcherCell;
 module.exports.JanitorCell      = JanitorCell;
 module.exports.CookCell         = CookCell;
+module.exports.AdminCell        = AdminCell;
 module.exports.UnknownCell      = UnknownCell;

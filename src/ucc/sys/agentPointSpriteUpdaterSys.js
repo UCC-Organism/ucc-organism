@@ -3,6 +3,7 @@ var geom                = require('pex-geom');
 var glu                 = require('pex-glu');
 var random              = require('pex-random');
 var sys                 = require('pex-sys');
+var Color     = require('pex-color').Color;
 
 var AgentsMaterial = require('../../materials/Agents');
 var Config              = require('../../config');
@@ -82,6 +83,14 @@ function agentPointSpriteUpdaterSys(state) {
     else if (entity.typeIndex == 11)
     {
       accentColors[entityIndex] = Config.agentCookColor;
+    }
+
+    if (Config.agentFillColorBasedOnAccentColor)
+    {
+      var c = accentColors[entityIndex];
+      c = new Color(c.r, c.g, c.b, c.a);
+      c.a = .5;
+      fillColors[entityIndex] = c;
     }
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
