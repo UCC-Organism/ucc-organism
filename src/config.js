@@ -120,6 +120,13 @@ var Config = {
   corridorColor: Color.fromHex('#FFFF00'),
 
   glowColor: Color.fromHex('#FF0000'),
+  agentLineColor: new Color(0.0, 0.0, 0.0, 1.0),
+  agentFillColor: new Color(1.0, 1.0, 1.0, 1.0),
+  agentStudentColor: new Color(1.0, 1.0, 0.3, 1.0),
+  agentTeacherColor: new Color(1.0, 0.3, 0.3, 1.0),
+  agentResearcherColor: new Color(1.0, 0.3, 0.3, 1.0),
+  agentCookColor: new Color(0.3, .9, 0.3, 1.0),
+  agentJanitorColor: new Color(0.0, 1.0, 0.0, 1.0),
 
   roomTypes: RoomTypes,
   floors: Floors,
