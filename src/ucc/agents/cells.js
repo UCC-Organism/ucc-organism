@@ -435,7 +435,7 @@ DivCell.prototype.draw = function(crayon) {
 
   crayon.save();
   crayon.translate(this.x, this.y);
-  //crayon.rotate(360 * seed - 0.5);
+  crayon.rotate(360 * seed - 0.5);
 
   var num = Math.ceil(random.float(2, 6));
   var angleStep = 360 / num;
@@ -555,7 +555,7 @@ DipLCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
+  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.4);
   var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
@@ -567,24 +567,50 @@ DipLCell.prototype.draw = function(crayon) {
   crayon.translate(this.x, this.y);
   crayon.rotate(360 * seed - 0.5);
 
-  crayon.fill(borderColor)
-    .circle(x, y, r + 6)
-    .circle(x2, y2, r2 + 6);
-
-  crayon.fill(primaryColor)
-    .circle(x, y, r + 5)
-    .circle(x2, y2, r2 + 5);
-
-  crayon.fill(fillColor)
-    .circle(x, y, r)
-    .circle(x2, y2, r2);
-
-  var x3 = x + Math.random()
-
-  var corePos = random.vec2(r - r/4)
+  var num = random.int(3, 7);
+  var angleStep = Math.PI * 2 / num;
+  var rads = [];
 
   crayon.fill(coreColor)
-    .circle(x + corePos.x, y + corePos.y, r/4)
+      .circle(random.float(-3, 3), random.float(-3, 3), random.float(3, 12));
+
+  crayon.stroke(borderColor)
+      .circle(0, 0, r)
+      .circle(0, 0, r+1)
+      .circle(0, 0, r+2)
+      .circle(0, 0, r-1)
+      .circle(0, 0, r-2);
+  
+  for (var i = 0; i < num; i++)
+  {
+    var x = Math.cos(i * angleStep) * r;
+    var y = Math.sin(i * angleStep) * r;
+    var rad = random.float(5, 11);
+    rads.push(rad);
+
+    crayon.fill(borderColor)
+      .circle(x, y, rad);
+
+    crayon.fill(primaryColor) 
+      .circle(x, y, rad-2);
+  }
+
+  crayon.stroke(primaryColor)
+      .circle(0, 0, r)
+
+  for (var i = 0; i < num; i++)
+  {
+    var x = Math.cos(i * angleStep) * r;
+    var y = Math.sin(i * angleStep) * r;
+    var rad = random.float(3, 6);
+
+    if (rads[i] > 10)
+    {
+      crayon.fill(fillColor)
+      .circle(x, y, rads[i] - 6);
+    }
+    
+  }
 
   crayon.restore();
 }
