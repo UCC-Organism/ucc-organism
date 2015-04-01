@@ -17,7 +17,6 @@ var agentFlockingSys              = require('./ucc/sys/agentFlockingSys');
 var agentPositionUpdaterSys       = require('./ucc/sys/agentPositionUpdaterSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
-var agentScheduleUpdaterSys       = require('./ucc/sys/agentScheduleUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
 
 //Stores
