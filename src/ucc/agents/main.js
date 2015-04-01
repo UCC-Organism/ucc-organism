@@ -50,7 +50,7 @@ function matrixLayout(w, h, n, lineHeight) {
 Window.create({
   settings: {
     width: 1280*1,
-    height: 1280*1.5,
+    height: 1280*1,
     //height: 1280,
     type: '2d3d',
     highdpi: 2,
@@ -206,7 +206,7 @@ Window.create({
 
     var crayon = this.crayon;
 
-    this.crayon.clear().fill(config.cellStyle.bg).rect(0, 0, this.width, this.height);
+    this.crayon.clear().fill([160, 160, 160, 255]).rect(0, 0, this.width, this.height);
 
     if (this.saveFrame) {
       this.canvas.drawColor(255, 0,0, 0, this.paint.kClearMode);
