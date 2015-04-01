@@ -576,8 +576,8 @@ DipLCell.prototype.draw = function(crayon) {
   var angleStep = Math.PI * 2 / num;
   var rads = [];
 
-  crayon.fill(coreColor)
-      .circle(random.float(-3, 3), random.float(-3, 3), random.float(3, 12));
+  crayon.fill(fillColor)
+      .circle(random.float(-3, 3), random.float(-3, 3), random.float(6, 12));
 
   crayon.stroke(borderColor)
       .circle(0, 0, r)

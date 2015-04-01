@@ -8,6 +8,7 @@ var AgentsMaterial = require('../../materials/Agents');
 var Config              = require('../../config');
 
 var Geometry            = geom.Geometry;
+var Vec4                = geom.Vec4;
 var Vec3                = geom.Vec3;
 var Vec2                = geom.Vec2;
 var Texture2D           = glu.Texture2D;
@@ -19,6 +20,9 @@ function agentPointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
     var image = Platform.isPlask ? __dirname + '/../../../assets/agents_5.png' : 'assets/agents_5.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
+    pointSpriteGeometry.addAttrib("lineColors", "lineColor", []);
+    pointSpriteGeometry.addAttrib("accentColors", "accentColor", []);
+    pointSpriteGeometry.addAttrib("fillColors", "fillColor", []);
     var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/10, 1/15), texOffset: new Vec2(1/10, 1/15) });
     state.pointSpriteMeshEntity = {
       agentMesh: true,
@@ -35,10 +39,16 @@ function agentPointSpriteUpdaterSys(state) {
   var colors = state.pointSpriteMeshEntity.mesh.geometry.colors;
   var normals = state.pointSpriteMeshEntity.mesh.geometry.normals;
   var texCoords = state.pointSpriteMeshEntity.mesh.geometry.texCoords;
+  var lineColors = state.pointSpriteMeshEntity.mesh.geometry.lineColors;
+  var fillColors = state.pointSpriteMeshEntity.mesh.geometry.fillColors;
+  var accentColors = state.pointSpriteMeshEntity.mesh.geometry.accentColors;
   vertices.length = entitiesWithPointSprite.length;
   colors.length = entitiesWithPointSprite.length;
   normals.length = entitiesWithPointSprite.length;
   texCoords.length = entitiesWithPointSprite.length;
+  lineColors.length = entitiesWithPointSprite.length;
+  fillColors.length = entitiesWithPointSprite.length;
+  accentColors.length = entitiesWithPointSprite.length;
 
   var dir = new Vec3();
   entitiesWithPointSprite.forEach(function(entity, entityIndex) {
@@ -48,6 +58,21 @@ function agentPointSpriteUpdaterSys(state) {
     else colors[entityIndex] = entity.color ? entity.color.clone() : Color.White;
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
     if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 10), entity.typeIndex); //FIXME: agent type
+
+    lineColors[entityIndex] = new Vec4(0.0, 0.0, 0.0, 1.0);
+    fillColors[entityIndex] = new Vec4(1.0, 1.0, 1.0, 1.0);
+
+    if (entity.typeIndex < 5)
+    {
+      accentColors[entityIndex] = new Vec4(1.0, .4, .4, 1.0);
+      fillColors[entityIndex] = new Vec4(1.0, .4, .4, .8);
+    }
+    else
+    {
+      accentColors[entityIndex] = new Vec4(0.3, 1.0, 1.0, 1.0);
+      fillColors[entityIndex] = new Vec4(0.3, 1.0, 1.0, .5);
+    }
+    
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
     var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;
