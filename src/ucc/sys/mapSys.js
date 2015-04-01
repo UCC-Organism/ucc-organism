@@ -89,7 +89,9 @@ function removeMapEntities(state) {
 
 function centerCamera(state, floorBBox) {
   var target = floorBBox.getCenter();
+  state.arcball.setTarget(target);
   var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
+  state.arcball.setPosition(position);
   var distance = 1;
 
   //organism
@@ -99,6 +101,14 @@ function centerCamera(state, floorBBox) {
   //classrom
   else if (state.map.focusRoomId != null) {
     distance = 0.1;
+    var roomNode = state.map.getSelectedNodeByRoomId(state.map.focusRoomId)
+    if (roomNode) {
+      target = roomNode.position;
+      console.log(roomNode)
+      state.arcball.setTarget(target);
+      var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
+      state.arcball.setPosition(position);
+    }
   }
   //floor
   else {
@@ -106,8 +116,8 @@ function centerCamera(state, floorBBox) {
   }
 
   state.camera.setUp(new Vec3(0, 0, -1));
-  state.arcball.setPosition(position);
-  state.arcball.setTarget(target);
+  
+  
   state.arcball.setDistance(distance);
 }
 
@@ -203,9 +213,6 @@ function rebuildMap(state) {
   var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
   var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.DarkGrey }), { lines: true });
 
-  var floorBBox = BoundingBox.fromPoints(pointVertices);
-  var floorBBoxHelper = new BoundingBoxHelper(floorBBox, Color.Yellow);
-
   var roomVertexGroups = fn.groupBy(roomVertices, 'room');
 
   Object.keys(roomVertexGroups).forEach(function(roomId) {
@@ -224,8 +231,6 @@ function rebuildMap(state) {
   //add new entities
   state.entities.push({ map: true, debug: true, mesh: stairsPointsMesh });
   state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
-
-  centerCamera(state, floorBBox);
 
   rebuildCells(state);
 }
@@ -562,6 +567,10 @@ function rebuildCells(state) {
   MapSys.edgeMesh = edgeMesh;
   MapSys.cellMesh = cellMesh;
   MapSys.cellEdgeMesh = cellEdgeMesh;
+
+  var floorBBox = BoundingBox.fromPoints(cellMesh.geometry.vertices);
+
+  centerCamera(state, floorBBox);
 
   console.log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
 }
