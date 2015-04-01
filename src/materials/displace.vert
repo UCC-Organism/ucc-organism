@@ -1,6 +1,6 @@
 #ifdef VERT
 
-#define N_DISTORT_POINTS 100
+#define N_DISTORT_POINTS 255
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
@@ -12,6 +12,7 @@ attribute vec4 color;
 attribute vec2 texCoord;
 
 uniform vec3 distortPoints[N_DISTORT_POINTS];
+uniform int numAgents;
 
 varying vec4 vColor;
 
@@ -25,6 +26,11 @@ void main()
 
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
+    if (i > numAgents)
+    {
+      break;
+    }
+    
      c = distortPoints[i];
     float dist = distance(pos, c);
     float maxDist = 0.1;
