@@ -580,13 +580,13 @@ function updateMap(state) {
 
   //state.map.roomNodes = rooms;
 
-  rooms.forEach(function(room, roomIndex) {
-    //console.log('room', roomIndex, room);
-    var strength = 1;
-    distortVertices(room.position, MapSys.edgeMesh.geometry, state.roomPotential * strength);
-    distortVertices(room.position, MapSys.cellMesh.geometry, state.roomPotential * strength);
-    distortVertices(room.position, MapSys.cellEdgeMesh.geometry, state.roomPotential * strength);
-  })
+  //rooms.forEach(function(room, roomIndex) {
+  //  //console.log('room', roomIndex, room);
+  //  var strength = 1;
+  //  distortVertices(room.position, MapSys.edgeMesh.geometry, state.roomPotential * strength);
+  //  distortVertices(room.position, MapSys.cellMesh.geometry, state.roomPotential * strength);
+  //  distortVertices(room.position, MapSys.cellEdgeMesh.geometry, state.roomPotential * strength);
+  //})
   //console.log('rooms', rooms.length);
   //distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
   //distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);

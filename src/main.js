@@ -135,8 +135,8 @@ sys.Window.create({
     ], function(liveData) {
     });
     this.gui.addHeader('Floors');
-    this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor, floorIndex) {
-      return { name: floor, value: floorIndex };
+    this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
+      return { name: floor.name, value: floor.id };
     }), function(floor) {
       state.map.setFloor(floor)
     });

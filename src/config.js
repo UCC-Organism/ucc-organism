@@ -88,14 +88,14 @@ var CellStyle = {
 };
 
 var Floors = [
-  'All', //0
-  'A 0', //1
-  'A 1', //2
-  'B 0', //3
-  'B 1', //4
-  'C 0', //5
-  'C 1', //6
-  'C 2' //7
+  { name: 'All', id: -1 },
+  { name: 'A 0', id:  1 },
+  { name: 'A 1', id:  2 },
+  { name: 'B 0', id:  3 },
+  { name: 'B 1', id:  4 },
+  { name: 'C 0', id:  5 },
+  { name: 'C 1', id:  6 },
+  { name: 'C 2', id:  7 }
 ];
 
 var Config = {
