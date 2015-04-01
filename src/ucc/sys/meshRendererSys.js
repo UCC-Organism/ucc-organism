@@ -1,6 +1,7 @@
 var R = require('ramda');
 var glu = require('pex-glu');
 var Vec3 = require('pex-geom').Vec3;
+var config = require('../../config');
 
 var Context = glu.Context;
 
@@ -34,6 +35,7 @@ function meshRendererSys(state) {
 
     if (entity.mesh.material.program.uniforms["distortPoints[0]"])
     {
+      entity.mesh.material.uniforms.glowColor = new Vec3(config.glowColor.r, config.glowColor.g, config.glowColor.b); 
       var n = agents.length;
       if (n > 100) n = 100;
 

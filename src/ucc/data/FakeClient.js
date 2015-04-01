@@ -69,7 +69,7 @@ FakeClient.prototype.genLunchOnAnotherFloor = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[rand.int(0, 10)],
+      programme: Config.agentTypeGroups[rand.int(0, 11)],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
       age: 25,

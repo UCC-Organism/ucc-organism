@@ -59,20 +59,30 @@ function agentPointSpriteUpdaterSys(state) {
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
     if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 10), entity.typeIndex); //FIXME: agent type
 
-    lineColors[entityIndex] = new Vec4(0.0, 0.0, 0.0, 1.0);
-    fillColors[entityIndex] = new Vec4(1.0, 1.0, 1.0, 1.0);
-
-    if (entity.typeIndex > 5)
-    {
-      accentColors[entityIndex] = new Vec4(1.0, .4, .4, 1.0);
-      fillColors[entityIndex] = new Vec4(1.0, .4, .4, .8);
-    }
-    else
-    {
-      accentColors[entityIndex] = new Vec4(1.0, 1.0, .3, 1.0);
-      fillColors[entityIndex] = new Vec4(1.0, 1.0, .3, .5);
-    }
+    lineColors[entityIndex] = Config.agentLineColor;
+    fillColors[entityIndex] = Config.agentFillColor;
     
+
+    if (entity.typeIndex <= 7) // Student
+    {
+      accentColors[entityIndex] = Config.agentStudentColor;
+    }
+    else if (entity.typeIndex == 8)
+    {
+      accentColors[entityIndex] = Config.agentTeacherColor;
+    }
+    else if (entity.typeIndex == 9)
+    {
+      accentColors[entityIndex] = Config.agentResearcherColor;
+    }
+    else if (entity.typeIndex == 10)
+    {
+      accentColors[entityIndex] = Config.agentJanitorColor;
+    }
+    else if (entity.typeIndex == 11)
+    {
+      accentColors[entityIndex] = Config.agentCookColor;
+    }
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
     var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;
