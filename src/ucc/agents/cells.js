@@ -4,10 +4,10 @@ var remap  = require('re-map');
 var random = require('pex-random');
 var R      = require('ramda');
 
-var borderColor = [0, 0, 0, 255];
-var primaryColor = [255, 255, 255, 255];
-var fillColor = [255, 0, 0, 255];
-var coreColor = [100, 100, 100, 255];
+var borderColor = [255, 0, 0, 255];
+var primaryColor = [0, 255, 0, 255];
+var fillColor = [0, 0, 255, 255];
+var coreColor = [255, 0, 0, 255];
 
 //-----------------------------------------------------------------------------
 

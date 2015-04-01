@@ -5,6 +5,7 @@ var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var Config = require('../../config');
+var rand = require('pex-random');
 
 var students = [
   "student663",
@@ -68,7 +69,7 @@ FakeClient.prototype.genLunchOnAnotherFloor = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[0],
+      programme: Config.agentTypeGroups[rand.int(0, 10)],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
       age: 25,

@@ -73,24 +73,23 @@ void main() {
   texCoord *= texSize;
   texCoord += texOffset * vTexCoord;
 
-
   vec4 c = texture2D(texture, texCoord);
+  float a = c.a;
+  vec3 hsv = rgb2hsv(c.rgb);
+
+  vec4 c1 = vec4(0.0, 0.0, 0.0, 1.0);
+  vec4 c2 = vec4(1.0, 1.0, 1.0, 1.0);
+  vec4 c3 = vec4(1.0, 0.4, 0.4, 1.0);
+
+  float total = c.r + c.g + c.b;
+  c = (c1 * (c.r / total)) + (c2 * (c.g/ total)) + (c3 * (c.b / total));
+  c.a *= a;
 
   gl_FragColor = c;
   gl_FragColor.rgb *= vColor.rgb;
-
-  //gl_FragColor.rgb *= mix(1.0 - vColor.rgb, vColor.rgb, step(0.75, gl_FragColor.r));
-  //gl_FragColor.a *= vColor.a;
-  //gl_FragColor = vec4(step(0.75, gl_FragColor.r));
   gl_FragColor *= alpha;
 
   if (gl_FragColor.a == 0.0) discard;
-
-  //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-
-  //rot += 0.5;
-  //gl_FragColor = vec4(vNormal * 0.5 + 0.5, 1.0);
-  //gl_FragColor.rgb = vNormal*0.5 + 0.5;
 }
 
 #endif
