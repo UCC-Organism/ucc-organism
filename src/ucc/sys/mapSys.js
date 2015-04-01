@@ -116,8 +116,7 @@ function centerCamera(state, floorBBox) {
   }
 
   state.camera.setUp(new Vec3(0, 0, -1));
-  
-  
+
   state.arcball.setDistance(distance);
 }
 
@@ -568,10 +567,6 @@ function rebuildCells(state) {
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
-
-  edgeMesh.geometry.baseVertices = edgeMesh.geometry.vertices.map(cloneVert);
-  cellMesh.geometry.baseVertices = cellMesh.geometry.vertices.map(cloneVert);
-  cellEdgeMesh.geometry.baseVertices = cellEdgeMesh.geometry.vertices.map(cloneVert);
 
   MapSys.edgeMesh = edgeMesh;
   MapSys.cellMesh = cellMesh;
