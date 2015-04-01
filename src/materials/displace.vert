@@ -16,10 +16,11 @@ varying vec4 vColor;
 
 void main() 
 {
-	vColor = color;
+  vColor = color;
 
-	vec3 pos = position;
+  vec3 pos = position;
   vec3 c = vec3(-.56, -.45, 0.0);
+  vec3 offset = vec3(0.0, 0.0, 0.0);
 
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
@@ -31,13 +32,21 @@ void main()
     {
       vec3 dir = normalize(pos - c);
       float rat = pow(1.0 - dist / maxDist, 4.0);
-      vColor.rgb += vec3(1.0, 0.0, 0.0) *  rat * .01;
-      pos += dir * rat * maxDist * .02;
+      vColor.rgb += vec3(1.0, 0.0, 0.0) *  rat * .05;
+
+      offset += dir * rat * maxDist * .02;
     }
   }
+
+  if (length(offset) > .006)
+  {
+    offset = normalize(offset) * .006;
+  }
+
+  pos += offset;
   
-	gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-	gl_PointSize = pointSize;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+  gl_PointSize = pointSize;
 }
 
 #endif
