@@ -488,7 +488,6 @@ function rebuildCells(state) {
         cellColor = Color.Red;
       }
 
-      
       var c = Color.fromHSL(0, 1, 0.5);
       if (focusRoomCenter) {
         var dist = p.distance(focusRoomCenter);

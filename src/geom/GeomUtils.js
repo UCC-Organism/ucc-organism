@@ -93,7 +93,7 @@ GeomUtils.smoothCurve = function(points, c, n, adaptive, subdivisionLength) {
 
     for(var j=0; j<n; j++) {
       var t = j/n;
-      
+
       var x = deCasteljau([(p0.x + p1.x)/2, (p0.x + p1.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2], t);
       var y = deCasteljau([(p0.y + p1.y)/2, (p0.y + p1.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2], t);
       var z = deCasteljau([(p0.z + p1.z)/2, (p0.z + p1.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2], t);
