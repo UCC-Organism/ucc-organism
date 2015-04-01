@@ -119,7 +119,6 @@ sys.Window.create({
     this.initScene();
     this.initStores();
     this.initKeys();
-    this.initMouse();
   },
   initGUI: function() {
     Time.verbose = true;
@@ -246,71 +245,6 @@ sys.Window.create({
         case VK_RIGHT: state.map.setNextFloor(); this.killAllAgents(); break;
       }
     }.bind(this));
-  },
-  initMouse: function() {
-    var gen = require('pex-gen');
-    var materials = require('pex-materials');
-    var geom = require('pex-geom');
-
-    var mouseMesh = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
-    var mouseMesh2 = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
-    var mouseMesh3 = new glu.Mesh(new gen.Cube(0.01), new materials.SolidColor({ color: Color.Red }));
-
-    var xyPlane = {
-      point: new geom.Vec3(0, 0, 0),
-      normal: new geom.Vec3(0, 0, 1)
-    }
-
-    this.on('mouseMoved', function(e) {
-      state.mousePos = {
-        x: e.x,
-        y: e.y
-      }
-
-      var ray = state.camera.getWorldRay(e.x, e.y, this.width, this.height);
-      var hit = ray.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
-      if (!hit) return;
-      mouseMesh.position.copy(hit);
-
-      state.mouseHit = {
-        x: hit.x,
-        y: hit.y,
-        z: hit.z
-      };
-
-      var ray2 = state.camera.getWorldRay(this.width - e.x, this.height - e.y, this.width, this.height);
-      var hit2 = ray2.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
-      mouseMesh2.position.copy(hit2);
-      state.mouseHit2 = {
-        x: hit2.x,
-        y: hit2.y,
-        z: hit2.z
-      };
-
-      var ray3 = state.camera.getWorldRay(e.y, e.x, this.width, this.height);
-      var hit3 = ray3.hitTestPlane(xyPlane.point, xyPlane.normal)[0];
-      mouseMesh3.position.copy(hit3);
-      state.mouseHit3 = {
-        x: hit3.x,
-        y: hit3.y,
-        z: hit3.z
-      };
-    }.bind(this));
-
-    state.entities.push({
-      type: 'mouse',
-      mesh: mouseMesh
-    })
-
-    state.entities.push({
-      type: 'mouse',
-      mesh: mouseMesh2
-    })
-
-    state.entities.push({
-      type: 'mouse',
-      mesh: mouseMesh3
-    })
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
