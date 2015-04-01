@@ -359,11 +359,20 @@ function rebuildCells(state) {
   var center = boundingRect.getCenter();
   var size = boundingRect.getSize();
   var r = Math.max(size.x, size.y) / 2 * 1.5;
-  for(var i=0; i<30; i++) {
-    points2D.push(new Vec2(
-      center.x + r * Math.cos(2 * Math.PI * i/30),
-      center.y + r * Math.sin(2 * Math.PI * i/30)
-    ))
+
+  if (state.map.currentFloor == -1) {
+    random.seed(0);
+    for(var i=0; i<30; i++) {
+      points2D.push(new Vec2(random.float(-2, 2), random.float(-2, 2)))
+    }
+  }
+  else {
+    for(var i=0; i<30; i++) {
+      points2D.push(new Vec2(
+        center.x + r * Math.cos(2 * Math.PI * i/30),
+        center.y + r * Math.sin(2 * Math.PI * i/30)
+      ))
+    }
   }
 
   //cells

@@ -27,7 +27,6 @@ var AgentStore        = require('./ucc/stores/AgentStore')
 var config            = require('./config');
 var AgentModes        = require('./ucc/agents/agentModes');
 
-
 //Data
 var Client            = require('./ucc/data/Client');
 var FakeClient        = require('./ucc/data/FakeClient');
