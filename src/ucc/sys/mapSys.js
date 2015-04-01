@@ -22,8 +22,8 @@ var BoundingBox       = geom.BoundingBox;
 var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
 var Mesh              = glu.Mesh;
-var SolidColor        = materials.SolidColor;
-var ShowColors        = materials.ShowColors;
+var SolidColor        = require('../../materials/SolidColor');
+var ShowColors        = require('../../materials/ShowColors');
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 var Time              = sys.Time;
@@ -449,7 +449,9 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 3);
+    // TODO: Make subdivision length dependentant on map overall complexity
+    // On the biggest most complex maps too much subdivision will make total number of vertices exceed limit
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 20, true, 0.001);
 
     var center = GeomUtils.centroid(splinePoints);
 
@@ -486,6 +488,7 @@ function rebuildCells(state) {
         cellColor = Color.Red;
       }
 
+      
       var c = Color.fromHSL(0, 1, 0.5);
       if (focusRoomCenter) {
         var dist = p.distance(focusRoomCenter);
@@ -529,7 +532,7 @@ function rebuildCells(state) {
   })
 
 
-  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({ }), { lines: true });
+  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
 
@@ -577,23 +580,6 @@ function updateMap(state) {
   }
 
   var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
-
-  //state.map.roomNodes = rooms;
-
-  //rooms.forEach(function(room, roomIndex) {
-  //  //console.log('room', roomIndex, room);
-  //  var strength = 1;
-  //  distortVertices(room.position, MapSys.edgeMesh.geometry, state.roomPotential * strength);
-  //  distortVertices(room.position, MapSys.cellMesh.geometry, state.roomPotential * strength);
-  //  distortVertices(room.position, MapSys.cellEdgeMesh.geometry, state.roomPotential * strength);
-  //})
-  //console.log('rooms', rooms.length);
-  //distortVertices(state.mouseHit2, MapSys.edgeMesh.geometry);
-  //distortVertices(state.mouseHit2, MapSys.cellMesh.geometry);
-  //distortVertices(state.mouseHit2, MapSys.cellEdgeMesh.geometry);
-  //distortVertices(state.mouseHit3, MapSys.edgeMesh.geometry);
-  //distortVertices(state.mouseHit3, MapSys.cellMesh.geometry);
-  //distortVertices(state.mouseHit3, MapSys.cellEdgeMesh.geometry);
 
   MapSys.edgeMesh.geometry.vertices.dirty = true;
   MapSys.cellMesh.geometry.vertices.dirty = true;

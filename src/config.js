@@ -60,9 +60,9 @@ var EnergyTypes = {
 var RoomTypes = {
   ''         : { label: 'Other'    , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
   'classroom': { label: 'Classroom', color: '#00FF00', centerColor: '#00FF00', edgeColor: '#00FF00' },
-  'toilet'   : { label: 'Toilet'   , color: '#0055DD', centerColor: '#0055DD', edgeColor: '#0055DD' },
+  'toilet'   : { label: 'Toilet'   , color: '#FF0000', centerColor: '#0055DD', edgeColor: '#0055DD' },
   'research' : { label: 'Research' , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
-  'admin'    : { label: 'Admin'    , color: '#6666FF', centerColor: '#6666FF', edgeColor: '#6666FF' },
+  'admin'    : { label: 'Admin'    , color: '#112f28', centerColor: '#122120', edgeColor: '#3333FF' },
   'closet'   : { label: 'Closet'   , color: '#996600', centerColor: '#996600', edgeColor: '#996600' },
   'food'     : { label: 'Food'     , color: '#FFAA00', centerColor: '#FFAA00', edgeColor: '#FFAA00' },
   'knowledge': { label: 'Knowledge', color: '#00DDAA', centerColor: '#00DDAA', edgeColor: '#00DDAA' },
@@ -111,7 +111,7 @@ var Config = {
   scheduleStartDate: "2014-11-24",
   scheduleEndDate: "2014-11-30",
 
-  cellCloseness: 0.00135,
+  cellCloseness: 0.00155,
   cellEdgeWidth: 1,
   cellColor: Color.fromHex('#696E98'),
   cellCenterColor: Color.fromHex('#696E98'),

@@ -1,5 +1,6 @@
 var R = require('ramda');
 var glu = require('pex-glu');
+var Vec3 = require('pex-geom').Vec3;
 
 var Context = glu.Context;
 
@@ -24,10 +25,24 @@ function meshRendererSys(state) {
     .filter(makeFilter('enabled', true));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);
 
+  var agents = R.filter(R.where({ agent: true }), visibleEntities);
+
   entitiesWithMesh.forEach(function(entity) {
     if (entity.mesh.geometry.vertices.length == 0) {
       return;
     }
+
+    if (entity.mesh.material.program.uniforms["distortPoints[0]"])
+    {
+      var n = agents.length;
+      if (n > 100) n = 100;
+
+      for (var i = 0; i < n; i++)
+      {
+         entity.mesh.material.uniforms["distortPoints[" + i + "]"] = agents[i].position;
+      }
+    }
+    
     if (entity.lineWidth) {
       gl.lineWidth(entity.lineWidth);
     }

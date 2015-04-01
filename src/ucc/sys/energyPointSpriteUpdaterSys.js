@@ -49,7 +49,7 @@ function energyPointSpriteUpdaterSys(state) {
   var colors = state.energyPointSpriteMeshEntity.mesh.geometry.colors;
   var texCoords = state.energyPointSpriteMeshEntity.mesh.geometry.texCoords;
 
-  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * state.zoom;
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * 3.0;
 
   vertices.length = 0;
   colors.length = 0;

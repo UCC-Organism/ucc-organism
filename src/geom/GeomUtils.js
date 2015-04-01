@@ -66,7 +66,7 @@ GeomUtils.computeBSpline = function(points) {
   return result;
 }
 
-GeomUtils.smoothCurve = function(points, c, n) {
+GeomUtils.smoothCurve = function(points, c, n, adaptive, subdivisionLength) {
   n = n || 10;
   c = (typeof(c) == 'undefined') ? 1 : c;
   var spline = [];
@@ -81,11 +81,19 @@ GeomUtils.smoothCurve = function(points, c, n) {
       return newPoints[0];
   }
   for(var i=0; i<points.length; i++) {
+    var p0 = points[(i-1 + points.length) % points.length];
+    var p1 = points[(i-0 + points.length) % points.length];
+    var p2 = points[(i+1 + points.length) % points.length];
+
+    if (adaptive)
+    {
+      var dist = p0.distance(p1);
+      n = Math.ceil(dist / subdivisionLength);
+    }
+
     for(var j=0; j<n; j++) {
       var t = j/n;
-      var p0 = points[(i-1 + points.length) % points.length];
-      var p1 = points[(i-0 + points.length) % points.length];
-      var p2 = points[(i+1 + points.length) % points.length];
+      
       var x = deCasteljau([(p0.x + p1.x)/2, (p0.x + p1.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2 * (1-c) + p1.x * c, (p1.x + p2.x)/2], t);
       var y = deCasteljau([(p0.y + p1.y)/2, (p0.y + p1.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2 * (1-c) + p1.y * c, (p1.y + p2.y)/2], t);
       var z = deCasteljau([(p0.z + p1.z)/2, (p0.z + p1.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2 * (1-c) + p1.z * c, (p1.z + p2.z)/2], t);
