@@ -116,9 +116,7 @@ Window.create({
       cells.ResearcherCell,
       cells.JanitorCell,
       cells.CookCell,
-      cells.UnknownCell,
-      cells.UnknownCell,
-      cells.UnknownCell
+      cells.AdminCell,
     ];
 
     var programmeLabels = this.programmeLabels = [
@@ -134,9 +132,7 @@ Window.create({
       'Researcher',
       'Janitor',
       'Cook',
-      'Unknown',
-      'Unknown',
-      'Unknown'
+      'Admin',
     ];
 
     function notEmpty(list) {
