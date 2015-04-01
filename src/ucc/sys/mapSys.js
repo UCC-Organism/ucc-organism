@@ -555,39 +555,6 @@ function rebuildCells(state) {
   MapSys.cellEdgeMesh = cellEdgeMesh;
 }
 
-//map animation
-function updateMap(state) {
-  //console.log('updateMap cells:', MapSys.cells.length);
-  var roomValue;
-  var diff = new Vec3();
-
-  function distortVertices(hit, geometry, roomPotential) {
-    for(var j=0; j<geometry.vertices.length; j++) {
-      var v = geometry.vertices[j];
-      //var base = cell.basePos[j];
-      var base = geometry.baseVertices[j];
-      if (!state.mouseHit) continue;
-      var dist = v.distance(hit);
-      var range = 0.05;
-      if (dist < range) {
-        //diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(10*roomPotential); //MB
-        diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(10*roomPotential); //MB
-        v.add(diff);
-      }
-      diff.copy(base).sub(v).scale(0.27);
-      v.add(diff);
-    }
-  }
-
-  var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
-
-  MapSys.edgeMesh.geometry.vertices.dirty = true;
-  MapSys.cellMesh.geometry.vertices.dirty = true;
-  MapSys.cellMesh.geometry.colors.dirty = true;
-  MapSys.cellEdgeMesh.geometry.vertices.dirty = true;
-  MapSys.cellEdgeMesh.geometry.colors.dirty = true;
-}
-
 //-----------------------------------------------------------------------------
 
 function update(state) {
@@ -598,9 +565,6 @@ function update(state) {
   if (!MapSys.ready || state.map.dirty) {
     MapSys.ready = true;
     rebuildMap(state);
-  }
-  else {
-    updateMap(state);
   }
 }
 
