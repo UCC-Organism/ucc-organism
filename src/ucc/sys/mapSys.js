@@ -409,14 +409,12 @@ function rebuildCells(state) {
 
   //cell blobs
 
-  var cellGeometry = new Geometry({ vertices: true, colors: true, faces: true });
+  var cellGeometry = new Geometry({ vertices: true, colors: true, faces: false });
   var cellVertices = cellGeometry.vertices;
-  var cellFaces = cellGeometry.faces;
   var cellColors = cellGeometry.colors;
 
-  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, edges: true });
+  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, edges: false });
   var cellEdgeVertices = cellEdgeGeometry.vertices;
-  var cellEdgeEdges = cellEdgeGeometry.edges;
   var cellEdgeColors = cellEdgeGeometry.colors;
 
   var debugNodesVertices = voronoiCells.points;
@@ -494,7 +492,6 @@ function rebuildCells(state) {
         if (dist > 0.12) return; //FIXME: hardcoded
         dist = Math.floor(dist * 20)/20;
         c = Color.fromHSL(dist*2, 0.7, 0.5);
-        //cellColors.push(c, c, c);
         cellColors.push(cellColor);
         cellColors.push(cellColor);
         cellColors.push(cellCenterColor);
@@ -509,15 +506,12 @@ function rebuildCells(state) {
       cellVertices.push(np2);
       cellVertices.push(center.dup());
 
-      cellFaces.push([vidx, vidx+1, vidx+2]);
-
       var e2 = p2.dup().add(new Vec3(0, 0, 0.0001));
       var ne2 = np2.dup().add(new Vec3(0, 0, 0.0001));
       cellEdgeVertices.push(e2);
       cellEdgeVertices.push(ne2);
       cellEdgeColors.push(cellEdgeColor);
       cellEdgeColors.push(cellEdgeColor);
-      cellEdgeEdges.push([eidx, eidx+1]);
 
       cell.vertices.push(p2);
       cell.vertices.push(np2);
@@ -552,6 +546,8 @@ function rebuildCells(state) {
   MapSys.edgeMesh = edgeMesh;
   MapSys.cellMesh = cellMesh;
   MapSys.cellEdgeMesh = cellEdgeMesh;
+
+  console.log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
 }
 
 //-----------------------------------------------------------------------------
