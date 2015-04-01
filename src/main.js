@@ -132,13 +132,21 @@ sys.Window.create({
       { name: 'Live', value: 1 }
     ], function(liveData) {
     });
-    this.gui.addHeader('Floors');
+    this.gui.addHeader('Map');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };
     }), function(floor) {
+      state.map.setFocusRoom(null);
       state.map.setFloor(floor);
       this.killAllAgents();
     }.bind(this));
+    var roomList = [
+      { name: 'None', value: null },
+      { name: 'C.117', value: 'C.117' }
+    ]
+    this.gui.addRadioList('Room', state, 'focusedRoom', roomList, function(roomId) {
+      state.map.setFocusRoom(roomId);
+    })
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI);
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
@@ -185,17 +193,6 @@ sys.Window.create({
     //this.client = state.client = new Client(config.serverUrl);
     this.client = state.client = new FakeClient(config.serverUrl);
   },
-  initRoomsGUI: function() {
-    this.gui.addHeader('Rooms').setPosition(this.width - 170 * state.DPI, 10 * state.DPI);
-    this.gui.addParam('Potential', state, 'roomPotential', { min: -1, max: 1})
-    var classrooms = R.filter(R.where({type:'classroom'}), state.map.rooms);
-    var roomList = classrooms.map(function(classroom) {
-      return { name: classroom.id + ' / ' + classroom.floor, value: classroom.id };
-    })
-    this.gui.addRadioList('Room', state, 'focusedRoom', roomList, function(roomId) {
-      state.map.setFocusRoom(roomId);
-    })
-  },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
       window.setInterval(function() {
@@ -226,7 +223,6 @@ sys.Window.create({
       state.width = this.width;
       state.height = this.height;
 
-      this.initRoomsGUI();
     }.bind(this))
     .catch(function(e) {
       console.log(e.stack)
@@ -352,8 +348,6 @@ sys.Window.create({
         entity.mesh.geometry.colors.dirty = true;
       }
     });
-  },
-  updateSystems: function() {
   },
   draw: function() {
     this.update();
