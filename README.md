@@ -62,3 +62,4 @@ We use library called *faye*.
 # Key bindings
 
 - `g` show/hide the overlays
+- left-arrow / right-arrow switch floor (floor "-1" = all floors at once)
