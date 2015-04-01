@@ -137,8 +137,9 @@ sys.Window.create({
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };
     }), function(floor) {
-      state.map.setFloor(floor)
-    });
+      state.map.setFloor(floor);
+      this.killAllAgents();
+    }.bind(this));
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI);
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
@@ -248,10 +249,6 @@ sys.Window.create({
         case ' ': this.toggleClass(); break;
         case 'S': this.gui.save(config.settingsFile); break;
         case 'L': this.gui.load(config.settingsFile); break;
-      }
-      switch(e.keyCode) {
-        case VK_LEFT: state.map.setPrevFloor(); this.killAllAgents(); break;
-        case VK_RIGHT: state.map.setNextFloor(); this.killAllAgents(); break;
       }
     }.bind(this));
   },
