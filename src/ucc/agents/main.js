@@ -50,7 +50,7 @@ function matrixLayout(w, h, n, lineHeight) {
 Window.create({
   settings: {
     width: 1280*1,
-    height: 1280*1,
+    height: 1280*1.5,
     //height: 1280,
     type: '2d3d',
     highdpi: 2,
