@@ -26,7 +26,7 @@ var AgentStore        = require('./ucc/stores/AgentStore')
 
 //Config
 var config            = require('./config');
-var AgentModes        = require('./ucc/agents/AgentModes');
+var AgentModes        = require('./ucc/agents/agentModes');
 
 
 //Data
