@@ -45,6 +45,10 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
 var state = {
   DPI: Platform.isPlask ? 2 : 2,
+
+  //data
+  liveData: false,
+
   //scene
   initFloor: 7,
   camera: null,
@@ -124,6 +128,12 @@ sys.Window.create({
     Time.verbose = true;
 
     this.gui = new GUI(this);
+    this.gui.addHeader('Data');
+    this.gui.addRadioList('Source', state, 'liveData', [
+      { name: 'Generated', value: 0 },
+      { name: 'Live', value: 1 }
+    ], function(liveData) {
+    });
     this.gui.addHeader('Floors');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor, floorIndex) {
       return { name: floor, value: floorIndex };
