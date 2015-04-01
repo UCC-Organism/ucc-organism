@@ -36,7 +36,7 @@ function agentFlockingSys(state) {
             //normal repulsion
             agent.force.add(tmpDir.scale(0.001));
           }
-          debugLineBuilder.addLine(agent.position, anotherAgent.position, Color.Red);
+          debugLineBuilder.addLine(agent.position, anotherAgent.position, Color.White);
         }
       }
 

@@ -12,8 +12,10 @@ varying vec3 vNormal;
 varying vec4 vColor;
 varying vec2 vTexCoord;
 
-void main() {
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+void main() 
+{
+  vec3 pos = position;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = pointSize;
   vNormal = normal;
   vColor = color;
