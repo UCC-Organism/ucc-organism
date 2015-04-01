@@ -120,6 +120,7 @@ var Config = {
   corridorColor: Color.fromHex('#FFFF00'),
 
   roomTypes: RoomTypes,
+  floors: Floors,
 
   cellStyle: CellStyle,
 

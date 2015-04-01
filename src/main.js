@@ -96,6 +96,8 @@ var state = {
   //debug: false,
   //
 
+  guiCurrentFloor: 0,
+
   selectedRooms: {}
 };
 
@@ -123,7 +125,14 @@ sys.Window.create({
     Time.verbose = true;
 
     this.gui = new GUI(this);
-    this.gui.addHeader('UI');
+    this.gui.addHeader('Floors');
+    this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor, floorIndex) {
+      return { name: floor, value: floorIndex };
+    }), function(floor) {
+      state.map.setFloor(floor)
+    });
+
+    this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI);
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
     this.gui.addParam('Animate cells', state, 'animateCells', false);
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 0.1 });
