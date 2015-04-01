@@ -66,8 +66,8 @@ var state = {
 
   //state
   currentTime: 0,
-  timeSpeed: Platform.isPlask ? 0 : 60 * 60,//60 * 60 * 5,
-  agentSpeed: Platform.isPlask ? 0.02 : 0.02,
+  timeSpeed: Platform.isPlask ? 1 : 0.5,
+  agentSpeed: Platform.isPlask ? 0.01 : 0.01/2,
   debug: false,
   showCells: true,
   showCorridors: true,
@@ -149,9 +149,6 @@ sys.Window.create({
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI);
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
-    this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 0.1 });
-    this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
-    this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
     this.gui.addHeader('Global Colors');
     this.gui.addParam('Cell Edge Width', config, 'cellEdgeWidth', { min: 0.5, max: 5 });
     this.gui.addParam('BgColor', config, 'bgColor', {}, this.onColorChange.bind(this));

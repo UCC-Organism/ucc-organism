@@ -60,7 +60,8 @@ var rooms = [
   "C.202"
 ];
 
-function FakeClient() {
+function FakeClient(timeSpeed) {
+  this.timeSpeed = timeSpeed;
   //this.genStudents();
   this.genLunchOnAnotherFloor();
 }
@@ -93,14 +94,14 @@ FakeClient.prototype.genLunchOnAnotherFloor = function() {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 10000)
+  }, 10000 / this.timeSpeed)
 
   setTimeout(function() {
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 20000)
+  }, 20000 / this.timeSpeed)
 }
 
 FakeClient.prototype.genStudents = function() {
@@ -131,20 +132,20 @@ FakeClient.prototype.genStudents = function() {
       agent.targetMode = AgentModes.Toilet;
       agent.targetLocation = 'toilet';
     })
-  }, 10000)
+  }, 10000 / this.timeSpeed)
 
   setTimeout(function() {
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Roaming;
     })
-  }, 20000)
+  }, 20000 / this.timeSpeed)
 
   setTimeout(function() {
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 25000)
+  }, 25000 / this.timeSpeed)
 }
 
 module.exports = FakeClient;

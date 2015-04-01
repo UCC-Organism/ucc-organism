@@ -107,7 +107,7 @@ ActivityTimeline.prototype.updateTime = function(state) {
   else {
     var start = state.activities.all[0].start.getTime();
     var end = R.last(state.activities.all).end.getTime();
-    state.currentTime += Time.delta * 1000 * state.timeSpeed;
+    state.currentTime += Time.delta * 1000;
 
     if (state.currentTime > end) {
       state.currentTime = start;
