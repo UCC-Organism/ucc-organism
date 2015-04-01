@@ -62,15 +62,15 @@ function agentPointSpriteUpdaterSys(state) {
     lineColors[entityIndex] = new Vec4(0.0, 0.0, 0.0, 1.0);
     fillColors[entityIndex] = new Vec4(1.0, 1.0, 1.0, 1.0);
 
-    if (entity.typeIndex < 5)
+    if (entity.typeIndex > 5)
     {
       accentColors[entityIndex] = new Vec4(1.0, .4, .4, 1.0);
       fillColors[entityIndex] = new Vec4(1.0, .4, .4, .8);
     }
     else
     {
-      accentColors[entityIndex] = new Vec4(0.3, 1.0, 1.0, 1.0);
-      fillColors[entityIndex] = new Vec4(0.3, 1.0, 1.0, .5);
+      accentColors[entityIndex] = new Vec4(1.0, 1.0, .3, 1.0);
+      fillColors[entityIndex] = new Vec4(1.0, 1.0, .3, .5);
     }
     
 

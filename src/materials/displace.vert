@@ -32,7 +32,7 @@ void main()
     {
       vec3 dir = normalize(pos - c);
       float rat = pow(1.0 - dist / maxDist, 4.0);
-      vColor.rgb += vec3(1.0, 0.0, 0.0) *  rat * .05;
+      vColor.rgb += vec3(1.0, 0.1, 0.1) *  rat * .05;
 
       offset += dir * rat * maxDist * .02;
     }
