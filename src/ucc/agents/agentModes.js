@@ -5,5 +5,6 @@ module.exports = {
   Toilet: 'toilet',
   Study: 'study',
   Classroom: 'classrom',
-  Lunch: 'lunch'
+  Lunch: 'lunch',
+  Closet: 'closet'
 }

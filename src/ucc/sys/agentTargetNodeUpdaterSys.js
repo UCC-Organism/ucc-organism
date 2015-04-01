@@ -41,6 +41,8 @@ function agentTargetNodeUpdaterSys(state) {
           agent.state.mode = AgentModes.Roaming;
         }
       }
+      else if (agent.state.mode == AgentModes.Closet) {
+      }
       else if (agent.state.mode == AgentModes.Lunch) {
         targetNode = state.map.getSelectedNodeByRoomId(agent.state.targetLocation);
         if (!targetNode) {
