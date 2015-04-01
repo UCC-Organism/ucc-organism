@@ -102,6 +102,8 @@ var state = {
   selectedRooms: {}
 };
 
+var GUI_OFFSET = Platform.isPlask ? 0 : 9999;
+
 sys.Window.create({
   settings: {
     width: 1400 * state.DPI,
@@ -125,12 +127,6 @@ sys.Window.create({
     Time.verbose = true;
 
     this.gui = new GUI(this);
-    this.gui.addHeader('Data');
-    this.gui.addRadioList('Source', state, 'liveData', [
-      { name: 'Generated', value: 0 },
-      { name: 'Live', value: 1 }
-    ], function(liveData) {
-    });
     this.gui.addHeader('Map');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };
@@ -147,8 +143,14 @@ sys.Window.create({
       state.map.setFocusRoom(roomId);
     })
 
-    this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI);
-    this.gui.addParam('Show Schedule', state, 'showSchedule', false);
+    this.gui.addHeader('Data').setPosition(GUI_OFFSET, GUI_OFFSET);
+    this.gui.addRadioList('Source', state, 'liveData', [
+      { name: 'Generated', value: 0 },
+      { name: 'Live', value: 1 }
+    ], function(liveData) {
+    });
+
+    this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addHeader('Global Colors');
     this.gui.addParam('Cell Edge Width', config, 'cellEdgeWidth', { min: 0.5, max: 5 });
     this.gui.addParam('BgColor', config, 'bgColor', {}, this.onColorChange.bind(this));
@@ -156,7 +158,7 @@ sys.Window.create({
     this.gui.addParam('Cell', config, 'cellColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Center', config, 'cellCenterColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Edge', config, 'cellEdgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI);
+    this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Classroom Edge',   config.roomTypes.classroom, 'edgeColor', {}, this.onColorChange.bind(this));
@@ -169,7 +171,7 @@ sys.Window.create({
     this.gui.addParam('Exit',           config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Exit Center',    config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Exit Edge',      config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Energy colors').setPosition(520 * state.DPI, 10 * state.DPI);
+    this.gui.addHeader('Energy colors').setPosition(520 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Social Energy',    config.energyTypes.social, 'color');
     this.gui.addParam('Knowledge Energy', config.energyTypes.knowledge, 'color');
     this.gui.addParam('Economic Energy',  config.energyTypes.economic, 'color');
