@@ -209,7 +209,7 @@ sys.Window.create({
     random.seed(0);
   },
   initScene: function() {
-    state.camera = new PerspectiveCamera(60, this.width / this.height);
+    state.camera = new PerspectiveCamera(60, this.width / this.height, 0.01, 10);
     state.arcball = new Arcball(this, state.camera);
   },
   initStores: function() {

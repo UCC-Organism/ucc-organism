@@ -90,9 +90,25 @@ function removeMapEntities(state) {
 function centerCamera(state, floorBBox) {
   var target = floorBBox.getCenter();
   var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
+  var distance = 1;
+
+  //organism
+  if (state.map.currentFloor == -1) {
+    distance = 1;
+  }
+  //classrom
+  else if (state.map.focusRoomId != null) {
+    distance = 0.1;
+  }
+  //floor
+  else {
+    distance = 0.37;
+  }
+
   state.camera.setUp(new Vec3(0, 0, -1));
   state.arcball.setPosition(position);
   state.arcball.setTarget(target);
+  state.arcball.setDistance(distance);
 }
 
 //-----------------------------------------------------------------------------

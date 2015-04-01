@@ -99,7 +99,7 @@ var MapStore = {
   setFocusRoom: function(roomId) {
     this.focusRoomId = roomId;
     var room = this.roomsById[roomId];
-    this.setFloor(room.floor);
+    this.setFloor(room ? room.floor : this.currentFloor);
   },
   setPrevFloor: function() {
     var floorIndex = this.floors.indexOf(this.currentFloor);
