@@ -37,12 +37,14 @@ function meshRendererSys(state) {
     {
       entity.mesh.material.uniforms.glowColor = new Vec3(config.glowColor.r, config.glowColor.g, config.glowColor.b); 
       var n = agents.length;
-      if (n > 100) n = 100;
+      if (n > 255) n = 255;
 
       for (var i = 0; i < n; i++)
       {
          entity.mesh.material.uniforms["distortPoints[" + i + "]"] = agents[i].position;
       }
+
+      entity.mesh.material.uniforms.numAgents = n;
     }
     
     if (entity.lineWidth) {
