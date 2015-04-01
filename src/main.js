@@ -116,6 +116,9 @@ sys.Window.create({
   bla: 0,
   init: function() {
     this.initGUI();
+    this.initAll();
+  },
+  initAll: function() {
     this.initDataClient();
     this.initWatchdog();
     this.initLibs();
@@ -185,11 +188,11 @@ sys.Window.create({
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
-    this.gui.load(config.settingsFile);
+    this.gui.load(config.settingsFile, this.initAll.bind(this));
   },
   initDataClient: function() {
     //this.client = state.client = new Client(config.serverUrl);
-    this.client = state.client = new FakeClient(config.serverUrl);
+    this.client = state.client = new FakeClient(state.timeSpeed);
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
