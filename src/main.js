@@ -76,7 +76,6 @@ var state = {
   showAgents: true,
   showEnergy: true,
   clearBg: true,
-  animateCells: false,
 
   roomPotential: 0,
 
@@ -143,7 +142,6 @@ sys.Window.create({
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI);
     this.gui.addParam('Show Schedule', state, 'showSchedule', false);
-    this.gui.addParam('Animate cells', state, 'animateCells', false);
     this.gui.addParam('Agent speed', state, 'agentSpeed', { min: 0.01, max: 0.1 });
     this.gui.addParam('Agent count', state, 'maxAgentCount', { min: 1, max: 2500, step: 1 });
     this.gui.addParam('Time speed', state, 'timeSpeed', { min: 0, max: 60 * 60 * 5 });
@@ -342,18 +340,8 @@ sys.Window.create({
       }
     })
   },
-  updateFake: function() {
-    if (state.animateCells) {
-      Object.keys(state.selectedRooms).forEach(function(roomId, roomIndex) {
-        random.seed(roomIndex);
-        state.selectedRooms[roomId] = 0.75 + 0.5 * Math.cos(Time.seconds + random.float(0, Math.PI * 2));
-      })
-    }
-  },
   update: function() {
     var verbose = false;
-
-    this.updateFake();
 
     state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
   },

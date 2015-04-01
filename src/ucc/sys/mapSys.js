@@ -409,14 +409,12 @@ function rebuildCells(state) {
 
   //cell blobs
 
-  var cellGeometry = new Geometry({ vertices: true, colors: true, faces: true });
+  var cellGeometry = new Geometry({ vertices: true, colors: true, faces: false });
   var cellVertices = cellGeometry.vertices;
-  var cellFaces = cellGeometry.faces;
   var cellColors = cellGeometry.colors;
 
-  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, edges: true });
+  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, edges: false });
   var cellEdgeVertices = cellEdgeGeometry.vertices;
-  var cellEdgeEdges = cellEdgeGeometry.edges;
   var cellEdgeColors = cellEdgeGeometry.colors;
 
   var debugNodesVertices = voronoiCells.points;
@@ -488,14 +486,12 @@ function rebuildCells(state) {
         cellColor = Color.Red;
       }
 
-      
       var c = Color.fromHSL(0, 1, 0.5);
       if (focusRoomCenter) {
         var dist = p.distance(focusRoomCenter);
         if (dist > 0.12) return; //FIXME: hardcoded
         dist = Math.floor(dist * 20)/20;
         c = Color.fromHSL(dist*2, 0.7, 0.5);
-        //cellColors.push(c, c, c);
         cellColors.push(cellColor);
         cellColors.push(cellColor);
         cellColors.push(cellCenterColor);
@@ -510,15 +506,12 @@ function rebuildCells(state) {
       cellVertices.push(np2);
       cellVertices.push(center.dup());
 
-      cellFaces.push([vidx, vidx+1, vidx+2]);
-
       var e2 = p2.dup().add(new Vec3(0, 0, 0.0001));
       var ne2 = np2.dup().add(new Vec3(0, 0, 0.0001));
       cellEdgeVertices.push(e2);
       cellEdgeVertices.push(ne2);
       cellEdgeColors.push(cellEdgeColor);
       cellEdgeColors.push(cellEdgeColor);
-      cellEdgeEdges.push([eidx, eidx+1]);
 
       cell.vertices.push(p2);
       cell.vertices.push(np2);
@@ -553,39 +546,8 @@ function rebuildCells(state) {
   MapSys.edgeMesh = edgeMesh;
   MapSys.cellMesh = cellMesh;
   MapSys.cellEdgeMesh = cellEdgeMesh;
-}
 
-//map animation
-function updateMap(state) {
-  //console.log('updateMap cells:', MapSys.cells.length);
-  var roomValue;
-  var diff = new Vec3();
-
-  function distortVertices(hit, geometry, roomPotential) {
-    for(var j=0; j<geometry.vertices.length; j++) {
-      var v = geometry.vertices[j];
-      //var base = cell.basePos[j];
-      var base = geometry.baseVertices[j];
-      if (!state.mouseHit) continue;
-      var dist = v.distance(hit);
-      var range = 0.05;
-      if (dist < range) {
-        //diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(10*roomPotential); //MB
-        diff.copy(v).sub(hit).scale(Math.max(0, 1.0 - dist/range)).scale(10*roomPotential); //MB
-        v.add(diff);
-      }
-      diff.copy(base).sub(v).scale(0.27);
-      v.add(diff);
-    }
-  }
-
-  var rooms = state.map.selectedNodes.filter(R.where({ roomType: 'classroom'}));
-
-  MapSys.edgeMesh.geometry.vertices.dirty = true;
-  MapSys.cellMesh.geometry.vertices.dirty = true;
-  MapSys.cellMesh.geometry.colors.dirty = true;
-  MapSys.cellEdgeMesh.geometry.vertices.dirty = true;
-  MapSys.cellEdgeMesh.geometry.colors.dirty = true;
+  console.log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
 }
 
 //-----------------------------------------------------------------------------
@@ -598,9 +560,6 @@ function update(state) {
   if (!MapSys.ready || state.map.dirty) {
     MapSys.ready = true;
     rebuildMap(state);
-  }
-  else {
-    updateMap(state);
   }
 }
 
