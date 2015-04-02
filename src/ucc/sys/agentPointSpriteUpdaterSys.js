@@ -27,6 +27,7 @@ function agentPointSpriteUpdaterSys(state) {
     var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/10, 1/15), texOffset: new Vec2(1/10, 1/15) });
     state.pointSpriteMeshEntity = {
       agentMesh: true,
+      disableDepthTest: true,
       mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
     }
     state.entities.push(state.pointSpriteMeshEntity);
