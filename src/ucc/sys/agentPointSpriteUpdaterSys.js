@@ -58,11 +58,10 @@ function agentPointSpriteUpdaterSys(state) {
     if (colors[entityIndex]) colors[entityIndex].copy(entity.color || Color.White);
     else colors[entityIndex] = entity.color ? entity.color.clone() : Color.White;
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
-    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 10), entity.typeIndex); //FIXME: agent type
+    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(entity.agentIdNumber % 10, entity.typeIndex); //FIXME: agent type
 
     lineColors[entityIndex] = Config.agentLineColor;
     fillColors[entityIndex] = Config.agentFillColor;
-    
 
     if (entity.typeIndex <= 7) // Student
     {

@@ -21,6 +21,7 @@ function makeAgentEntity(props) {
     color: Color.White,
     targetNode: null,
     agentId: props.id,
+    agentIdNumber: parseInt(props.id.replace(/[a-zA-Z]/g,'')),
     state: props.state,
     speed: random.float(0.3, 1)
   };
