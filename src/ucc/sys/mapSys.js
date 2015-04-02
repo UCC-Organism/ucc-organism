@@ -96,7 +96,7 @@ function centerCamera(state, floorBBox) {
 
   //organism
   if (state.map.currentFloor == -1) {
-    distance = 1;
+    distance = 1.4;
   }
   //classrom
   else if (state.map.focusRoomId != null) {
@@ -348,6 +348,8 @@ function rebuildCells(state) {
   })
   points = roomCenterPoints.concat(points);
 
+  var cellsRoomExternalType = [];
+
   //2d points
 
   var points2D = points.map(vec3to2);
@@ -362,7 +364,14 @@ function rebuildCells(state) {
   if (state.map.currentFloor == -1) {
     random.seed(0);
     for(var i=0; i<30; i++) {
-      points2D.push(new Vec2(random.float(-2, 2), random.float(-2, 2)))
+      var a = random.float(0, 360);
+      var pos = new Vec2(random.float(-2, 2), random.float(-2, 2));
+      points2D.push(pos);
+      cellsRoomExternalType[points2D.length-1] = 'empty';
+      if (pos.x > 0 && pos.y > 0) cellsRoomExternalType[points2D.length-1] = 'classroom';
+      if (pos.x > 0 && pos.y < 0) cellsRoomExternalType[points2D.length-1] = 'food';
+      if (pos.x < 0 && pos.y > 0) cellsRoomExternalType[points2D.length-1] = 'classroom';
+      if (pos.x < 0 && pos.y < 0) cellsRoomExternalType[points2D.length-1] = 'admin';
     }
   }
   else {
@@ -385,9 +394,10 @@ function rebuildCells(state) {
   var borderPoints = voronoiCells.points.filter(inRect(boundingRect, EPSILON));
   var borderPointsIndices = borderPoints.map(indexFinder(voronoiCells.points));
 
-  voronoiCells.cells = voronoiCells.cells.filter(function(cell, cellIndex) {
+  voronoiCells.cells.forEach(function(cell, cellIndex) {
     var isRoom = cellIndex < cellsRoomIds.length;
-    return isRoom || R.intersection(cell, borderPointsIndices).length == 0;
+    var keep = isRoom || R.intersection(cell, borderPointsIndices).length == 0;
+    if (!keep) cellsRoomExternalType[cellIndex] = 'empty'
   })
 
   //if you reject cells you need to rebuild points too
@@ -468,6 +478,11 @@ function rebuildCells(state) {
     var roomId = cellsRoomIds[cellIndex] || -1;
     var isRoom = roomId != -1;
     var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
+
+    if (cellsRoomExternalType[cellIndex]) {
+      roomType = cellsRoomExternalType[cellIndex];
+      isRoom = true;
+    }
 
     //skip empty cells
     if (roomType == 'empty') {
