@@ -394,11 +394,16 @@ function rebuildCells(state) {
   var borderPoints = voronoiCells.points.filter(inRect(boundingRect, EPSILON));
   var borderPointsIndices = borderPoints.map(indexFinder(voronoiCells.points));
 
-  voronoiCells.cells.forEach(function(cell, cellIndex) {
+  for(var cellIndex=0; cellIndex<voronoiCells.cells.length; cellIndex++) {
     var isRoom = cellIndex < cellsRoomIds.length;
-    var keep = isRoom || R.intersection(cell, borderPointsIndices).length == 0;
-    if (!keep) cellsRoomExternalType[cellIndex] = 'empty'
-  })
+    var cell = voronoiCells.cells[cellIndex];
+    var keep = isRoom || (R.intersection(cell, borderPointsIndices).length == 0);
+    if (!keep) {
+      cellsRoomExternalType.splice(cellIndex, 1);
+      voronoiCells.cells.splice(cellIndex, 1);
+      cellIndex--;
+    }
+  }
 
   //if you reject cells you need to rebuild points too
   voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
