@@ -76,6 +76,7 @@ var state = {
   showAgents: true,
   showEnergy: true,
   clearBg: true,
+  sway: 0,
 
   roomPotential: 0,
 
@@ -130,6 +131,8 @@ sys.Window.create({
 
     this.gui = new GUI(this);
     this.gui.setEnabled(false);
+    this.gui.addHeader('Options');
+    this.gui.addParam('Sway Enabled', state, 'sway');
     this.gui.addHeader('Map');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };

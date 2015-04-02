@@ -2,6 +2,7 @@ var R = require('ramda');
 var glu = require('pex-glu');
 var Vec3 = require('pex-geom').Vec3;
 var config = require('../../config');
+var Time = require('pex-sys').Time;
 
 var Context = glu.Context;
 
@@ -33,6 +34,12 @@ function meshRendererSys(state) {
       return;
     }
 
+    if (entity.mesh.material.program.uniforms.time) {
+      entity.mesh.material.uniforms.time = Time.seconds;
+    }
+    if (entity.mesh.material.program.uniforms.sway) {
+      entity.mesh.material.uniforms.sway = state.sway;
+    }
     if (entity.mesh.material.program.uniforms["distortPoints[0]"])
     {
       entity.mesh.material.uniforms.glowColor = new Vec3(config.glowColor.r, config.glowColor.g, config.glowColor.b); 
