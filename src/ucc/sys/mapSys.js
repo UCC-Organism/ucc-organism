@@ -520,6 +520,7 @@ function rebuildCells(state) {
       var cellEdgeColor = config.cellEdgeColor;
 
       if (isRoom && roomType && roomType != 'none') {
+        if (!config.roomTypes[roomType]) console.log(roomType, '' + config.roomTypes[roomType])
         cellColor = config.roomTypes[roomType].color;
         cellCenterColor = config.roomTypes[roomType].centerColor;
         cellEdgeColor = config.roomTypes[roomType].edgeColor;

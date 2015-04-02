@@ -48,7 +48,7 @@ var state = {
   liveData: false,
 
   //scene
-  initFloor: 7,
+  initFloor: 1,
   camera: null,
   cameraPosZ: 0.30,
   arcball: null,
@@ -164,16 +164,29 @@ sys.Window.create({
     this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Classroom Edge',   config.roomTypes.classroom, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Other room',       config.roomTypes[''], 'color', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Other room Center',config.roomTypes[''], 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Other room Edge',  config.roomTypes[''], 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Food',             config.roomTypes.food, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Food Center',      config.roomTypes.food, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Food Edge',        config.roomTypes.food, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Research',         config.roomTypes.research, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Research Center',  config.roomTypes.research, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Research Edge',    config.roomTypes.research, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Knowledge',        config.roomTypes.knowledge, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Knowledge Center', config.roomTypes.knowledge, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Knowledge Edge',   config.roomTypes.knowledge, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addHeader('Other room colors').setPosition(520 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Admin',            config.roomTypes.admin, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Admin Center',     config.roomTypes.admin, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Admin Edge',       config.roomTypes.admin, 'edgeColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Toilet',           config.roomTypes.toilet, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Toilet Center',    config.roomTypes.toilet, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Toilet Edge',      config.roomTypes.toilet, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Exit',           config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Exit Center',    config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Exit Edge',      config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Energy colors').setPosition(520 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Closet',           config.roomTypes.closet, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Closet Center',    config.roomTypes.closet, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Closet Edge',      config.roomTypes.closet, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Exit',             config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Exit Center',      config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Exit Edge',        config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addHeader('Energy colors').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Social Energy',    config.energyTypes.social, 'color');
     this.gui.addParam('Knowledge Energy', config.energyTypes.knowledge, 'color');
     this.gui.addParam('Economic Energy',  config.energyTypes.economic, 'color');
