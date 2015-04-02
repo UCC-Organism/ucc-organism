@@ -352,7 +352,9 @@ sys.Window.create({
     })
   },
   update: function() {
-    state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
+    if (state.camera) {
+      state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
+    }
   },
   onColorChange: function() {
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), state.entities);
