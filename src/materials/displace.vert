@@ -164,7 +164,7 @@ void main()
 
   pos += offset;
 
-  pos.xy += sway * 0.05 * snoise(vec3(pos.x + time, pos.y, pos.x)/5.0);
+  pos.xy += sway * 0.05 * snoise(vec3(pos.x + time/5.0, pos.y, pos.x)*5.0);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = pointSize;
