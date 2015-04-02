@@ -97,7 +97,7 @@ function centerCamera(state, floorBBox) {
 
   //organism
   if (state.map.currentFloor == -1) {
-    distance = 1.4;
+    distance = 1.3;
   }
   //classrom
   else if (state.map.focusRoomId != null) {
@@ -362,17 +362,23 @@ function rebuildCells(state) {
   var size = boundingRect.getSize();
   var r = Math.max(size.x, size.y) / 2 * 1.5;
 
+  var bodyCenters = [];
+
   if (state.map.currentFloor == -1) {
     random.seed(0);
     for(var i=0; i<30; i++) {
       var a = random.float(0, 360);
       var pos = new Vec2(random.float(-2, 2), random.float(-2, 2));
+      pos.external = true;
+      bodyCenters.push(pos);
       points2D.push(pos);
       cellsRoomExternalType[points2D.length-1] = 'empty';
       if (pos.x > 0 && pos.y > 0) cellsRoomExternalType[points2D.length-1] = 'classroom';
       if (pos.x > 0 && pos.y < 0) cellsRoomExternalType[points2D.length-1] = 'food';
       if (pos.x < 0 && pos.y > 0) cellsRoomExternalType[points2D.length-1] = 'classroom';
       if (pos.x < 0 && pos.y < 0) cellsRoomExternalType[points2D.length-1] = 'admin';
+      pos.externalType = cellsRoomExternalType[points2D.length-1];
+      pos.index = points2D.length-1;
     }
   }
   else {
@@ -402,6 +408,13 @@ function rebuildCells(state) {
     if (!keep) {
       cellsRoomExternalType.splice(cellIndex, 1);
       voronoiCells.cells.splice(cellIndex, 1);
+      for(var i=0; i<bodyCenters.length; i++) {
+        if (bodyCenters[i].index == cellIndex) {
+          bodyCenters.splice(i, 1);
+          i--;
+        }
+        if (bodyCenters[i].index > cellIndex) bodyCenters[i].index--;
+      }
       cellIndex--;
     }
   }
@@ -435,6 +448,32 @@ function rebuildCells(state) {
     })
   })
 
+  //add center points
+  bodyCenters.forEach(function(p, cellIndex) {
+    var roomId = cellsRoomIds[p.index] || -1;
+    var room = state.map.roomsById[roomId];
+    var roomType = room ? room.type : 'none';
+    var roomFloor = room ? room.floor : -1;
+
+    //skip empty cells
+    if (roomType == 'empty') {
+      return;
+    }
+
+    var newPointIndex = voronoiCells.points.length;
+
+    //map central node to room id and type so we can reach it later
+    var p3 = vec2to3(p);
+    p3.roomId = roomId;
+    p3.roomType = roomType;
+    p3.external = true;
+    p3.externalType = p.externalType;
+    voronoiCells.points.push(p3);
+    voronoiCells.cells[p.index].forEach(function(cellPointIndex) {
+      voronoiCells.edges.push([cellPointIndex, newPointIndex]);
+    })
+  })
+
   //override map
 
   state.map.selectedNodes = voronoiCells.points.map(function(p, pindex) {
@@ -442,10 +481,14 @@ function rebuildCells(state) {
       id: pindex,
       roomId: p.roomId,
       roomType: p.roomType,
+      external: p.external ? true : false,
+      externalType: p.externalType,
       position: p,
-      neighbors: []
+      neighbors: [],
     }
   })
+
+  console.log('EXTERNAL voronoiCells.points', voronoiCells.points.filter(R.where({ external: true })).length);
 
   voronoiCells.edges.forEach(function(edge) {
     state.map.selectedNodes[edge[0]].neighbors.push(state.map.selectedNodes[edge[1]])

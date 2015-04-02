@@ -50,6 +50,7 @@ function energyPointSpriteUpdaterSys(state) {
   var texCoords = state.energyPointSpriteMeshEntity.mesh.geometry.texCoords;
 
   state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * 3.0;
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.spread = (state.map.currentFloor == -1) ? 4 : 1;
 
   vertices.length = 0;
   colors.length = 0;
