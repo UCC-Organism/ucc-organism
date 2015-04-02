@@ -82,7 +82,6 @@ var state = {
   numRandomStudents: 0,
 
   //ui
-  showGUI: false,
   showSchedule: false,
 
   //graph: null,
@@ -130,6 +129,7 @@ sys.Window.create({
     Time.verbose = true;
 
     this.gui = new GUI(this);
+    this.gui.setEnabled(false);
     this.gui.addHeader('Map');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };
@@ -248,7 +248,7 @@ sys.Window.create({
       switch(e.str) {
         //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
-        case 'g': state.showGUI = !state.showGUI; break;
+        case 'g': this.gui.toggleEnabled(); break;
         case 'c': state.showCells = !state.showCells; break;
         case 'p': state.showCorridors = !state.showCorridors; state.showNodes = !state.showNodes; break;
         case 'a': state.showAgents = !state.showAgents; break;
@@ -403,8 +403,6 @@ sys.Window.create({
     //glu.enableAlphaBlending();
     //state.ui.draw();
 
-    if (state.showGUI) {
-      this.gui.draw();
-    }
+    this.gui.draw();
   }
 });
