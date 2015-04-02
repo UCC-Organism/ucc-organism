@@ -7,7 +7,6 @@ function agentKillSys(state) {
     if (agent.state.mode == AgentModes.Dead) {
       agent.state.entity = null;
       var idx = state.entities.indexOf(agent);
-      console.log('kill!', idx);
       state.entities.splice(idx, 1);
     }
   })
