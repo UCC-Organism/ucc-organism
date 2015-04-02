@@ -117,7 +117,7 @@ float snoise(vec3 v)
 
 void main() {
   vec3 pos = position;
-  pos.x += 0.01 * snoise(vec3(texCoord, 0.0) * 10.0 + position * 10.0);
+  pos.x += 0.002 * snoise(vec3(texCoord, 0.0) * 10.0 + position * 10.0);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = pointSize;
   vColor = color;

@@ -54,6 +54,8 @@ function meshRendererSys(state) {
       entity.mesh.material.uniforms.numAgents = n;
     }
 
+    glu.enableDepthReadAndWrite();
+
     if (entity.lineWidth) {
       gl.lineWidth(entity.lineWidth);
     }
