@@ -12,7 +12,6 @@ function agentTargetNodeUpdaterSys(state) {
   var toiletNodes = state.map.selectedNodes.filter(R.where({roomType:'toilet'}));
 
   agents.forEach(function(agent, idx) {
-    //if (idx == 0) console.log(agent)
     if (agent.state.targetMode) {
       agent.state.mode = agent.state.targetMode;
       agent.state.targetMode = AgentModes.None;
@@ -20,9 +19,17 @@ function agentTargetNodeUpdaterSys(state) {
     }
 
     if (!agent.targetNode) {
+      if (agent.prevTargetNode && agent.prevTargetNode.roomType == 'exit') {
+        agent.state.mode = AgentModes.Dead;
+      }
+
       var targetNode = null;
       if (agent.state.mode == AgentModes.Classroom && agent.state.targetLocation) {
         targetNode = state.map.getSelectedNodeByRoomId(agent.state.targetLocation);
+        if (!targetNode) {
+          agent.state.mode = AgentModes.None;
+          targetNode = random.element(exitNodes);
+        }
         agent.state.targetLocation = null;
       }
       else if (agent.state.mode == AgentModes.Roaming) {
@@ -33,7 +40,6 @@ function agentTargetNodeUpdaterSys(state) {
       }
       else if (agent.state.mode == AgentModes.Toilet) {
         if (toiletNodes.length > 0) {
-          console.log('looking for toilets', toiletNodes.length)
           targetNode = random.element(toiletNodes);
           agent.state.mode = AgentModes.None;
         }
@@ -46,15 +52,17 @@ function agentTargetNodeUpdaterSys(state) {
       else if (agent.state.mode == AgentModes.Lunch) {
         targetNode = state.map.getSelectedNodeByRoomId(agent.state.targetLocation);
         if (!targetNode) {
+          agent.state.mode = AgentModes.None;
           targetNode = random.element(exitNodes);
         }
-        agent.state.mode = AgentModes.Dead;
+        agent.state.targetLocation = null;
       }
       var path = null;
 
       if (!path && targetNode) {
         var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
         path = graph.findShortestPath(closestNode, targetNode);
+        path.push(targetNode);
       }
       if (!path) {
         //TODO: print warnign and change mode to wander
@@ -74,6 +82,7 @@ function agentTargetNodeUpdaterSys(state) {
     var dist = agentEntity.position.distance(agentEntity.targetNode.position);
     if (dist < state.minNodeDistance) {
       if (agentEntity.targetNodeList.length > 0) {
+        agentEntity.prevTargetNode = agentEntity.targetNode;
         agentEntity.targetNode = agentEntity.targetNodeList.shift();
       }
       else {

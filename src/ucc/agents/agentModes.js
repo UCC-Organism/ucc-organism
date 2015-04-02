@@ -6,5 +6,6 @@ module.exports = {
   Study: 'study',
   Classroom: 'classrom',
   Lunch: 'lunch',
-  Closet: 'closet'
+  Closet: 'closet',
+  Dead: 'dead'
 }

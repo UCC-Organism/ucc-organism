@@ -16,6 +16,7 @@ var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSy
 var agentFlockingSys              = require('./ucc/sys/agentFlockingSys');
 var agentPositionUpdaterSys       = require('./ucc/sys/agentPositionUpdaterSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
+var agentKillSys                  = require('./ucc/sys/agentKillSys');
 var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
 
@@ -126,7 +127,7 @@ sys.Window.create({
     this.initKeys();
   },
   initGUI: function() {
-    Time.verbose = true;
+    //Time.verbose = true;
 
     this.gui = new GUI(this);
     this.gui.addHeader('Map');
@@ -351,8 +352,6 @@ sys.Window.create({
     })
   },
   update: function() {
-    var verbose = false;
-
     state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
   },
   onColorChange: function() {
@@ -377,6 +376,7 @@ sys.Window.create({
       energySys(state);
       agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
+      agentKillSys(state);
       agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);
 
