@@ -127,7 +127,7 @@ sys.Window.create({
     this.initKeys();
   },
   initGUI: function() {
-    //Time.verbose = true;
+    Time.verbose = true;
 
     this.gui = new GUI(this);
     this.gui.addHeader('Map');
