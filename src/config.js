@@ -136,6 +136,8 @@ var Config = {
   minStudentAge: 18,
   maxStudentAge: 40,
 
+  maxDistortPoints: 100,
+
   energySpriteSize: 0.5,
   agentSpriteSize: 10,
 };

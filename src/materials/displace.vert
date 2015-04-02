@@ -1,6 +1,6 @@
 #ifdef VERT
 
-#define N_DISTORT_POINTS 255
+#define N_DISTORT_POINTS 100
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
