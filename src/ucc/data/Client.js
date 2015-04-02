@@ -6,6 +6,7 @@ var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 
 function Client(serverUrl) {
+  this.enabled = true;
   this.serverUrl = serverUrl;
   this.updateCurrentState();
 }
@@ -69,6 +70,7 @@ Client.prototype.updateCurrentState = function() {
 }
 
 Client.prototype.onEvent = function(e) {
+  if (!this.enabled) return;
   console.log('Client.onEvent', e.description);
   e.agents.forEach(function(agentId) {
     var agent = AgentStore.getAgentById(agentId);

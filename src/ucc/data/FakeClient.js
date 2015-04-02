@@ -61,12 +61,15 @@ var rooms = [
 ];
 
 function FakeClient(timeSpeed) {
+  this.enabled = true;
   this.timeSpeed = timeSpeed;
   //this.genStudents();
   this.genC2();
 }
 
 FakeClient.prototype.genC2 = function() {
+  var self = this;
+  if (!self.enabled) return;
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
@@ -91,6 +94,7 @@ FakeClient.prototype.genC2 = function() {
   })
 
   setTimeout(function() {
+    if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
@@ -98,6 +102,7 @@ FakeClient.prototype.genC2 = function() {
   }, 20000 / this.timeSpeed)
 
   setTimeout(function() {
+    if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
@@ -106,6 +111,8 @@ FakeClient.prototype.genC2 = function() {
 }
 
 FakeClient.prototype.genStudents = function() {
+  var self = this;
+  if (!self.enabled) return;
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
@@ -129,6 +136,7 @@ FakeClient.prototype.genStudents = function() {
   })
 
   setTimeout(function() {
+    if (!self.enabled) return;
     AgentStore.all.slice(0, 6).forEach(function(agent) {
       agent.targetMode = AgentModes.Toilet;
       agent.targetLocation = 'toilet';
@@ -136,12 +144,14 @@ FakeClient.prototype.genStudents = function() {
   }, 10000 / this.timeSpeed)
 
   setTimeout(function() {
+    if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Roaming;
     })
   }, 20000 / this.timeSpeed)
 
   setTimeout(function() {
+    if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';

@@ -151,7 +151,8 @@ sys.Window.create({
       { name: 'Generated', value: 0 },
       { name: 'Live', value: 1 }
     ], function(liveData) {
-    });
+      this.killAllAgents();
+    }.bind(this));
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addHeader('Global Colors');
@@ -205,8 +206,8 @@ sys.Window.create({
     this.gui.load(config.settingsFile, this.initAll.bind(this));
   },
   initDataClient: function() {
-    //this.client = state.client = new Client(config.serverUrl);
-    this.client = state.client = new FakeClient(state.timeSpeed);
+    this.client = state.client = new Client(config.serverUrl);
+    this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed);
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {
@@ -352,6 +353,11 @@ sys.Window.create({
     })
   },
   update: function() {
+    if (this.client) {
+      this.client.enabled = state.liveData;
+      this.fakeClient.enabled = !state.liveData;
+    }
+
     if (state.camera) {
       state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
     }
