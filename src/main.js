@@ -49,7 +49,7 @@ var state = {
   liveData: false,
 
   //scene
-  initFloor: 7,
+  initFloor: 1,
   camera: null,
   cameraPosZ: 0.30,
   arcball: null,

@@ -3,9 +3,10 @@ module.exports = {
   Away: 'away',
   Roaming: 'roaming',
   Toilet: 'toilet',
-  Study: 'study',
+  Studying: 'studying',
   Classroom: 'classrom',
   Lunch: 'lunch',
+  Eating: 'eating',
   Closet: 'closet',
   Dead: 'dead'
 }

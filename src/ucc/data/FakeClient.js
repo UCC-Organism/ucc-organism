@@ -63,10 +63,10 @@ var rooms = [
 function FakeClient(timeSpeed) {
   this.timeSpeed = timeSpeed;
   //this.genStudents();
-  this.genLunchOnAnotherFloor();
+  this.genC2();
 }
 
-FakeClient.prototype.genLunchOnAnotherFloor = function() {
+FakeClient.prototype.genC2 = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,

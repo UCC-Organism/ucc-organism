@@ -78,15 +78,21 @@ function agentTargetNodeUpdaterSys(state) {
   })
 
   var agentsWithTarget = agents.filter(R.prop('targetNode'));
-  agentsWithTarget.forEach(function(agentEntity) {
-    var dist = agentEntity.position.distance(agentEntity.targetNode.position);
+  agentsWithTarget.forEach(function(agent) {
+    var dist = agent.position.distance(agent.targetNode.position);
     if (dist < state.minNodeDistance) {
-      if (agentEntity.targetNodeList.length > 0) {
-        agentEntity.prevTargetNode = agentEntity.targetNode;
-        agentEntity.targetNode = agentEntity.targetNodeList.shift();
+      if (agent.targetNodeList.length > 0) {
+        agent.prevTargetNode = agent.targetNode;
+        agent.targetNode = agent.targetNodeList.shift();
       }
       else {
-        agentEntity.targetNode = null;
+        agent.targetNode = null;
+        if (agent.state.mode == AgentModes.Lunch) {
+          agent.state.mode = AgentModes.Eating;
+        }
+        if (agent.state.mode == AgentModes.Classroom) {
+          agent.state.mode = AgentModes.Studying;
+        }
       }
     }
   })
