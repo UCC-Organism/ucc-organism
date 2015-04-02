@@ -46,7 +46,7 @@ function meshRendererSys(state) {
 
       entity.mesh.material.uniforms.numAgents = n;
     }
-    
+
     if (entity.lineWidth) {
       gl.lineWidth(entity.lineWidth);
     }

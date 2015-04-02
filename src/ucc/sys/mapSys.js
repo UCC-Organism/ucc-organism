@@ -23,6 +23,7 @@ var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
 var Mesh              = glu.Mesh;
 var SolidColor        = require('../../materials/SolidColor');
+var SolidColorOrig    = materials.SolidColor;
 var ShowColors        = require('../../materials/ShowColors');
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
@@ -70,7 +71,7 @@ function pointsToMesh(points, color) {
   points.forEach(function(p) {
     lineBuilder.addCross(p, 0.003);
   })
-  var mesh = new Mesh(lineBuilder, new SolidColor({ color : color }), { lines: true })
+  var mesh = new Mesh(lineBuilder, new SolidColorOrig({ color : color }), { lines: true })
   return mesh;
 }
 
@@ -201,16 +202,16 @@ function rebuildMap(state) {
   }));
 
   var mapPointsGeometry = new Geometry({ vertices: pointVertices });
-  var mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColor({ pointSize: 5, color: Color.Red }), { points: true });
+  var mapPointsMesh = new Mesh(mapPointsGeometry, new SolidColorOrig({ pointSize: 5, color: Color.Red }), { points: true });
 
   var entrancePointsGeometry = new Geometry({ vertices: entrancePointVertices });
-  var entrancePointsMesh = new Mesh(entrancePointsGeometry, new SolidColor({ pointSize: 10, color: Color.Yellow }), { points: true });
+  var entrancePointsMesh = new Mesh(entrancePointsGeometry, new SolidColorOrig({ pointSize: 10, color: Color.Yellow }), { points: true });
 
   var stairsPointsGeometry = new Geometry({ vertices: stairsPointVertices });
-  var stairsPointsMesh = new Mesh(stairsPointsGeometry, new SolidColor({ pointSize: 10, color: Color.Orange }), { points: true });
+  var stairsPointsMesh = new Mesh(stairsPointsGeometry, new SolidColorOrig({ pointSize: 10, color: Color.Orange }), { points: true });
 
   var corridorEdgesGeometry = new Geometry({ vertices: corridorEdgeVertices });
-  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColor({ pointSize: 2, color: Color.DarkGrey }), { lines: true });
+  var corridorEdgesMesh = new Mesh(corridorEdgesGeometry, new SolidColorOrig({ pointSize: 2, color: Color.DarkGrey }), { lines: true });
 
   var roomVertexGroups = fn.groupBy(roomVertices, 'room');
 
@@ -223,7 +224,7 @@ function rebuildMap(state) {
       })
     }));
     var g = new Geometry({ vertices: roomEdges });
-    var m = new Mesh(g, new SolidColor({ pointSize: 2, color: Color.Cyan }), { lines: true });
+    var m = new Mesh(g, new SolidColorOrig({ pointSize: 2, color: Color.fromHSL(0.6, 0.5, 0.5, 0.5) }), { lines: true });
     state.entities.push({ map: true, debug: true, room: roomId, mesh: m });
   })
 
@@ -583,10 +584,10 @@ function rebuildCells(state) {
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
-  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColor({ color: config.corridorColor }), { lines: true });
+  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: config.corridorColor }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh });
 
-  var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColor({ color: config.corridorColor, pointSize: 5 }), { points: true });
+  var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColorOrig({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
 
   MapSys.edgeMesh = edgeMesh;
