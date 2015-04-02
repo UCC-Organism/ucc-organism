@@ -26,8 +26,9 @@ function rebuildEnergyPaths(state) {
 
   var selectedNodes = state.map.selectedNodes;
   var externalNodes = state.map.selectedNodes.filter(R.where({ external: true }))
-
-  console.log('selectedNodes', selectedNodes.length, 'externalNodes', externalNodes.length)
+  var libraryNodes = state.map.selectedNodes.filter(R.where({ roomType: 'knowledge' }))
+  var researchNodes = state.map.selectedNodes.filter(R.where({ roomType: 'research' }))
+  var classroomNodes = state.map.selectedNodes.filter(R.where({ roomType: 'classroom' }))
 
   var numPaths = 50;
   R.range(0, numPaths).map(function() {
@@ -66,9 +67,40 @@ function rebuildEnergyPaths(state) {
     g.addPath(spline, Color.Red, 0);
     //var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
     //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
-    
+
     state.entities.push({ energyPath: spline, energy: true, color: energyType.color });
   })
+
+  if (state.map.currentFloor == -1 && externalNodes.length > 0) {
+    R.range(0, 5).map(function() {
+      start = random.element(libraryNodes);
+      end = random.element(classroomNodes);
+      var path = graph.findShortestPath(start, end);
+      if (!path || path.length == 0) return;
+      var pathPoints = R.pluck('position')(path);
+      var spline = new Spline3D(pathPoints);
+      var g = new LineBuilder();
+      g.addPath(spline, Color.Red, 0);
+      //var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
+      //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
+      //return;
+      state.entities.push({ energyPath: spline, energy: true, color: config.energyTypes['knowledge'].color });
+    });
+    R.range(0, 30).map(function() {
+      start = random.element(researchNodes);
+      end = random.element(classroomNodes);
+      var path = graph.findShortestPath(start, end);
+      if (!path || path.length == 0) return;
+      var pathPoints = R.pluck('position')(path);
+      var spline = new Spline3D(pathPoints);
+      var g = new LineBuilder();
+      g.addPath(spline, Color.Red, 0);
+      //var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
+      //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
+      //return;
+      state.entities.push({ energyPath: spline, energy: true, color: config.energyTypes['knowledge'].color });
+    });
+  }
 }
 
 function update(state) {
