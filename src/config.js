@@ -47,8 +47,8 @@ var AgentTypeGroups = [
   'Teacher',                                  //8
   'Researcher',                               //9
   'Janitor',                                  //10
-  'Cook'                                      //11
-  'Admin',                                    //12
+  'Cook',                                     //11
+  'Admin'                                     //12
 ];
 
 var EnergyTypes = {
