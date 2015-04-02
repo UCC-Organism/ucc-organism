@@ -116,7 +116,6 @@ sys.Window.create({
   bla: 0,
   init: function() {
     this.initGUI();
-    this.initAll();
   },
   initAll: function() {
     this.initDataClient();
