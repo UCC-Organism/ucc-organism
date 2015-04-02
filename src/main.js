@@ -160,6 +160,7 @@ sys.Window.create({
     this.gui.addParam('Cell', config, 'cellColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Center', config, 'cellCenterColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Edge', config, 'cellEdgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Glow', config, 'glowColor', {}, this.onColorChange.bind(this));
     this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
