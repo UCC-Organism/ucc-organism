@@ -14,7 +14,7 @@ var MapStore = {
   selectedNodes: [],
   focusRoomId: null,//'C.216',
   floors: [],
-  currentFloor: -1,
+  currentFloor: 7,
   dirty: true,
   init: function() {
     console.log('MapStore.init');

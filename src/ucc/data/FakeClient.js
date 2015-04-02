@@ -94,14 +94,14 @@ FakeClient.prototype.genC2 = function() {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 10000 / this.timeSpeed)
+  }, 20000 / this.timeSpeed)
 
   setTimeout(function() {
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 20000 / this.timeSpeed)
+  }, 30000 / this.timeSpeed)
 }
 
 FakeClient.prototype.genStudents = function() {
