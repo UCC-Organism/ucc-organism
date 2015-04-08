@@ -225,12 +225,12 @@ function rebuildMap(state) {
     }));
     var g = new Geometry({ vertices: roomEdges });
     var m = new Mesh(g, new SolidColorOrig({ pointSize: 2, color: Color.fromHSL(0.6, 0.5, 0.5, 0.5) }), { lines: true });
-    state.entities.push({ map: true, debug: true, room: roomId, mesh: m });
+    state.entities.push({ map: true, debug: true, room: roomId, mesh: m, lineWidth: 3, disableDepthTest: true });
   })
 
   //add new entities
   state.entities.push({ map: true, debug: true, mesh: stairsPointsMesh });
-  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh });
+  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh, lineWidth: 3, disableDepthTest: true });
 
   rebuildCells(state);
 }
