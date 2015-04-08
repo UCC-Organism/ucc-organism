@@ -1,6 +1,7 @@
 var R = require('ramda');
 var glu = require('pex-glu');
 var Vec3 = require('pex-geom').Vec3;
+var Vec2 = require('pex-geom').Vec2;
 var config = require('../../config');
 var Time = require('pex-sys').Time;
 
@@ -40,7 +41,7 @@ function meshRendererSys(state) {
     if (entity.mesh.material.program.uniforms.sway) {
       entity.mesh.material.uniforms.sway = state.sway;
     }
-    if (entity.mesh.material.program.uniforms["distortPoints[0]"])
+    if (entity.mesh.material.program.uniforms["weakDisplacePoints[0]"])
     {
       entity.mesh.material.uniforms.glowColor = new Vec3(config.glowColor.r, config.glowColor.g, config.glowColor.b); 
       var n = agents.length;
@@ -48,10 +49,12 @@ function meshRendererSys(state) {
 
       for (var i = 0; i < n; i++)
       {
-         entity.mesh.material.uniforms["distortPoints[" + i + "]"] = agents[i].position;
+        entity.mesh.material.uniforms["weakDisplacePoints[" + i + "]"] = agents[i].position;
+        entity.mesh.material.uniforms["weakDisplaceProps[" + i + "]"] = new Vec3(0.1, 0.02); // radius, strength
       }
 
-      entity.mesh.material.uniforms.numAgents = n;
+      entity.mesh.material.uniforms.maxWeakDisplacement = 0.006;
+      entity.mesh.material.uniforms.numWeakDisplacePoints = n;
     }
 
     glu.enableDepthReadAndWrite(true, true);

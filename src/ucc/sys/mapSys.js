@@ -364,6 +364,7 @@ function rebuildCells(state) {
 
   var bodyCenters = [];
 
+  // add extra blobs outside map
   if (state.map.currentFloor == -1) {
     random.seed(0);
     for(var i=0; i<30; i++) {

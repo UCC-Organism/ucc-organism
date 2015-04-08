@@ -118,15 +118,18 @@ attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
 
-uniform vec3 distortPoints[N_DISTORT_POINTS];
-uniform int numAgents;
+uniform vec3 weakDisplacePoints[N_DISTORT_POINTS];
+uniform vec2 weakDisplaceProps[N_DISTORT_POINTS];
+uniform int numWeakDisplacePoints;
+uniform float maxWeakDisplacement;
+
+uniform vec4 glowColors[N_DISTORT_POINTS];
+
 
 uniform float time;
 uniform float sway;
 
 varying vec4 vColor;
-
-
 
 void main() 
 {
@@ -134,18 +137,24 @@ void main()
 
   vec3 pos = position;
   vec3 c = vec3(-.56, -.45, 0.0);
-  vec3 offset = vec3(0.0, 0.0, 0.0);
+  vec3 displacement = vec3(0.0, 0.0, 0.0);
+
+
+  // ----------------------------
+  // Calculate weak dispalcement
+  // ----------------------------
 
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
-    if (i > numAgents)
+    if (i > numWeakDisplacePoints)
     {
       break;
     }
     
-     c = distortPoints[i];
+    c = weakDisplacePoints[i];
     float dist = distance(pos, c);
-    float maxDist = 0.1;
+    float distortionStrength = weakDisplaceProps[i].y;
+    float maxDist = weakDisplaceProps[i].x;
   
     if (dist < maxDist)
     {
@@ -153,16 +162,16 @@ void main()
       float rat = pow(1.0 - dist / maxDist, 4.0);
       vColor.rgb += glowColor *  rat * .05;
 
-      offset += dir * rat * maxDist * .02;
+      displacement += dir * rat * maxDist * distortionStrength;
     }
   }
 
-  if (length(offset) > .006)
+  if (maxWeakDisplacement > 0.0 && length(displacement) > maxWeakDisplacement)
   {
-    offset = normalize(offset) * .006;
+    displacement = normalize(displacement) * maxWeakDisplacement;
   }
 
-  pos += offset;
+  pos += displacement;
 
   pos.xy += sway * 0.05 * snoise(vec3(pos.x + time/5.0, pos.y, pos.x)*5.0);
 
