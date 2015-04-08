@@ -6,7 +6,7 @@ var Spline3D = require('pex-geom').Spline3D;
 var Vec3 = require('pex-geom').Vec3;
 var LineBuilder = require('pex-gen').LineBuilder;
 var Mesh = require('pex-glu').Mesh;
-var SolidColor = require('../../materials/SolidColor');
+var SolidColor = require('pex-materials').SolidColor;
 var ShowNormals = require('pex-materials').ShowNormals;
 var config            = require('../../config');
 
