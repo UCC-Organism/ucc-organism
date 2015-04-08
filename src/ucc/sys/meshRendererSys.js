@@ -55,9 +55,16 @@ function meshRendererSys(state) {
 
       entity.mesh.material.uniforms.maxWeakDisplacement = 0.006;
       entity.mesh.material.uniforms.numWeakDisplacePoints = n;
+    }
 
+    if (entity.mesh.material.program.uniforms["strongDisplacePoints[0]"])
+    {
       entity.mesh.material.uniforms["strongDisplacePoints[" + 0 + "]"] = new Vec3(-.3, -.3);
-      entity.mesh.material.uniforms["strongDisplaceProps[" + 0 + "]"] = new Vec3(0.8, ((1.0 + Math.sin(Time.seconds)) / 2.0) * .2); // radius, strength
+      entity.mesh.material.uniforms["strongDisplaceProps[" + 0 + "]"] = new Vec3(0.8, ((1.0 + Math.sin(Time.seconds)) / 2.0) * .06); // radius, strength
+      entity.mesh.material.uniforms["strongDisplacePoints[" + 1 + "]"] = new Vec3(-.8, -.7);
+      entity.mesh.material.uniforms["strongDisplaceProps[" + 1 + "]"] = new Vec3(1.0, ((2.0 + Math.sin(Time.seconds * 2.0)) / 2.0) * .05); // radius, strength
+      entity.mesh.material.uniforms["strongDisplacePoints[" + 1 + "]"] = new Vec3(-.54, -.58);
+      entity.mesh.material.uniforms["strongDisplaceProps[" + 1 + "]"] = new Vec3(2.1, ((2.0 + Math.sin(Time.seconds * 2.0)) / 2.0) * .005); // radius, strength
       entity.mesh.material.uniforms.numStrongDisplacePoints = 2;
     }
 

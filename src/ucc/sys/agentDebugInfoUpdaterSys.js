@@ -9,7 +9,7 @@ var R             = require('ramda');
 var Vec3          = geom.Vec3;
 var Mesh          = glu.Mesh;
 var LineBuilder   = gen.LineBuilder;
-var ShowColors    = materials.ShowColors;
+var ShowColors    = require('../../materials/ShowColors');
 var Color         = color.Color;
 
 function agentDebugInfoUpdaterSys(state) {

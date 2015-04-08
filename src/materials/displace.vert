@@ -1,7 +1,5 @@
 #ifdef VERT
 
-#define N_DISTORT_POINTS 100
-
 //START OF GLSL NOISE
 
 //
@@ -118,6 +116,8 @@ attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
 
+#define N_DISTORT_POINTS 100
+
 uniform vec3 weakDisplacePoints[N_DISTORT_POINTS];
 uniform vec2 weakDisplaceProps[N_DISTORT_POINTS];
 uniform int numWeakDisplacePoints;
@@ -140,7 +140,7 @@ void main()
   vColor = color;
 
   vec3 pos = position;
-  vec3 c = vec3(-.56, -.45, 0.0);
+  vec3 c;
   vec3 displacement = vec3(0.0, 0.0, 0.0);
 
   // ----------------------------
