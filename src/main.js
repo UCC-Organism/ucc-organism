@@ -149,7 +149,7 @@ sys.Window.create({
       state.map.setFocusRoom(roomId);
     })
 
-    this.gui.addHeader('Data').setPosition(GUI_OFFSET, GUI_OFFSET);
+    this.gui.addHeader('Data');
     this.gui.addRadioList('Source', state, 'liveData', [
       { name: 'Generated', value: 0 },
       { name: 'Live', value: 1 }
