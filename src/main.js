@@ -78,29 +78,8 @@ var state = {
   clearBg: true,
   sway: 0,
 
-  roomPotential: 0,
-
-  numRandomStudents: 0,
-
   //ui
-  showSchedule: false,
-
-  //graph: null,
-  //nodes: [],
-  //selectedNodes: [],
-  //floors: [],
-  //currentFloor: 6,
-  //
-  //pointSpriteMeshEntity: null,
-  //agentDebugInfoMeshEntity: null,
-  //agentSpeed: 0.02,
-  //maxNumAgents: 100,
-  //debug: false,
-  //
-
   guiCurrentFloor: 7,
-
-  selectedRooms: {}
 };
 
 var GUI_OFFSET = Platform.isPlask ? 0 : 9999;
