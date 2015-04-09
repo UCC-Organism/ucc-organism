@@ -2,9 +2,11 @@ var Texture2D = require('pex-glu').Texture2D;
 var SpriteTextBox = require('./SpriteTextBox');
 var Vec3 = require('pex-geom').Vec3;
 var OrthographicCamera = require('pex-glu').OrthographicCamera;
+var sys = require('pex-sys');
 
-var FontPath = __dirname + '/../../assets/fonts';
-var Font = require(FontPath + '/LatoRegular-sdf.json');
+var Platform = sys.Platform;
+var FontPath =  Platform.isBrowser ? 'assets/fonts' : __dirname + '/../../assets/fonts';
+var Font = require('../../assets/fonts/LatoRegular-sdf.json');
 var Mesh = require('pex-glu').Mesh;
 var Cube = require('pex-gen').Cube;
 var SolidColor = require('pex-materials').SolidColor;
