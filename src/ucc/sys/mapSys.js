@@ -460,6 +460,7 @@ function rebuildCells(state) {
     }, 0)
 
     state.map.strongDisplacePoints.push({
+      roomId: roomId,
       timeOffset: random.float(0, 1),
       position: p3,
       radius: displaceRadius * 3,

@@ -17,7 +17,7 @@ function DebugText(windowWidth, windowHeight) {
   var fontTex = this.fontTex = Texture2D.load(FontPath + '/' + Font.pages[0], { mipmaps: true, flip: true }, function(fontTex) {});
 
   this.text = new SpriteTextBox('hello world', {
-    fontSize: 50,
+    fontSize: 20,
     lineHeight: 1.2,
     font: Font,
     textures: [ fontTex ],
@@ -25,15 +25,30 @@ function DebugText(windowWidth, windowHeight) {
   })
 
   this.camera2d = new OrthographicCamera(0, 0, this.windowWidth, this.windowHeight);
+
+  this.texts = [];
+}
+
+DebugText.prototype.drawText = function(str, position) {
+  this.texts.push({
+    str: str,
+    position: position
+  })
 }
 
 DebugText.prototype.draw = function(camera) {
-  var position2d = camera.getScreenPos(this.text.opts.position3d, this.windowWidth, this.windowHeight);
-  this.text.mesh.position.x = position2d.x + 5;
-  this.text.mesh.position.y = position2d.y - 5;
   glu.enableAlphaBlending(true);
   this.fontTex.bind(); //TODO: bind font texture!!!!
-  this.text.mesh.draw(this.camera2d);
+
+  this.texts.forEach(function(text) {
+    this.text.rebuild(text.str);
+    var position2d = camera.getScreenPos(text.position, this.windowWidth, this.windowHeight);
+    this.text.mesh.position.x = position2d.x;
+    this.text.mesh.position.y = position2d.y;
+    this.text.mesh.draw(this.camera2d);
+  }.bind(this));
+
+  this.texts = [];
 }
 
 

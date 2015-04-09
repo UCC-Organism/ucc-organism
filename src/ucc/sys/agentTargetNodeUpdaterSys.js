@@ -30,6 +30,7 @@ function agentTargetNodeUpdaterSys(state) {
           agent.state.mode = AgentModes.None;
           targetNode = random.element(exitNodes);
         }
+        agent.state.location = agent.state.targetLocation;
         agent.state.targetLocation = null;
       }
       else if (agent.state.mode == AgentModes.Roaming) {
@@ -54,6 +55,10 @@ function agentTargetNodeUpdaterSys(state) {
         if (!targetNode) {
           agent.state.mode = AgentModes.None;
           targetNode = random.element(exitNodes);
+          agent.state.location = null;
+        }
+        else {
+          agent.state.location = agent.state.targetLocation;
         }
         agent.state.targetLocation = null;
       }

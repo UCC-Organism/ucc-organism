@@ -19,6 +19,7 @@ function agentFlockingSys(state) {
   var minDistSqr = minDist * minDist;
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
+
     for(var j=i+1; j<agents.length; j++) {
       anotherAgent = agents[j];
       var distSqr = agent.position.squareDistance(anotherAgent.position);
@@ -30,8 +31,8 @@ function agentFlockingSys(state) {
             //tmpDir.normalize().cross(up).scale(0.00001);
             //agent.force.add(tmpDir);
             //anotherAgent.force.add(tmpDir.scale(-2));
-            console.log('repulsion')
-            agent.force.add(tmpDir.scale(0.1));
+            //console.log('repulsion')
+            //agent.force.add(tmpDir.scale(0.1));
           }
           else {
             //normal repulsion

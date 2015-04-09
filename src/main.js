@@ -19,7 +19,8 @@ var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var agentKillSys                  = require('./ucc/sys/agentKillSys');
 var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
-var displacePointUpdaterSys      = require('./ucc/sys/displacePointUpdaterSys');
+var displacePointUpdaterSys       = require('./ucc/sys/displacePointUpdaterSys');
+var roomInfoUpdaterSys            = require('./ucc/sys/roomInfoUpdaterSys');
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
@@ -40,6 +41,8 @@ var Arcball           = glu.Arcball;
 var Color             = color.Color;
 var GUI               = gui.GUI;
 var DebugText         = require('./typo/DebugText');
+
+var Vec3              = require('pex-geom').Vec3;
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -77,6 +80,7 @@ var state = {
   showNodes: false,
   showAgents: true,
   showEnergy: true,
+  showLabels: true,
   clearBg: true,
   sway: 0,
 
@@ -243,6 +247,7 @@ sys.Window.create({
         case 'p': state.showCorridors = !state.showCorridors; state.showNodes = !state.showNodes; break;
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
+        case 'l': state.showLabels = !state.showLabels; break;
         case 'b': state.clearBg = !state.clearBg; break;
         case 'q': config.bgColor = Color.fromHex('#FF0000'); config.cellColor = Color.fromHex('#FF0000'); this.onColorChange(); break;
         //case ' ': this.killAllAgents(); break;
@@ -374,6 +379,7 @@ sys.Window.create({
       agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentKillSys(state);
+      roomInfoUpdaterSys(state);
       agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);
 
@@ -397,7 +403,12 @@ sys.Window.create({
       state.map.dirty = false;
     }
 
-    state.debugText.draw(state.camera);
+    if (state.showLabels) {
+      state.debugText.draw(state.camera);
+    }
+    else {
+      state.debugText.texts = []; //clear!
+    }
     this.gui.draw();
   }
 });

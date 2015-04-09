@@ -110,10 +110,10 @@ SpriteTextBox.prototype.rebuild = function(text) {
   var lines = [];
 
   if (this.opts.wrap) {
-    lines = wordwrap(this.text, { width: this.opts.wrap / this.opts.scale, measure: measure.bind(this) }).split('\n');
+    lines = wordwrap(text, { width: this.opts.wrap / this.opts.scale, measure: measure.bind(this) }).split('\n');
   }
   else {
-    lines = [ this.text ]
+    lines = [ text ]
   }
 
   lines.forEach(function(line) {
@@ -184,7 +184,7 @@ SpriteTextBox.prototype.rebuild = function(text) {
   texCoords.dirty = true;
   faces.dirty = true;
 
-  this.geometry.computeEdges();
+  //this.geometry.computeEdges();
 }
 
 SpriteTextBox.prototype.dispose = function() {
