@@ -142,11 +142,11 @@ Window.create({
     var groupIndex = 0;
     cellTypes.forEach(function(CellType, cellTypeIndex) {
       var programmeName = programmeLabels[cellTypeIndex];
-      var programmeColor = config.programmeColors[programmeName];
+      //var programmeColor = config.programmeColors[programmeName];
       var color = config.cellStyle.cellBorder;
-      if (programmeColor) {
-        color = [ Math.floor(255*programmeColor.primary.r), Math.floor(255*programmeColor.primary.g), Math.floor(255*programmeColor.primary.b), Math.floor(255*programmeColor.primary.a)];
-      }
+      //if (programmeColor) {
+        //color = [ Math.floor(255*programmeColor.primary.r), Math.floor(255*programmeColor.primary.g), Math.floor(255*programmeColor.primary.b), Math.floor(255*programmeColor.primary.a)];
+      //}
       students = R.range(0, 10).map(function() {
         return {
           age: 25,

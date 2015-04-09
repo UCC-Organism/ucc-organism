@@ -79,6 +79,10 @@ function spawnAgents(state) {
           //position = R.find(R.where({ roomId: room.id }), state.map.selectedNodes).position;
           agent.entity = makeAgentEntity({ position: position, id: agent.id, state: agent })
           agent.entity.typeIndex = Config.agentTypeGroups.indexOf(agent.programme);
+          var c1 = Config.agentTypeColors[agent.entity.typeIndex][0];
+          var c2 = Config.agentTypeColors[agent.entity.typeIndex][1];
+          agent.entity.color = new Color(random.float(c1.r, c2.r), random.float(c1.g, c2.g), random.float(c1.b, c2.b));
+          console.log(agent.entity.color);
           if (agent.entity.typeIndex !== -1) {
             state.entities.push(agent.entity);
           }

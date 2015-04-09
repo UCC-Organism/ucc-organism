@@ -50,14 +50,9 @@ function meshRendererSys(state) {
 
       for (var i = 0; i < n; i++) {
         entity.mesh.material.uniforms["weakDisplacePoints[" + i + "]"] = agents[i].position;
-        entity.mesh.material.uniforms["weakDisplaceProps[" + i + "]"] = new Vec3(0.1, 0.02); // radius, strength
-        var programmeColor = config.programmeColors[agents[i].state.programme];
-        if (programmeColor) {
-          entity.mesh.material.uniforms["glowColors[" + i + "]"] = programmeColor.primary; // do we have colors pr agent here?
-        }
-        else {
-          entity.mesh.material.uniforms["glowColors[" + i + "]"] = new Vec3(0.0, 1.0, 1.0); // do we have colors pr agent here?
-        }
+        var s = agents[i].life;
+        entity.mesh.material.uniforms["weakDisplaceProps[" + i + "]"] = new Vec3(0.1 * s, 0.02 * s); // radius, strength
+        entity.mesh.material.uniforms["glowColors[" + i + "]"] = agents[i].color;
       }
 
       entity.mesh.material.uniforms.maxWeakDisplacement = 0.006;

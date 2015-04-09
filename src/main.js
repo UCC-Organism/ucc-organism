@@ -186,11 +186,14 @@ sys.Window.create({
     this.gui.addParam('Economic Energy',  config.energyTypes.economic, 'color');
     this.gui.addParam('Dirt Energy',      config.energyTypes.dirt, 'color');
     this.gui.addHeader('Programme colors')
+
+    /*
     Object.keys(config.programmeColors).forEach(function(programme, programmeIndex) {
       if (programme != 'default') {
         var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this));
+*/
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
