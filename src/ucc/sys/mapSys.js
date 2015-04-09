@@ -28,6 +28,7 @@ var ShowColors        = require('../../materials/Map');
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 var Time              = sys.Time;
+var AddCircleExt      = require('../../geom/LineBuilderAddCircle');
 
 var EPSILON = 0.0001;
 
@@ -334,6 +335,8 @@ function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   MapSys.cells.length = 0;
 
+  state.map.strongDisplacePoints.length = 0;
+
   //all points
   //var points = selectedNodes.map(R.prop('position'));
 
@@ -348,6 +351,8 @@ function rebuildCells(state) {
     return GeomUtils.centroid(R.pluck('position', cellGroups[roomId]));
   })
   points = roomCenterPoints.concat(points);
+
+  console.log('cellGroups', cellsRoomIds.length);
 
   var cellsRoomExternalType = [];
 
@@ -446,6 +451,19 @@ function rebuildCells(state) {
     voronoiCells.points.push(p3);
     voronoiCells.cells[cellIndex].forEach(function(cellPointIndex) {
       voronoiCells.edges.push([cellPointIndex, newPointIndex]);
+    })
+
+    //add displacement point for that room
+
+    var displaceRadius = voronoiCells.cells[cellIndex].reduce(function(r, cellPointIndex) {
+      return Math.max(r, p.distance(voronoiCells.points[cellPointIndex]));
+    }, 0)
+
+    state.map.strongDisplacePoints.push({
+      timeOffset: random.float(0, 1),
+      position: p3,
+      radius: displaceRadius * 3,
+      strength: displaceRadius
     })
   })
 
@@ -619,6 +637,13 @@ function rebuildCells(state) {
     }
   })
 
+  var displacePointsCircles = new LineBuilder();
+  state.map.strongDisplacePoints.forEach(function(displacePoint) {
+    displacePointsCircles.addCircle(displacePoint.position, displacePoint.radius, 16, 'x', 'z');
+  });
+  var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
+  state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });
+
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
@@ -629,7 +654,7 @@ function rebuildCells(state) {
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: config.corridorColor }), { lines: true });
-  state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh });
+  state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh, lineWidth: 2 });
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColorOrig({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });

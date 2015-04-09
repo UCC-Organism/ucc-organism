@@ -13,6 +13,7 @@ var MapStore = {
   roomsById: {},
   selectedNodes: [],
   focusRoomId: null,//'C.216',
+  strongDisplacePoints: [],
   floors: [],
   currentFloor: 7,
   dirty: true,
