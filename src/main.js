@@ -19,7 +19,7 @@ var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var agentKillSys                  = require('./ucc/sys/agentKillSys');
 var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSys');
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
-var displacePointAnimatorSys      = require('./ucc/sys/displacePointAnimatorSys');
+var displacePointUpdaterSys      = require('./ucc/sys/displacePointUpdaterSys');
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
@@ -382,7 +382,7 @@ sys.Window.create({
       agentPointSpriteUpdaterSys(state);
       energyPointSpriteUpdaterSys(state);
 
-      displacePointAnimatorSys(state);
+      displacePointUpdaterSys(state);
 
       glu.enableDepthReadAndWrite(false);
       glu.enableAlphaBlending(true);
