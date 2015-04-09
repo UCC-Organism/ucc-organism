@@ -39,6 +39,7 @@ var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball           = glu.Arcball;
 var Color             = color.Color;
 var GUI               = gui.GUI;
+var DebugText         = require('./typo/DebugText');
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -81,6 +82,9 @@ var state = {
 
   //ui
   guiCurrentFloor: 7,
+
+  //debug
+  debugText: null
 };
 
 var GUI_OFFSET = Platform.isPlask ? 0 : 9999;
@@ -187,6 +191,8 @@ sys.Window.create({
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
     this.gui.load(config.settingsFile, this.initAll.bind(this));
+
+    state.debugText = new DebugText(this.width, this.height);
   },
   initDataClient: function() {
     this.client = state.client = new Client(config.serverUrl);
@@ -391,9 +397,7 @@ sys.Window.create({
       state.map.dirty = false;
     }
 
-    //glu.enableAlphaBlending();
-    //state.ui.draw();
-
+    state.debugText.draw(state.camera);
     this.gui.draw();
   }
 });

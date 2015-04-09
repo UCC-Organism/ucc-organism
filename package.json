@@ -14,7 +14,7 @@
     "pex-fx": "^0.0.5",
     "pex-gen": "^0.1.0",
     "pex-geom": "^0.12.0",
-    "pex-glu": "^0.3.0",
+    "pex-glu": "^0.3.1",
     "pex-gui": "^0.5.1",
     "pex-helpers": "^0.0.2",
     "pex-materials": "^0.1.1",
@@ -25,7 +25,8 @@
     "signals": "^1.0.0",
     "superagent": "^1.1.0",
     "vinyl-source-stream": "0.1.1",
-    "watchify": "1.0.1"
+    "watchify": "1.0.1",
+    "word-wrapper": "^1.0.7"
   },
   "scripts": {
     "watch": "./lib/watchscript.js"
