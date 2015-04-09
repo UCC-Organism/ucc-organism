@@ -23,7 +23,9 @@ function makeAgentEntity(props) {
     agentId: props.id,
     agentIdNumber: parseInt(props.id.replace(/[a-zA-Z]/g,'')),
     state: props.state,
-    speed: random.float(0.3, 1)
+    speed: random.float(0.3, 1),
+    scale: 1,
+    life: 0
   };
   return studentAgent;
 }

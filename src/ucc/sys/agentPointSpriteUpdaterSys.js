@@ -24,6 +24,7 @@ function agentPointSpriteUpdaterSys(state) {
     pointSpriteGeometry.addAttrib("lineColors", "lineColor", []);
     pointSpriteGeometry.addAttrib("accentColors", "accentColor", []);
     pointSpriteGeometry.addAttrib("fillColors", "fillColor", []);
+    pointSpriteGeometry.addAttrib("scales", "scale", []);
     var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/10, 1/15), texOffset: new Vec2(1/10, 1/15) });
     state.pointSpriteMeshEntity = {
       agentMesh: true,
@@ -44,6 +45,7 @@ function agentPointSpriteUpdaterSys(state) {
   var lineColors = state.pointSpriteMeshEntity.mesh.geometry.lineColors;
   var fillColors = state.pointSpriteMeshEntity.mesh.geometry.fillColors;
   var accentColors = state.pointSpriteMeshEntity.mesh.geometry.accentColors;
+  var scales = state.pointSpriteMeshEntity.mesh.geometry.scales;
   vertices.length = entitiesWithPointSprite.length;
   colors.length = entitiesWithPointSprite.length;
   normals.length = entitiesWithPointSprite.length;
@@ -51,6 +53,7 @@ function agentPointSpriteUpdaterSys(state) {
   lineColors.length = entitiesWithPointSprite.length;
   fillColors.length = entitiesWithPointSprite.length;
   accentColors.length = entitiesWithPointSprite.length;
+  scales.length = entitiesWithPointSprite.length;
 
   var dir = new Vec3();
   entitiesWithPointSprite.forEach(function(entity, entityIndex) {
@@ -93,6 +96,8 @@ function agentPointSpriteUpdaterSys(state) {
       fillColors[entityIndex] = c;
     }
 
+    scales[entityIndex] = entity.scale * entity.life;
+
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
     var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;
     normals[entityIndex].x = (normals[entityIndex].x * 5 + agentRotation) / 6;
@@ -102,6 +107,10 @@ function agentPointSpriteUpdaterSys(state) {
   colors.dirty = true;
   normals.dirty = true;
   texCoords.dirty = true;
+  lineColors.dirty = true;
+  fillColors.dirty = true;
+  accentColors.dirty = true;
+  scales.dirty = true;
 }
 
 module.exports = agentPointSpriteUpdaterSys;

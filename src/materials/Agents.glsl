@@ -11,6 +11,7 @@ attribute vec2 texCoord;
 attribute vec4 lineColor;
 attribute vec4 fillColor;
 attribute vec4 accentColor;
+attribute float scale;
 
 varying vec3 vNormal;
 varying vec4 vColor;
@@ -57,7 +58,7 @@ void main() {
   pos += displacement;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-  gl_PointSize = pointSize;
+  gl_PointSize = pointSize * scale;
   vNormal = normal;
   vColor = color;
   vTexCoord = texCoord;

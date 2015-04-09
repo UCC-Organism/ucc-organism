@@ -14,7 +14,9 @@ function agentPositionUpdaterSys(state) {
     followerEntity.velocity.scale(0.9);
     followerEntity.force.limit(state.agentSpeed * Time.delta / 10);
     followerEntity.velocity.add(followerEntity.force);
-    followerEntity.position.add(followerEntity.velocity);
+    if (followerEntity.life >= 1) {
+      followerEntity.position.add(followerEntity.velocity);
+    }
     followerEntity.force.scale(0);
   })
 }
