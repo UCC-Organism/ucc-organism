@@ -66,27 +66,7 @@ function agentPointSpriteUpdaterSys(state) {
 
     lineColors[entityIndex] = Config.agentLineColor;
     fillColors[entityIndex] = Config.agentFillColor;
-
-    if (entity.typeIndex <= 7) // Student
-    {
-      accentColors[entityIndex] = Config.agentStudentColor;
-    }
-    else if (entity.typeIndex == 8)
-    {
-      accentColors[entityIndex] = Config.agentTeacherColor;
-    }
-    else if (entity.typeIndex == 9)
-    {
-      accentColors[entityIndex] = Config.agentResearcherColor;
-    }
-    else if (entity.typeIndex == 10)
-    {
-      accentColors[entityIndex] = Config.agentJanitorColor;
-    }
-    else if (entity.typeIndex == 11)
-    {
-      accentColors[entityIndex] = Config.agentCookColor;
-    }
+    accentColors[entityIndex] = entity.color;
 
     if (Config.agentFillColorBasedOnAccentColor)
     {

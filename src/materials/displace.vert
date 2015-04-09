@@ -160,7 +160,7 @@ void main()
     {
       vec3 dir = normalize(pos - c);
       float rat = pow(1.0 - dist / maxDist, 4.0);
-      vColor.rgb += glowColors[i].rgb *  rat * .05;
+      vColor.rgb = mix(vColor.rgb, glowColors[i].rgb, rat * distortionStrength * 30);
 
       displacement += dir * rat * maxDist * distortionStrength;
     }

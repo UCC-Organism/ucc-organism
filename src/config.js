@@ -23,17 +23,21 @@ var RoomIdMap = {
   'Kantine': 'KantineS'  //TODO: Fix 'KantineS'
 };
 
-var ProgrammeColors = {
-  'default'                               : { primary: Color.fromHSL(0.0, 0, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'SPL - Sygeplejerskeuddannelsen'        : { primary: Color.fromHSL(0.0, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'PMU - Psykomotorikuddannelsen'         : { primary: Color.fromHSL(0.1, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'FYS - Fysioterapeutuddannelsen'        : { primary: Color.fromHSL(0.4, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'PÆD - Pædagoguddannelsen'              : { primary: Color.fromHSL(0.6, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'SOC - Socialrådgiveruddannelsen'       : { primary: Color.fromHSL(0.2, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'DIV - Diverse aktiviteter'             : { primary: Color.fromHSL(0.9, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'Diplom S - Diplomuddannelse - Sundhed' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) },
-  'Diplom L - Diplomuddannelse - Ledelse' : { primary: Color.fromHSL(0.75, 0.7, 0.5), secondary: Color.fromHSL(0, 1, 1) }
-};
+var AgentTypeColors = [
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")]
+];
 
 var AgentTypeGroups = [
   'SPL - Sygeplejerskeuddannelsen',           //0
@@ -103,9 +107,9 @@ var Config = {
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
-  programmeColors: ProgrammeColors,
   energyTypes: EnergyTypes,
 
+  agentTypeColors: AgentTypeColors,
   agentTypeGroups: AgentTypeGroups,
 
   scheduleStartDate: "2014-11-24",
