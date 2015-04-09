@@ -8,6 +8,7 @@ function agentKillSys(state) {
     if (agent.state.mode == AgentModes.Dead) {
       if (agent.life > 0.01) {
         agent.life -= Time.delta * agent.speed;
+        if (agent.life < 0.0) agent.life = 0.0;
       }
       else {
         agent.state.entity = null;
