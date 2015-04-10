@@ -57,6 +57,7 @@ var state = {
   initFloor: 7,
   camera: null,
   cameraPosZ: 0.30,
+  cameraRotation: 0,
   arcball: null,
   zoom: 1,
 

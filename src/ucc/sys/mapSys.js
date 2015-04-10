@@ -684,10 +684,22 @@ function rebuildCells(state) {
 
 //-----------------------------------------------------------------------------
 
+function updateCamera(state) {
+  if (state.map.dirty) {
+    state.cameraRotation = Math.PI/2;
+  }
+  state.cameraRotation += Time.delta/config.cameraRotationDuration;
+  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation), 0));
+}
+
+//-----------------------------------------------------------------------------
+
 function update(state) {
   if (!state.map.nodes.length) {
     return;
   }
+
+  updateCamera(state);
 
   if (!MapSys.ready || state.map.dirty) {
     MapSys.ready = true;
