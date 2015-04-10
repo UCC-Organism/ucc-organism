@@ -106,7 +106,6 @@ function centerCamera(state, floorBBox) {
     var roomNode = state.map.getSelectedNodeByRoomId(state.map.focusRoomId)
     if (roomNode) {
       target = roomNode.position;
-      console.log(roomNode)
       state.arcball.setTarget(target);
       var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
       state.arcball.setPosition(position);
@@ -184,6 +183,19 @@ function rebuildMap(state) {
       return sameFloorSoFar && (neighborNode.floor == node.floor);
     }, true)
   });
+
+  state.map.strongDisplacePoints.length = 0;
+  var displaceNodes = selectedNodes.filter(R.where({ displacePoint: true }));
+  displaceNodes.forEach(function(node) {
+    state.map.strongDisplacePoints.push({
+      roomId: '',
+      timeOffset: random.float(0, 1),
+      position: node.position,
+      radius: node.displaceRadius * 4,
+      strength: node.displaceStrength / 4,
+      maxStrength: node.displaceStrength / 4
+    })
+  })
 
   var pointVertices = selectedNodes.map(R.prop('position'));
   var roomVertices = selectedNodes.filter(R.where({ room: R.identity }));
@@ -335,8 +347,6 @@ function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   MapSys.cells.length = 0;
 
-  state.map.strongDisplacePoints.length = 0;
-
   //all points
   //var points = selectedNodes.map(R.prop('position'));
 
@@ -459,13 +469,14 @@ function rebuildCells(state) {
       return Math.max(r, p.distance(voronoiCells.points[cellPointIndex]));
     }, 0)
 
-    state.map.strongDisplacePoints.push({
-      roomId: roomId,
-      timeOffset: random.float(0, 1),
-      position: p3,
-      radius: displaceRadius * 3,
-      strength: displaceRadius
-    })
+    //state.map.strongDisplacePoints.push({
+    //  roomId: roomId,
+    //  timeOffset: random.float(0, 1),
+    //  position: p3,
+    //  radius: displaceRadius * 3,
+    //  strength: displaceRadius,
+    //  maxStrength: displaceRadius
+    //})
   })
 
   //add center points
@@ -640,7 +651,7 @@ function rebuildCells(state) {
 
   var displacePointsCircles = new LineBuilder();
   state.map.strongDisplacePoints.forEach(function(displacePoint) {
-    displacePointsCircles.addCircle(displacePoint.position, displacePoint.radius, 16, 'x', 'z');
+    displacePointsCircles.addCircle(displacePoint.position, displacePoint.radius, 16, 'x', 'y');
   });
   var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
   state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });

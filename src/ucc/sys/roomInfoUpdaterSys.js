@@ -19,7 +19,9 @@ function roomInfoUpdaterSys(state) {
 
   state.map.strongDisplacePoints.forEach(function(point) {
     var room = state.map.getRoomById(point.roomId);
-    state.debugText.drawText(point.roomId + ' / ' + room.agentCount, point.position);
+    if (room) {
+      state.debugText.drawText(point.roomId + ' / ' + room.agentCount, point.position);
+    }
   });
 }
 
