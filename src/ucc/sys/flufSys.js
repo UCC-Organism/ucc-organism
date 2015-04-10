@@ -19,16 +19,16 @@ var Time                = sys.Time;
 
 function flufSys(state) {
   if (!state.flufMeshEntity) {
-    var image = Platform.isPlask ? __dirname + '/../../../assets/dirt_sprites.png' : 'assets/dirt_sprites.png';
+    var image = Platform.isPlask ? __dirname + '/../../../assets/dirt_sprites_2.png' : 'assets/dirt_sprites_2.png';
     var flufGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
     flufGeometry.addAttrib("lineColors", "lineColor", []);
     flufGeometry.addAttrib("accentColors", "accentColor", []);
     flufGeometry.addAttrib("fillColors", "fillColor", []);
     flufGeometry.addAttrib("scales", "scale", []);
-    var flufMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/7, 1/7), texOffset: new Vec2(1/7, 1/7) });
+    var flufMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/2, 1/2), texOffset: new Vec2(1/2, 1/2) });
     state.flufMeshEntity = {
       agentMesh: true,
-      disableDepthTest: false,
+      disableDepthTest: true,
       enableAlphaBlending: true,
       mesh: new Mesh(flufGeometry, flufMaterial, { points: true } )
     }
@@ -38,13 +38,11 @@ function flufSys(state) {
       var entity = {
         rotation: random.float(0, 1),
         color: Color.White,
-        position: new Vec3(random.float(-1.0, 0.0), random.float(-1.0, 0.0), -0.10)
+        position: new Vec3(random.float(-1.0, 0.0), random.float(-1.0, 0.0), random.float(-0.1, 0.5))
       };
       entity.prevPosition = entity.position.dup();
       return entity;
     })
-
-    //state.dirts = [];
   }
 
   var dirts = state.dirts;
@@ -76,7 +74,7 @@ function flufSys(state) {
     if (colors[entityIndex]) colors[entityIndex].copy(entity.color || Color.White);
     else colors[entityIndex] = entity.color ? entity.color.clone() : Color.White;
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
-    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 7), random.int(0, 7));
+    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 2), random.int(0, 2));
 
     lineColors[entityIndex] = Config.agentLineColor;
     fillColors[entityIndex] = Config.agentFillColor;
@@ -90,7 +88,7 @@ function flufSys(state) {
       fillColors[entityIndex] = c;
     }
 
-    if (!scales[entityIndex]) scales[entityIndex] = random.float(0.1, 1.0);
+    if (!scales[entityIndex]) scales[entityIndex] = random.float(0.1, 2.0);
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
     var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds / 100;
