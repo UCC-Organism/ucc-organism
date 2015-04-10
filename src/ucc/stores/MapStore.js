@@ -113,6 +113,7 @@ var MapStore = {
     this.setFloor(this.floors[nextFloorIndex]);
   },
   getRoomById: function(id) {
+    if (!id) return null;
     var room = this.roomsById[id];
     if (!room) {
       room = this.roomsById[Config.roomIdMap[id]];
