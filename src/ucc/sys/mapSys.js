@@ -16,11 +16,13 @@ var Rect              = require('../../geom/Rect');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
 var config            = require('../../config');
+var hull              = require('hull.js');
 
 var Geometry          = geom.Geometry;
 var BoundingBox       = geom.BoundingBox;
 var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
+var Spline3D          = geom.Spline3D;
 var Mesh              = glu.Mesh;
 var SolidColor        = require('../../materials/SolidColor');
 var SolidColorOrig    = materials.SolidColor;
@@ -656,14 +658,27 @@ function rebuildCells(state) {
   var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
   state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });
 
+  var membranePoints = R.pluck('position', state.map.selectedNodes.filter(function(node) {
+    return node.neighbors.length >= 2 && node.neighbors.length <= 3;
+  }));
+  var membraneCenter = GeomUtils.centroid(membranePoints);
+  membranePoints = hull(membranePoints, 10, ['.x', '.y']).map(vec2to3);
+  membranePoints.forEach(function(p) {
+    p.sub(membraneCenter).scale(1.1).add(membraneCenter);
+  })
+
+  var membraneGeometry = new LineBuilder();
+  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.membraneColor, membranePoints.length*2)
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
+  var membraneMesh = new Mesh(membraneGeometry, new ShowColors(), { lines: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
+  state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: config.corridorColor }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh, lineWidth: 2 });
