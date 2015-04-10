@@ -21,6 +21,7 @@ var agentPointSpriteUpdaterSys    = require('./ucc/sys/agentPointSpriteUpdaterSy
 var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys');
 var displacePointUpdaterSys       = require('./ucc/sys/displacePointUpdaterSys');
 var roomInfoUpdaterSys            = require('./ucc/sys/roomInfoUpdaterSys');
+var flufSys                       = require('./ucc/sys/flufSys');
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
@@ -398,10 +399,10 @@ sys.Window.create({
       agentPointSpriteUpdaterSys(state);
       energyPointSpriteUpdaterSys(state);
 
+      flufSys(state);
+
       displacePointUpdaterSys(state);
 
-      glu.enableDepthReadAndWrite(false);
-      glu.enableAlphaBlending(true);
       meshRendererSys(state);
 
       state.map.dirty = false;
