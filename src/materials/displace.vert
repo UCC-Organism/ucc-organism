@@ -143,6 +143,8 @@ void main()
   vec3 c;
   vec3 displacement = vec3(0.0, 0.0, 0.0);
 
+  float isRoom = normal.x;
+
   // ----------------------------
   // Calculate weak displacement
   // ----------------------------
@@ -160,7 +162,7 @@ void main()
     {
       vec3 dir = normalize(pos - c);
       float rat = pow(1.0 - dist / maxDist, 4.0);
-      vColor.rgb = mix(vColor.rgb, glowColors[i].rgb, rat * distortionStrength * 30.0);
+      vColor.rgb = mix(vColor.rgb, glowColors[i].rgb, rat * distortionStrength * 30.0 * isRoom);
 
       displacement += dir * rat * maxDist * distortionStrength;
     }

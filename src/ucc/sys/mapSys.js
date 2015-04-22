@@ -530,13 +530,15 @@ function rebuildCells(state) {
 
   //cell blobs
 
-  var cellGeometry = new Geometry({ vertices: true, colors: true, faces: false });
+  var cellGeometry = new Geometry({ vertices: true, colors: true, normals: true, faces: false });
   var cellVertices = cellGeometry.vertices;
   var cellColors = cellGeometry.colors;
+  var cellNormals = cellGeometry.normals;
 
-  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, edges: false });
+  var cellEdgeGeometry = new Geometry({ vertices: true, colors: true, normals: true, edges: false });
   var cellEdgeVertices = cellEdgeGeometry.vertices;
   var cellEdgeColors = cellEdgeGeometry.colors;
+  var cellEdgeNormals = cellEdgeGeometry.normals;
 
   var debugNodesVertices = voronoiCells.points;
   var debugNodesColors = debugNodesVertices.map(function(p) {
@@ -632,12 +634,18 @@ function rebuildCells(state) {
       cellVertices.push(np2);
       cellVertices.push(center.dup());
 
+      cellNormals.push(new Vec3(isRoom ? 1 : 0, 0, 0));
+      cellNormals.push(new Vec3(isRoom ? 1 : 0, 0, 0));
+      cellNormals.push(new Vec3(isRoom ? 1 : 0, 0, 0));
+
       var e2 = p2.dup().add(new Vec3(0, 0, 0.0001));
       var ne2 = np2.dup().add(new Vec3(0, 0, 0.0001));
       cellEdgeVertices.push(e2);
       cellEdgeVertices.push(ne2);
       cellEdgeColors.push(cellEdgeColor);
       cellEdgeColors.push(cellEdgeColor);
+      cellEdgeNormals.push(new Vec3(isRoom ? 1 : 0, 0, 0));
+      cellEdgeNormals.push(new Vec3(isRoom ? 1 : 0, 0, 0));
 
       cell.vertices.push(p2);
       cell.vertices.push(np2);
