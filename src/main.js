@@ -131,7 +131,7 @@ sys.Window.create({
       state.map.setFloor(floor);
       this.killAllAgents();
 
-      this.fakeClient.genMorning();
+      this.fakeClient.genMorning(state);
 
     }.bind(this));
     var roomList = [
@@ -208,7 +208,7 @@ sys.Window.create({
   },
   initDataClient: function() {
     this.client = state.client = new Client(config.serverUrl);
-    this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed);
+    this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed, state);
   },
   initWatchdog: function() {
     if (typeof(uccextension) != 'undefined') {

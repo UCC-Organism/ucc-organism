@@ -60,34 +60,91 @@ var rooms = [
   "C.202"
 ];
 
-function FakeClient(timeSpeed) {
+function FakeClient(timeSpeed, state) {
   this.enabled = true;
   this.timeSpeed = timeSpeed;
   //this.genStudents();
   //this.genC2();
-  //this.genMorning();
+  this.genMorning(state);
 }
 
-FakeClient.prototype.genMorning = function() {
+FakeClient.prototype.genMorning = function(state) {
   var self = this;
   if (!self.enabled) return;
 
+  var allRooms = state.map.roomsById;
+  var roomIds = [];
+  var classroomIds = [];
+  for (var id in allRooms){
+    if (allRooms.hasOwnProperty(id) && allRooms[id].floor == state.map.currentFloor) {
+         roomIds.push(id);
+         if (allRooms[id].type == "classroom") classroomIds.push(id);
+    }
+  }
+
+  for (var i = 0; i < classroomIds.length; i++)
+  {
+    //add teacher
+    AgentStore.all.push({
+      id: 'teacher' + i,
+      programme: Config.agentTypeGroups[8],
+      end: "2018-01-31 00:00:00.0000000",
+      gender: 0,
+      age: 25,
+      targetMode: AgentModes.Classroom,
+      targetLocation: classroomIds[i]
+    })
+  }
+
+  //add 100 students
   for (var i = 0; i < 100; i++)
   {
     setTimeout(function() 
     {
       AgentStore.all.push({
         id: 'student' + i,
-        programme: Config.agentTypeGroups[Math.floor(rand.int(0, 11))],
+        programme: Config.agentTypeGroups[Math.floor(rand.int(0, 7))],
         //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
         gender: 0,
         age: 25,
         targetMode: AgentModes.Roaming,
-        targetLocation: 'B.101'
+        targetLocation: roomIds[Math.floor(rand.int(0, roomIds.length))]
       });
-    }, (rand.int(50000)) / this.timeSpeed)
+    }, (rand.int(10000)) / this.timeSpeed)
   }
+
+  // go to classroom
+  setTimeout(function() {
+    if (!self.enabled) return;
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Classroom;
+
+      if (agent.programme != "Teacher")
+      {
+        agent.targetLocation = classroomIds[Math.floor(rand.int(0, classroomIds.length))];
+      }
+      
+    })
+  }, 30000 / this.timeSpeed)
+
+  // go to lunch
+  setTimeout(function() {
+    if (!self.enabled) return;
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Lunch;
+      agent.targetLocation = 'Kantine';
+    })
+  }, 60000 / this.timeSpeed)
+
+  // go home
+  setTimeout(function() {
+    if (!self.enabled) return;
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Away;
+      agent.targetLocation = '';
+    })
+  }, 100000 / this.timeSpeed)
 }
 
 FakeClient.prototype.genOneEachClassRoom = function() {
