@@ -67,7 +67,9 @@ function agentTargetNodeUpdaterSys(state) {
       if (!path && targetNode) {
         var closestNode = graph.findNearestNode(state.map.selectedNodes, agent.position);
         path = graph.findShortestPath(closestNode, targetNode);
-        path.push(targetNode);
+        if (path) {
+          path.push(targetNode);
+        }
       }
       if (!path) {
         //TODO: print warnign and change mode to wander
