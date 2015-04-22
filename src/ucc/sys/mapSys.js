@@ -16,11 +16,13 @@ var Rect              = require('../../geom/Rect');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
 var config            = require('../../config');
+var hull              = require('hull.js');
 
 var Geometry          = geom.Geometry;
 var BoundingBox       = geom.BoundingBox;
 var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
+var Spline3D          = geom.Spline3D;
 var Mesh              = glu.Mesh;
 var SolidColor        = require('../../materials/SolidColor');
 var SolidColorOrig    = materials.SolidColor;
@@ -106,7 +108,6 @@ function centerCamera(state, floorBBox) {
     var roomNode = state.map.getSelectedNodeByRoomId(state.map.focusRoomId)
     if (roomNode) {
       target = roomNode.position;
-      console.log(roomNode)
       state.arcball.setTarget(target);
       var position = new Vec3(state.camera.target.x, state.camera.target.y + 0.001, state.camera.target.z  + state.cameraPosZ);
       state.arcball.setPosition(position);
@@ -184,6 +185,19 @@ function rebuildMap(state) {
       return sameFloorSoFar && (neighborNode.floor == node.floor);
     }, true)
   });
+
+  state.map.strongDisplacePoints.length = 0;
+  var displaceNodes = selectedNodes.filter(R.where({ displacePoint: true }));
+  displaceNodes.forEach(function(node) {
+    state.map.strongDisplacePoints.push({
+      roomId: '',
+      timeOffset: random.float(0, 1),
+      position: node.position,
+      radius: node.displaceRadius * 4,
+      strength: node.displaceStrength / 4,
+      maxStrength: node.displaceStrength / 4
+    })
+  })
 
   var pointVertices = selectedNodes.map(R.prop('position'));
   var roomVertices = selectedNodes.filter(R.where({ room: R.identity }));
@@ -335,8 +349,6 @@ function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   MapSys.cells.length = 0;
 
-  state.map.strongDisplacePoints.length = 0;
-
   //all points
   //var points = selectedNodes.map(R.prop('position'));
 
@@ -459,13 +471,14 @@ function rebuildCells(state) {
       return Math.max(r, p.distance(voronoiCells.points[cellPointIndex]));
     }, 0)
 
-    state.map.strongDisplacePoints.push({
-      roomId: roomId,
-      timeOffset: random.float(0, 1),
-      position: p3,
-      radius: displaceRadius * 3,
-      strength: displaceRadius
-    })
+    //state.map.strongDisplacePoints.push({
+    //  roomId: roomId,
+    //  timeOffset: random.float(0, 1),
+    //  position: p3,
+    //  radius: displaceRadius * 3,
+    //  strength: displaceRadius,
+    //  maxStrength: displaceRadius
+    //})
   })
 
   //add center points
@@ -640,19 +653,32 @@ function rebuildCells(state) {
 
   var displacePointsCircles = new LineBuilder();
   state.map.strongDisplacePoints.forEach(function(displacePoint) {
-    displacePointsCircles.addCircle(displacePoint.position, displacePoint.radius, 16, 'x', 'z');
+    displacePointsCircles.addCircle(displacePoint.position, displacePoint.radius, 16, 'x', 'y');
   });
   var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
   state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });
 
+  var membranePoints = R.pluck('position', state.map.selectedNodes.filter(function(node) {
+    return node.neighbors.length >= 2 && node.neighbors.length <= 3;
+  }));
+  var membraneCenter = GeomUtils.centroid(membranePoints);
+  membranePoints = hull(membranePoints, 10, ['.x', '.y']).map(vec2to3);
+  membranePoints.forEach(function(p) {
+    p.sub(membraneCenter).scale(1.1).add(membraneCenter);
+  })
+
+  var membraneGeometry = new LineBuilder();
+  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.membraneColor, membranePoints.length*2)
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
+  var membraneMesh = new Mesh(membraneGeometry, new ShowColors(), { lines: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
+  state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: config.corridorColor }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh, lineWidth: 2 });
@@ -673,10 +699,22 @@ function rebuildCells(state) {
 
 //-----------------------------------------------------------------------------
 
+function updateCamera(state) {
+  if (state.map.dirty) {
+    state.cameraRotation = Math.PI/2;
+  }
+  state.cameraRotation += Time.delta/config.cameraRotationDuration;
+  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation), 0));
+}
+
+//-----------------------------------------------------------------------------
+
 function update(state) {
   if (!state.map.nodes.length) {
     return;
   }
+
+  updateCamera(state);
 
   if (!MapSys.ready || state.map.dirty) {
     MapSys.ready = true;

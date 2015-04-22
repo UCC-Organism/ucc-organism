@@ -23417,6 +23417,90 @@
         76
       ],
       "id": 1631
+    },
+    {
+      "floor": 7,
+      "room": "",
+      "position": {
+        "x": -0.1581908856318545,
+        "y": 0.22584629092904213,
+        "z": 0.20350000000000001
+      },
+      "neighbors": [],
+      "displacePoint": true,
+      "displaceRadius": 0.2149705762987013,
+      "displaceStrength": 0.08541751217532467,
+      "id": 1632
+    },
+    {
+      "floor": 7,
+      "room": "",
+      "position": {
+        "x": -0.013430159880345627,
+        "y": 0.42280016017893596,
+        "z": 0.20350000000000001
+      },
+      "neighbors": [],
+      "displacePoint": true,
+      "displaceRadius": 0.19423447646103897,
+      "displaceStrength": 0.17665635146103897,
+      "id": 1633
+    },
+    {
+      "floor": 7,
+      "room": "",
+      "position": {
+        "x": -0.3462657420328469,
+        "y": 0.500601791266617,
+        "z": 0.20350000000000001
+      },
+      "neighbors": [],
+      "displacePoint": true,
+      "displaceRadius": 0.22183187905844157,
+      "displaceStrength": 0.15546367694805194,
+      "id": 1634
+    },
+    {
+      "floor": 6,
+      "room": "",
+      "position": {
+        "x": -0.0896733878390582,
+        "y": 0.2126274517314361,
+        "z": 0.10299999999999998
+      },
+      "neighbors": [],
+      "displacePoint": true,
+      "displaceRadius": 0.21197747564935066,
+      "displaceStrength": 0.056057224025974024,
+      "id": 1635
+    },
+    {
+      "floor": 6,
+      "room": "",
+      "position": {
+        "x": 0.0006464785551494323,
+        "y": 0.4563605544857764,
+        "z": 0.10299999999999998
+      },
+      "neighbors": [],
+      "displacePoint": true,
+      "displaceRadius": 0.10297027191558442,
+      "displaceStrength": 0.049982244318181816,
+      "id": 1636
+    },
+    {
+      "floor": 6,
+      "room": "",
+      "position": {
+        "x": -0.3405034782817955,
+        "y": 0.4291376765322611,
+        "z": 0.10299999999999998
+      },
+      "neighbors": [],
+      "displacePoint": true,
+      "displaceRadius": 0.14387175324675325,
+      "displaceStrength": 0.032251927759740256,
+      "id": 1637
     }
   ],
   "rooms": [

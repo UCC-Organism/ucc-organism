@@ -33,7 +33,7 @@ var MapStore = {
         if (node.room) {
           this.roomsById[node.room].floor = node.floor;
         }
-      }.bind(this))
+      }.bind(this));
 
       console.log('MapStore.init nodes:' + this.nodes.length + ' rooms:' + this.rooms.length);
 
@@ -113,6 +113,7 @@ var MapStore = {
     this.setFloor(this.floors[nextFloorIndex]);
   },
   getRoomById: function(id) {
+    if (!id) return null;
     var room = this.roomsById[id];
     if (!room) {
       room = this.roomsById[Config.roomIdMap[id]];

@@ -67,7 +67,7 @@ var RoomTypes = {
   'classroom': { label: 'Classroom', color: '#00FF00', centerColor: '#00FF00', edgeColor: '#00FF00' },
   'toilet'   : { label: 'Toilet'   , color: '#FF0000', centerColor: '#0055DD', edgeColor: '#0055DD' },
   'research' : { label: 'Research' , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
-  'knowledge': { label: 'Knowledge' , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
+  'knowledge': { label: 'Knowledge', color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
   'admin'    : { label: 'Admin'    , color: '#112f28', centerColor: '#122120', edgeColor: '#3333FF' },
   'closet'   : { label: 'Closet'   , color: '#996600', centerColor: '#996600', edgeColor: '#996600' },
   'food'     : { label: 'Food'     , color: '#FFAA00', centerColor: '#FFAA00', edgeColor: '#FFAA00' },
@@ -132,6 +132,7 @@ var Config = {
   agentResearcherColor: new Color(1.0, 0.3, 0.3, 1.0),
   agentCookColor: new Color(0.3, .9, 0.3, 1.0),
   agentJanitorColor: new Color(0.0, 1.0, 0.0, 1.0),
+  membraneColor: new Color(0.9, 0.9, 0.9, 1.0),
 
   roomTypes: RoomTypes,
   floors: Floors,
@@ -145,6 +146,8 @@ var Config = {
 
   energySpriteSize: 0.5,
   agentSpriteSize: 10,
+
+  cameraRotationDuration: 120 //2min
 };
 
 Object.keys(Config.roomTypes).forEach(function(type) {
