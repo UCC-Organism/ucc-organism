@@ -28,11 +28,10 @@ function agentFlockingSys(state) {
         if (dist > 0) {
           tmpDir.copy(agent.position).sub(anotherAgent.position);
           if (agent.mode == AgentModes.Studying || agent.mode == AgentModes.Eating) {
-            //tmpDir.normalize().cross(up).scale(0.00001);
-            //agent.force.add(tmpDir);
-            //anotherAgent.force.add(tmpDir.scale(-2));
-            //console.log('repulsion')
-            //agent.force.add(tmpDir.scale(0.1));
+            tmpDir.normalize().cross(up).scale(0.00001);
+            agent.force.add(tmpDir);
+            anotherAgent.force.add(tmpDir.scale(-2));
+            agent.force.add(tmpDir.scale(0.1));
           }
           else {
             //normal repulsion
