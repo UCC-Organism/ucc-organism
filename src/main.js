@@ -131,8 +131,6 @@ sys.Window.create({
       state.map.setFloor(floor);
       this.killAllAgents();
 
-      this.fakeClient.genMorning(state);
-
     }.bind(this));
     var roomList = [
       { name: 'None', value: null },
@@ -407,6 +405,11 @@ sys.Window.create({
       displacePointUpdaterSys(state);
 
       meshRendererSys(state);
+
+      if (state.map.dirty)
+      {
+        this.fakeClient.genMorning(state);
+      }
 
       state.map.dirty = false;
     }

@@ -63,14 +63,16 @@ var rooms = [
 function FakeClient(timeSpeed, state) {
   this.enabled = true;
   this.timeSpeed = timeSpeed;
+  this.timers = [];
   //this.genStudents();
   //this.genC2();
-  this.genMorning(state);
 }
 
 FakeClient.prototype.genMorning = function(state) {
   var self = this;
   if (!self.enabled) return;
+
+  self.clearTimers();
 
   var allRooms = state.map.roomsById;
   var roomIds = [];
@@ -97,9 +99,9 @@ FakeClient.prototype.genMorning = function(state) {
   }
 
   //add 100 students
-  for (var i = 0; i < 100; i++)
+  for (var i = 0; i < 5; i++)
   {
-    setTimeout(function() 
+    self.timers.push(setTimeout(function() 
     {
       AgentStore.all.push({
         id: 'student' + i,
@@ -111,12 +113,14 @@ FakeClient.prototype.genMorning = function(state) {
         targetMode: AgentModes.Roaming,
         targetLocation: roomIds[Math.floor(rand.int(0, roomIds.length))]
       });
-    }, (rand.int(10000)) / this.timeSpeed)
+    }, (rand.int(10000)) / this.timeSpeed));
   }
 
   // go to classroom
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
+    console.log("go to classroom");
+
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
 
@@ -126,25 +130,38 @@ FakeClient.prototype.genMorning = function(state) {
       }
       
     })
-  }, 30000 / this.timeSpeed)
+  }, 30000 / this.timeSpeed));
 
   // go to lunch
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
+    console.log("go to lunch");
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 60000 / this.timeSpeed)
+  }, 60000 / this.timeSpeed));
 
   // go home
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
+    console.log("go home");
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Away;
       agent.targetLocation = '';
     })
-  }, 100000 / this.timeSpeed)
+  }, 100000 / this.timeSpeed));
+}
+
+FakeClient.prototype.clearTimers = function() 
+{
+  console.log("clear timers: " + this.timers.length);
+
+  for (var i = 0; i < this.timers.length; i++)
+  {
+    clearTimeout(this.timers[i]);
+    console.log(this.timers[i]);
+  }
 }
 
 FakeClient.prototype.genOneEachClassRoom = function() {
