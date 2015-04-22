@@ -6,6 +6,7 @@ var color             = require('pex-color');
 var gen               = require('pex-gen');
 var random            = require('pex-random');
 var sys               = require('pex-sys');
+var gen               = require('pex-gen');
 
 var delaunay          = require('../../geom/delaunay');
 var voronoi           = require('../../geom/voronoi');
@@ -31,6 +32,7 @@ var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 var Time              = sys.Time;
 var AddCircleExt      = require('../../geom/LineBuilderAddCircle');
+var Plane             = gen.Plane;
 
 var EPSILON = 0.0001;
 
@@ -696,6 +698,18 @@ function rebuildCells(state) {
   var floorBBox = BoundingBox.fromPoints(cellMesh.geometry.vertices);
 
   centerCamera(state, floorBBox);
+
+  var corridorBg = new Plane(floorBBox.getSize().x * 1.2, floorBBox.getSize().y * 1.2, 20, 20, 'x', 'y');
+  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.bgColor}));
+  corridorBg.addAttrib('normals', 'normal', corridorBg.vertices.map(function() { return new Vec3(1, 0, 0)}));
+  corridorBg.addAttrib('texCoords', 'texCoords', corridorBg.vertices.map(function() { return new Vec2(1, 0)}));
+  var center = floorBBox.getCenter();
+  corridorBg.vertices.forEach(function(v) {
+    v.add(center)
+  })
+  var corridorBgMesh = new Mesh(corridorBg, new ShowColors(), { faces: true })
+  corridorBgMesh.position.z = -0.001;
+  state.entities.unshift({ name: 'corridorBgMesh', map: true, cell: true, mesh: corridorBgMesh });
 
   console.log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
 }
