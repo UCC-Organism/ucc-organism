@@ -99,7 +99,7 @@ FakeClient.prototype.genMorning = function(state) {
   }
 
   //add 100 students
-  for (var i = 0; i < 5; i++)
+  for (var i = 0; i < 100; i++)
   {
     self.timers.push(setTimeout(function() 
     {
