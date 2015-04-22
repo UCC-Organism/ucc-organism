@@ -583,7 +583,6 @@ function rebuildCells(state) {
 
     var cell = {
       vertices: [],
-      basePos: [],
       center: center
     };
 
@@ -644,10 +643,6 @@ function rebuildCells(state) {
       cell.vertices.push(np2);
       cell.vertices.push(e2);
       cell.vertices.push(ne2);
-      cell.basePos.push(p2.dup());
-      cell.basePos.push(np2.dup());
-      cell.basePos.push(e2.dup());
-      cell.basePos.push(ne2.dup());
     }
   })
 
