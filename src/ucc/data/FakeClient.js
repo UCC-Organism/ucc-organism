@@ -68,12 +68,14 @@ function FakeClient(timeSpeed, state) {
   //this.genC2();
 }
 
-FakeClient.prototype.genMorning = function(state) {
-  var self = this;
-  if (!self.enabled) return;
+FakeClient.prototype.update = function(state) {
+  if (!state.map.dirty) return;
 
-  self.clearTimers();
+  if (state.map)
+  this.genMorning(state);
+}
 
+FakeClient.prototype.findRoomIds = function(state) {
   var allRooms = state.map.roomsById;
   var roomIds = [];
   var classroomIds = [];
@@ -83,6 +85,30 @@ FakeClient.prototype.genMorning = function(state) {
          if (allRooms[id].type == "classroom") classroomIds.push(id);
     }
   }
+  return roomIds;
+}
+
+FakeClient.prototype.findRoomIdsByType = function(state, type) {
+  var allRooms = state.map.roomsById;
+  var roomIds = [];
+  var classroomIds = [];
+  for (var id in allRooms){
+    if (allRooms.hasOwnProperty(id) && allRooms[id].floor == state.map.currentFloor) {
+         roomIds.push(id);
+         if (allRooms[id].type == type) classroomIds.push(id);
+    }
+  }
+  return roomIds;
+}
+
+FakeClient.prototype.genMorning = function(state) {
+  var self = this;
+  if (!self.enabled) return;
+
+  self.clearTimers();
+
+  var roomIds = this.findRoomIds(state);
+  var classroomIds = this.findRoomIdsByType(state, 'classroom');
 
   for (var i = 0; i < classroomIds.length; i++)
   {

@@ -406,10 +406,7 @@ sys.Window.create({
 
       meshRendererSys(state);
 
-      if (state.map.dirty)
-      {
-        this.fakeClient.genMorning(state);
-      }
+      this.fakeClient.update(state);
 
       state.map.dirty = false;
     }
