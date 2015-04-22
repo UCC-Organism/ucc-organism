@@ -64,7 +64,57 @@ function FakeClient(timeSpeed) {
   this.enabled = true;
   this.timeSpeed = timeSpeed;
   //this.genStudents();
-  this.genC2();
+  //this.genC2();
+  //this.genMorning();
+}
+
+FakeClient.prototype.genMorning = function() {
+  var self = this;
+  if (!self.enabled) return;
+
+  for (var i = 0; i < 100; i++)
+  {
+    setTimeout(function() 
+    {
+      AgentStore.all.push({
+        id: 'student' + i,
+        programme: Config.agentTypeGroups[Math.floor(rand.int(0, 11))],
+        //programme: Config.agentTypeGroups[0],
+        end: "2018-01-31 00:00:00.0000000",
+        gender: 0,
+        age: 25,
+        targetMode: AgentModes.Roaming,
+        targetLocation: 'B.101'
+      });
+    }, (rand.int(50000)) / this.timeSpeed)
+  }
+}
+
+FakeClient.prototype.genOneEachClassRoom = function() {
+  var self = this;
+  if (!self.enabled) return;
+
+  for (var i = 0; i < 100; i++)
+  {
+    AgentStore.all.push({
+      id: 'student' + i,
+      programme: Config.agentTypeGroups[Math.floor(rand.int(0, 10))],
+      //programme: Config.agentTypeGroups[0],
+      end: "2018-01-31 00:00:00.0000000",
+      gender: 0,
+      age: 25,
+      targetMode: AgentModes.Classroom,
+      targetLocation: 'C.201'
+    })
+  }
+
+  setTimeout(function() {
+    if (!self.enabled) return;
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Lunch;
+      agent.targetLocation = 'Kantine';
+    })
+  }, 10000 / this.timeSpeed)
 }
 
 FakeClient.prototype.genC2 = function() {

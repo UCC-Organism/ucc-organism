@@ -128,6 +128,9 @@ sys.Window.create({
       state.map.setFocusRoom(null);
       state.map.setFloor(floor);
       this.killAllAgents();
+
+      this.fakeClient.genMorning();
+
     }.bind(this));
     var roomList = [
       { name: 'None', value: null },
