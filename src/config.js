@@ -147,7 +147,7 @@ var Config = {
   energySpriteSize: 0.5,
   agentSpriteSize: 10,
 
-  cameraRotationDuration: 120 //2min
+  cameraRotationDuration: 120*5 //10min
 };
 
 Object.keys(Config.roomTypes).forEach(function(type) {
