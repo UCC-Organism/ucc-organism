@@ -105,8 +105,6 @@ FakeClient.prototype.genMorning = function(state) {
   var self = this;
   if (!self.enabled) return;
 
-  self.clearTimers();
-
   var roomIds = this.findRoomIds(state);
   var classroomIds = this.findRoomIdsByType(state, 'classroom');
 
@@ -208,13 +206,13 @@ FakeClient.prototype.genOneEachClassRoom = function() {
     })
   }
 
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 10000 / this.timeSpeed)
+  }, 10000 / this.timeSpeed))
 }
 
 FakeClient.prototype.genC2 = function() {
@@ -243,21 +241,21 @@ FakeClient.prototype.genC2 = function() {
     targetLocation: 'C.230'
   })
 
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 20000 / this.timeSpeed)
+  }, 20000 / this.timeSpeed))
 
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 30000 / this.timeSpeed)
+  }, 30000 / this.timeSpeed))
 }
 
 FakeClient.prototype.genStudents = function() {
@@ -285,28 +283,28 @@ FakeClient.prototype.genStudents = function() {
     targetLocation: 'C.216'
   })
 
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
     AgentStore.all.slice(0, 6).forEach(function(agent) {
       agent.targetMode = AgentModes.Toilet;
       agent.targetLocation = 'toilet';
     })
-  }, 10000 / this.timeSpeed)
+  }, 10000 / this.timeSpeed))
 
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Roaming;
     })
-  }, 20000 / this.timeSpeed)
+  }, 20000 / this.timeSpeed))
 
-  setTimeout(function() {
+  self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 25000 / this.timeSpeed)
+  }, 25000 / this.timeSpeed))
 }
 
 module.exports = FakeClient;
