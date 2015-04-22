@@ -71,8 +71,17 @@ function FakeClient(timeSpeed, state) {
 FakeClient.prototype.update = function(state) {
   if (!state.map.dirty) return;
 
-  if (state.map)
-  this.genMorning(state);
+  this.clearTimers();
+
+  if (state.map.currentFloor == 1) { //A 0
+    this.genMorning(state);
+  }
+  if (state.map.currentFloor == 6) { //C 1
+    this.genMorning(state);
+  }
+  if (state.map.currentFloor == 7) { //C 2
+    this.genC2(state);
+  }
 }
 
 FakeClient.prototype.findRoomIds = function(state) {
