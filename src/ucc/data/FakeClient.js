@@ -5,7 +5,7 @@ var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var Config = require('../../config');
-var rand = require('pex-random');
+var random = require('pex-random');
 
 var students = [
   "student663",
@@ -129,17 +129,18 @@ FakeClient.prototype.genMorning = function(state) {
   {
     self.timers.push(setTimeout(function() 
     {
+      random.seed(Date.now());
       AgentStore.all.push({
         id: 'student' + i,
-        programme: Config.agentTypeGroups[Math.floor(rand.int(0, 7))],
+        programme: Config.agentTypeGroups[Math.floor(random.int(0, 7))],
         //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
         gender: 0,
         age: 25,
         targetMode: AgentModes.Roaming,
-        targetLocation: roomIds[Math.floor(rand.int(0, roomIds.length))]
+        targetLocation: random.element(roomIds)
       });
-    }, (rand.int(10000)) / this.timeSpeed));
+    }, (random.int(10000)) / this.timeSpeed));
   }
 
   // go to classroom
@@ -152,9 +153,8 @@ FakeClient.prototype.genMorning = function(state) {
 
       if (agent.programme != "Teacher")
       {
-        agent.targetLocation = classroomIds[Math.floor(rand.int(0, classroomIds.length))];
+        agent.targetLocation = classroomIds[Math.floor(random.int(0, classroomIds.length))];
       }
-      
     })
   }, 30000 / this.timeSpeed));
 
@@ -198,7 +198,7 @@ FakeClient.prototype.genOneEachClassRoom = function() {
   {
     AgentStore.all.push({
       id: 'student' + i,
-      programme: Config.agentTypeGroups[Math.floor(rand.int(0, 10))],
+      programme: Config.agentTypeGroups[Math.floor(random.int(0, 10))],
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
@@ -223,7 +223,7 @@ FakeClient.prototype.genC2 = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[Math.floor(rand.int(0, 2))],
+      programme: Config.agentTypeGroups[Math.floor(random.int(0, 2))],
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
