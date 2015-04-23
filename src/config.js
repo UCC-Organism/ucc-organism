@@ -34,7 +34,7 @@ var AgentTypeColors = [
   [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Diplom L - Diplomuddannelse - Ledelse',
   [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],//'Teacher',
   [Color.fromHex("#DD33FF"), Color.fromHex("#FF22FF")],//'Researcher',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Janitor',
+  [Color.fromHex("#7B5647"), Color.fromHex("#7B5647")],//'Janitor',
   [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Cook',
   [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],//'Admin'
 ];

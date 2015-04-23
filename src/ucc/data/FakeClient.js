@@ -269,6 +269,16 @@ FakeClient.prototype.genB2 = function(state) {
 FakeClient.prototype.genC2 = function() {
   var self = this;
   if (!self.enabled) return;
+  AgentStore.all.push({
+    id: 'janitor1',
+    programme: "Janitor",
+    //programme: Config.agentTypeGroups[0],
+    end: "2018-01-31 00:00:00.0000000",
+    gender: 0,
+    age: 25,
+    targetMode: AgentModes.Roaming,
+    targetLocation: 'C.230'
+  })
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
