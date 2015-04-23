@@ -12,8 +12,6 @@ function makeAgentEntity(props) {
 
   var scale = 1;
 
-  console.log(props);
-
   var prog = props.state.programme;
 
   if (prog == "Teacher")

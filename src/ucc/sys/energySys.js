@@ -24,14 +24,44 @@ function removeEnergyPathsEntities(state) {
 function rebuildEnergyPaths(state) {
   removeEnergyPathsEntities(state);
 
-  var selectedNodes = state.map.selectedNodes;
-  var externalNodes = state.map.selectedNodes.filter(R.where({ external: true }))
-  var libraryNodes = state.map.selectedNodes.filter(R.where({ roomType: 'knowledge' }))
-  var researchNodes = state.map.selectedNodes.filter(R.where({ roomType: 'research' }))
-  var classroomNodes = state.map.selectedNodes.filter(R.where({ roomType: 'classroom' }))
+  var specs = [
+    { from: "toilet", to: "exit", type: "random", energy: "dirt", multiplier: 100},
+    { from: "classroom", to: "classroom", type: "random", energy: "economic", multiplier: 100},
+    { from: "classroom", to: "classroom", type: "random", energy: "economic", multiplier: 100},
+    { from: "classroom", to: "classroom", type: "random", energy: "knowledge", multiplier: 100}
+  ];
 
-  function addPath (start, end, energyType)
+  var selectedNodes = state.map.selectedNodes;
+  var roomNodesPrType = {};
+
+  for (var type in config.roomTypes)
   {
+    var nodes = state.map.selectedNodes.filter(R.where({ roomType: type }))
+    roomNodesPrType[type] = nodes;
+  }
+
+  for (var i = 0; i < specs.length; i++)
+  {
+    var spec = specs[i];
+    var startCandidates = getRoomNodesForIdOrType(spec.from)
+    var endCandidates = getRoomNodesForIdOrType(spec.to);
+    var start = random.element(startCandidates);
+    var end = random.element(endCandidates);
+    var energyType = config.energyTypes[spec.energy];
+    addPath(start, end, energyType, spec.multiplier);
+  }
+
+  function getRoomNodesForIdOrType (idOrType)
+  {
+    return roomNodesPrType[idOrType];
+  }
+
+  function addPath (start, end, energyType, multiplier)
+  {
+      if (!start || !end) return;
+
+      multiplier = multiplier || 1;
+
       var path = graph.findShortestPath(start, end);
       if (!path || path.length == 0) return;
       var pathPoints = R.pluck('position')(path);
@@ -41,9 +71,10 @@ function rebuildEnergyPaths(state) {
       //var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
       //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
 
-      state.entities.push({ energyPath: spline, energy: true, color: energyType.color });
+      state.entities.push({ energyPath: spline, energy: true, color: energyType.color, multiplier: multiplier});
   }
 
+/*
   var numPaths = 50;
   R.range(0, numPaths).map(function() {
 
@@ -89,6 +120,7 @@ function rebuildEnergyPaths(state) {
       addPath(start, end, config.energyTypes['knowledge']);
     });
   }
+  */
 }
 
 function update(state) {
