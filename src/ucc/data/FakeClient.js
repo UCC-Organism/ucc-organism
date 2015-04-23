@@ -241,7 +241,7 @@ FakeClient.prototype.genB2 = function(state) {
         targetLocation = random.element(adminRoomIds);
       }
       AgentStore.all.push({
-        id: 'student' + i,
+        id: programme + '' + random.int(0, 99),
         programme: programme,
         //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
