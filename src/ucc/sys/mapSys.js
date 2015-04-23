@@ -700,7 +700,7 @@ function rebuildCells(state) {
 
   centerCamera(state, floorBBox);
 
-  var corridorBg = new Plane(floorBBox.getSize().x * 1.2, floorBBox.getSize().y * 1.2, 20, 20, 'x', 'y');
+  var corridorBg = new Plane(floorBBox.getSize().x * 1.4, floorBBox.getSize().y * 1.2, 14, 14, 'x', 'y');
   corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.bgColor}));
   corridorBg.addAttrib('normals', 'normal', corridorBg.vertices.map(function() { return new Vec3(1, 0, 0)}));
   corridorBg.addAttrib('texCoords', 'texCoords', corridorBg.vertices.map(function() { return new Vec2(1, 0)}));
