@@ -26,7 +26,7 @@ function makeAgentEntity(props) {
   }
   else // Student
   {
-    scale = .5 + (((props.state.age - 15.0) / 15.0) * 1.0);
+    scale = .5 + (((props.state.age - 20.0) / 10.0) * 1.0);
   }
 
   var studentAgent = {
