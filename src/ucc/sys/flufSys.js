@@ -38,7 +38,7 @@ function flufSys(state) {
       var entity = {
         rotation: random.float(0, 1),
         color: Color.White,
-        position: new Vec3(random.float(-1.0, 0.0), random.float(-1.0, 0.0), random.float(-0.1, 0.5))
+        position: new Vec3(random.float(-1.0, 1.0), random.float(-1.0, 1.0), random.float(-0.1, 0.5))
       };
       entity.prevPosition = entity.position.dup();
       return entity;
