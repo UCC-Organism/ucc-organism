@@ -61,7 +61,17 @@ function energyPointSpriteUpdaterSys(state) {
   random.seed(0)
 
   energyPathEntities.forEach(function(entity) {
-    for(var i=0; i<50; i++) {
+
+    var num = 10;
+
+    if (parseFloat(entity.multiplier)) {
+      num *= entity.multiplier;
+    } else {
+      // base on num agents in room
+    }
+
+
+    for(var i=0; i<num; i++) {
       var t = random.float();
       var len = entity.energyPath.getLength();
       var speed = random.float(0.005/len, 0.01/len);
