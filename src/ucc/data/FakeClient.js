@@ -269,7 +269,7 @@ FakeClient.prototype.genC2 = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[Math.floor(random.int(0, 2))],
+      programme: Config.agentTypeGroups[6],
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
