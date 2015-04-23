@@ -9,6 +9,26 @@ var Log         = require('../../utils/log');
 var Color       = color.Color;
 
 function makeAgentEntity(props) {
+
+  var scale = 1;
+
+  console.log(props);
+
+  var prog = props.state.programme;
+
+  if (prog == "Teacher")
+  {
+    scale = random.float(1.2, 1.8);
+  }
+  else if (prog == "Researcher" || prog == "Janitor" || prog == "Cook" || prog == "Admin")
+  {
+    scale = random.float(1.0, 1.5);
+  }
+  else // Student
+  {
+    scale = .5 + (((props.state.age - 15.0) / 15.0) * 1.0);
+  }
+
   var studentAgent = {
     agent: true,
     pointSize: 3,
@@ -24,9 +44,10 @@ function makeAgentEntity(props) {
     agentIdNumber: parseInt(props.id.replace(/[a-zA-Z]/g,'')),
     state: props.state,
     speed: random.float(0.3, 1),
-    scale: 1,
+    scale: scale,
     life: 0
   };
+
   return studentAgent;
 }
 
