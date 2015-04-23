@@ -87,11 +87,9 @@ FakeClient.prototype.update = function(state) {
 FakeClient.prototype.findRoomIds = function(state) {
   var allRooms = state.map.roomsById;
   var roomIds = [];
-  var classroomIds = [];
   for (var id in allRooms){
     if (allRooms.hasOwnProperty(id) && allRooms[id].floor == state.map.currentFloor) {
          roomIds.push(id);
-         if (allRooms[id].type == "classroom") classroomIds.push(id);
     }
   }
   return roomIds;
@@ -100,11 +98,9 @@ FakeClient.prototype.findRoomIds = function(state) {
 FakeClient.prototype.findRoomIdsByType = function(state, type) {
   var allRooms = state.map.roomsById;
   var roomIds = [];
-  var classroomIds = [];
   for (var id in allRooms){
     if (allRooms.hasOwnProperty(id) && allRooms[id].floor == state.map.currentFloor) {
-         roomIds.push(id);
-         if (allRooms[id].type == type) classroomIds.push(id);
+         if (allRooms[id].type == type) roomIds.push(id);
     }
   }
   return roomIds;
