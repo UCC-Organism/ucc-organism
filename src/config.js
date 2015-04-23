@@ -24,19 +24,19 @@ var RoomIdMap = {
 };
 
 var AgentTypeColors = [
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")]
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'SPL - Sygeplejerskeuddannelsen',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'PMU - Psykomotorikuddannelsen',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'FYS - Fysioterapeutuddannelsen',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'SOC - Socialrådgiveruddannelsen',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'PÆD - Pædagoguddannelsen',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'DIV - Diverse aktiviteter',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Diplom S - Diplomuddannelse - Sundhed',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Diplom L - Diplomuddannelse - Ledelse',
+  [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],//'Teacher',
+  [Color.fromHex("#DD33FF"), Color.fromHex("#FF22FF")],//'Researcher',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Janitor',
+  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Cook',
+  [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],//'Admin'
 ];
 
 var AgentTypeGroups = [
@@ -102,6 +102,17 @@ var Floors = [
   { name: 'C 2', id:  7 }
 ];
 
+var FloorId = {
+  All: -1,
+  A_0:  1,
+  A_1:  2,
+  B_0:  3,
+  B_1:  4,
+  C_0:  5,
+  C_1:  6,
+  C_2:  7
+};
+
 var Config = {
   serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
@@ -147,7 +158,10 @@ var Config = {
   energySpriteSize: 0.5,
   agentSpriteSize: 10,
 
-  cameraRotationDuration: 120*5 //10min
+  cameraRotationDuration: 120*5, //10min,
+
+
+  floorId: FloorId
 };
 
 Object.keys(Config.roomTypes).forEach(function(type) {
