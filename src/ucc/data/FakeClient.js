@@ -75,7 +75,10 @@ FakeClient.prototype.update = function(state) {
 
   if (state.map.currentFloor == Config.floorId.All) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.A_0) { this.genMorning(state); }
+  if (state.map.currentFloor == Config.floorId.A_1) { this.genMorning(state); }
+  if (state.map.currentFloor == Config.floorId.B_0) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
+  if (state.map.currentFloor == Config.floorId.C_0) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.C_1) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.C_2) { this.genC2(state); }
 }
