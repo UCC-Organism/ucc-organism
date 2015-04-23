@@ -674,6 +674,7 @@ function rebuildCells(state) {
 
   var membraneGeometry = new LineBuilder();
   membraneGeometry.addPath(new Spline3D(membranePoints, true), config.membraneColor, membranePoints.length*2)
+  membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
   var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
