@@ -143,7 +143,7 @@ FakeClient.prototype.genMorning = function(state) {
         //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
         gender: 0,
-        age: 25,
+        age: random.int(20, 30),
         targetMode: AgentModes.Roaming,
         targetLocation: random.element(roomIds)
       });
@@ -209,7 +209,7 @@ FakeClient.prototype.genOneEachClassRoom = function() {
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
-      age: 25,
+      age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.201'
     })
@@ -234,7 +234,7 @@ FakeClient.prototype.genC2 = function() {
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
-      age: 25,
+      age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.230'
     })
@@ -242,7 +242,7 @@ FakeClient.prototype.genC2 = function() {
   //add teacher
   AgentStore.all.push({
     id: 'teacher01',
-    programme: Config.agentTypeGroups[9],
+    programme: Config.agentTypeGroups[8],
     end: "2018-01-31 00:00:00.0000000",
     gender: 0,
     age: 25,
@@ -276,7 +276,7 @@ FakeClient.prototype.genStudents = function() {
       programme: Config.agentTypeGroups[1],
       end: "2018-01-31 00:00:00.0000000",
       gender: 0,
-      age: 25,
+      age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.216'
     })
@@ -284,10 +284,10 @@ FakeClient.prototype.genStudents = function() {
   //add teacher
   AgentStore.all.push({
     id: 'teacher01',
-    programme: Config.agentTypeGroups[9],
+    programme: Config.agentTypeGroups[8],
     end: "2018-01-31 00:00:00.0000000",
     gender: 0,
-    age: 25,
+    age: random.int(20, 30),
     targetMode: AgentModes.Classroom,
     targetLocation: 'C.216'
   })
