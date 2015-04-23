@@ -73,6 +73,7 @@ FakeClient.prototype.update = function(state) {
 
   this.clearTimers();
 
+  if (state.map.currentFloor == Config.floorId.All) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.A_0) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
   if (state.map.currentFloor == Config.floorId.C_1) { this.genMorning(state); }
