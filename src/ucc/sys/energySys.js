@@ -25,39 +25,68 @@ function rebuildEnergyPaths(state) {
   removeEnergyPathsEntities(state);
 
   var specs = [
-    { from: "toilet", to: "exit", type: "random", energy: "dirt", multiplier: 100},
+   /* { from: "C.202c", to: "exit", type: "each", energy: "knowledge", multiplier: 100},*/
+    { from: "C.202c", to: "classroom", type: "each", energy: "economic", multiplier: 20},
+    { from: "C.202c", to: "classroom", type: "random", num: 10, energy: "knowledge", multiplier: 20}
+    /*
+    { from: "toilet", to: "exit", type: "random", energy: "knowledge", multiplier: 100},
+    { from: "C.202c", to: "c.226", type: "random", energy: "knowledge", multiplier: 100},
+    { from: "cantine", to: "exit", type: "random", energy: "knowledge", multiplier: 100},
     { from: "classroom", to: "classroom", type: "random", energy: "economic", multiplier: 100},
     { from: "classroom", to: "classroom", type: "random", energy: "economic", multiplier: 100},
     { from: "classroom", to: "classroom", type: "random", energy: "knowledge", multiplier: 100}
+    */
   ];
 
   var selectedNodes = state.map.selectedNodes;
   var roomNodesPrType = {};
 
-  for (var type in config.roomTypes)
-  {
+  for (var type in config.roomTypes) {
     var nodes = state.map.selectedNodes.filter(R.where({ roomType: type }))
     roomNodesPrType[type] = nodes;
   }
 
-  for (var i = 0; i < specs.length; i++)
-  {
+  for (var i = 0; i < specs.length; i++) {
     var spec = specs[i];
     var startCandidates = getRoomNodesForIdOrType(spec.from)
     var endCandidates = getRoomNodesForIdOrType(spec.to);
-    var start = random.element(startCandidates);
-    var end = random.element(endCandidates);
-    var energyType = config.energyTypes[spec.energy];
-    addPath(start, end, energyType, spec.multiplier);
+
+    if (!startCandidates || !endCandidates || !startCandidates.length || !endCandidates.length) continue;
+
+    if (spec.type != "each") { // randomize element
+      startCandidates = shuffleArray(startCandidates);
+      endCandidates = shuffleArray(endCandidates);
+    }
+
+    var num = spec.num || 1;
+    var numAdded = 0;
+    for (var j = 0; j < startCandidates.length; j++) {
+      for (var k = 0; k < endCandidates.length; k++) {
+        var start = startCandidates[j];
+        var end = endCandidates[k];
+        var energyType = config.energyTypes[spec.energy];
+        addPath(start, end, energyType, spec.multiplier);
+        numAdded++;
+        if (numAdded >= num) break;
+      }
+      if (numAdded >= num) break;
+    }
   }
 
-  function getRoomNodesForIdOrType (idOrType)
-  {
+  function getRoomNodesForIdOrType (idOrType) {
+    var room = state.map.roomsById[idOrType];
+    var nodes;
+
+    if (room)
+    {
+      nodes = state.map.selectedNodes.filter(R.where({ roomId: idOrType }))
+      if (nodes) return nodes;
+    }
+
     return roomNodesPrType[idOrType];
   }
 
-  function addPath (start, end, energyType, multiplier)
-  {
+  function addPath (start, end, energyType, multiplier) {
       if (!start || !end) return;
 
       multiplier = multiplier || 1;
@@ -72,6 +101,26 @@ function rebuildEnergyPaths(state) {
       //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
 
       state.entities.push({ energyPath: spline, energy: true, color: energyType.color, multiplier: multiplier});
+  }
+
+  console.log(shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9]));
+
+  function shuffleArray(arr)
+  { 
+    if (arr.length < 2) return arr;
+
+    var a = arr.slice();
+    var newArr = [];
+    var num = a.length;
+
+    for (var i = 0; i < num; i++)
+    {
+      var el = random.element(a);
+      a.splice(a.indexOf(el), 1);
+      newArr.push(el)
+    }
+
+    return newArr;
   }
 
 /*
