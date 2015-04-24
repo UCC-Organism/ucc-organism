@@ -113,6 +113,13 @@ var FloorId = {
   C_2:  7
 };
 
+var EnergyPaths = [
+  { from: "classroom", to: "classroom", fromNum: 'all', toNum: 1, random: true, energy: "knowledge", multiplier: "agents"},
+  { from: "toilet", to: "exit", fromNum: 'all', toNum: 1, random: true, energy: "dirt", multiplier: 10},
+  { from: "admin", to: "classroom", fromNum: 'all', toNum: 1, random: true, energy: "economic", multiplier: 10},
+  { from: "food", to: "classroom", fromNum: 'all', toNum: 'all', random: true, energy: "social", multiplier: "agents"}
+];
+
 var Config = {
   serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
@@ -147,6 +154,7 @@ var Config = {
 
   roomTypes: RoomTypes,
   floors: Floors,
+  energyPaths: EnergyPaths,
 
   cellStyle: CellStyle,
 
