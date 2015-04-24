@@ -62,14 +62,30 @@ function energyPointSpriteUpdaterSys(state) {
 
   energyPathEntities.forEach(function(entity) {
 
-    var num = 10;
+    var numTarget = 10;
 
     if (parseFloat(entity.multiplier)) {
-      num *= entity.multiplier;
+      numTarget *= entity.multiplier;
     } else {
       // base on num agents in room
-      num *= state.map.getRoomById(entity.startRoomId).agentCount * 2;
+      numTarget *= state.map.getRoomById(entity.startRoomId).agentCount * 3;
     }
+
+    var num = entity.num || 0;
+
+    if (num != numTarget)
+    {
+      if (num < numTarget)
+      {
+        num += 4;
+      }
+      else
+      {
+        num -= 4;
+      }
+    }
+
+    entity.num = num;
 
     for(var i=0; i<num; i++) {
       var t = random.float();

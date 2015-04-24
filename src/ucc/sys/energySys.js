@@ -27,7 +27,7 @@ function rebuildEnergyPaths(state) {
 
   var specs = [
    /* { from: "C.202c", to: "exit", type: "each", energy: "knowledge", multiplier: 100},*/
-    { from: "C.230", to: "classroom", type: "each", energy: "knowledge", multiplier: "agents"},
+    { from: "C.230", to: "classroom", type: "each", energy: "dirt", multiplier: "agents"},
     //{ from: "C.202c", to: "classroom", type: "random", num: 10, energy: "knowledge", multiplier: 20}
     /*
     { from: "toilet", to: "exit", type: "random", energy: "knowledge", multiplier: 100},
