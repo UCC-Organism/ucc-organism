@@ -101,6 +101,24 @@ function spawnAgents(state) {
           var c1 = Config.agentTypeColors[agent.entity.typeIndex][0];
           var c2 = Config.agentTypeColors[agent.entity.typeIndex][1];
           agent.entity.color = new Color(random.float(c1.r, c2.r), random.float(c1.g, c2.g), random.float(c1.b, c2.b));
+          agent.entity.colorLines = Config.agentLineColor;
+          agent.entity.colorFill = Config.agentFillColor;
+
+          if (Config.agentFillColorBasedOnAccentColor)
+          {
+            var c = agent.entity.color.clone();
+            c.a = .5;
+            agent.entity.colorFill = c;
+          }
+
+          if (Config.agentInvertFillAndLineColorBasedOnGender && agent.gender == 0)
+          {
+            var cl = agent.entity.colorLines;
+            agent.entity.colorLines = agent.entity.colorFill;
+            agent.entity.colorFill = cl;
+          }
+
+
           if (agent.entity.typeIndex !== -1) {
             state.entities.push(agent.entity);
           }

@@ -119,7 +119,7 @@ void main() {
   c.a *= a;
 
   gl_FragColor = c;
-  gl_FragColor.rgb *= vColor.rgb;
+  //gl_FragColor.rgb *= vColor.rgb;
   gl_FragColor *= alpha;
 
   if (gl_FragColor.a == 0.0) discard;

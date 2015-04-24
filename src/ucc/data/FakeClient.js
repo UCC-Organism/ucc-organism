@@ -119,7 +119,7 @@ FakeClient.prototype.genMorning = function(state) {
       id: 'teacher' + i,
       programme: Config.agentTypeGroups[8],
       end: "2018-01-31 00:00:00.0000000",
-      gender: 0,
+      gender: random.int(0, 2),
       age: 25,
       targetMode: AgentModes.Classroom,
       targetLocation: classroomIds[i]
@@ -137,7 +137,7 @@ FakeClient.prototype.genMorning = function(state) {
         programme: Config.agentTypeGroups[Math.floor(random.int(0, 7))],
         //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
-        gender: 0,
+        gender: random.int(0,2),
         age: random.int(20, 30),
         targetMode: AgentModes.Roaming,
         targetLocation: random.element(roomIds)
@@ -203,7 +203,7 @@ FakeClient.prototype.genOneEachClassRoom = function() {
       programme: Config.agentTypeGroups[Math.floor(random.int(0, 10))],
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
-      gender: 0,
+      gender: random.int(0, 2),
       age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.201'
@@ -245,7 +245,7 @@ FakeClient.prototype.genB2 = function(state) {
         programme: programme,
         //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
-        gender: 0,
+        gender: random.int(0, 2),
         age: 25,
         targetMode: AgentModes.Classroom,
         targetLocation: targetLocation
@@ -274,7 +274,7 @@ FakeClient.prototype.genC2 = function() {
     programme: "Janitor",
     //programme: Config.agentTypeGroups[0],
     end: "2018-01-31 00:00:00.0000000",
-    gender: 0,
+    gender: random.int(0, 2),
     age: 25,
     targetMode: AgentModes.Roaming,
     targetLocation: 'C.230'
@@ -285,7 +285,7 @@ FakeClient.prototype.genC2 = function() {
       programme: Config.agentTypeGroups[6],
       //programme: Config.agentTypeGroups[0],
       end: "2018-01-31 00:00:00.0000000",
-      gender: 0,
+      gender: random.int(0, 2),
       age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.230'
@@ -296,7 +296,7 @@ FakeClient.prototype.genC2 = function() {
     id: 'teacher01',
     programme: Config.agentTypeGroups[8],
     end: "2018-01-31 00:00:00.0000000",
-    gender: 0,
+    gender: random.int(0, 2),
     age: 25,
     targetMode: AgentModes.Classroom,
     targetLocation: 'C.230'
@@ -327,7 +327,7 @@ FakeClient.prototype.genStudents = function() {
       id: id,
       programme: Config.agentTypeGroups[1],
       end: "2018-01-31 00:00:00.0000000",
-      gender: 0,
+      gender: random.int(0, 2),
       age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
       targetLocation: 'C.216'
@@ -338,7 +338,7 @@ FakeClient.prototype.genStudents = function() {
     id: 'teacher01',
     programme: Config.agentTypeGroups[8],
     end: "2018-01-31 00:00:00.0000000",
-    gender: 0,
+    gender: random.int(0, 2),
     age: random.int(20, 30),
     targetMode: AgentModes.Classroom,
     targetLocation: 'C.216'

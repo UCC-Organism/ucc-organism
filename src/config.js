@@ -145,6 +145,7 @@ var Config = {
   agentLineColor: new Color(0.0, 0.0, 0.0, 1.0),
   agentFillColor: new Color(1.0, 1.0, 1.0, 1.0),
   agentFillColorBasedOnAccentColor: true,
+  agentInvertFillAndLineColorBasedOnGender: true,
   agentStudentColor: new Color(1.0, 1.0, 0.3, 1.0),
   agentTeacherColor: new Color(1.0, 0.3, 0.3, 1.0),
   agentResearcherColor: new Color(1.0, 0.3, 0.3, 1.0),
