@@ -68,8 +68,8 @@ function energyPointSpriteUpdaterSys(state) {
       num *= entity.multiplier;
     } else {
       // base on num agents in room
+      num *= state.map.getRoomById(entity.startRoomId).agentCount * 2;
     }
-
 
     for(var i=0; i<num; i++) {
       var t = random.float();

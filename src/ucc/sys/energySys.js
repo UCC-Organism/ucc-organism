@@ -9,6 +9,7 @@ var Mesh = require('pex-glu').Mesh;
 var SolidColor = require('pex-materials').SolidColor;
 var ShowNormals = require('pex-materials').ShowNormals;
 var config            = require('../../config');
+var util = require('util');
 
 function removeEnergyPathsEntities(state) {
   //remove existing map meshes
@@ -26,8 +27,8 @@ function rebuildEnergyPaths(state) {
 
   var specs = [
    /* { from: "C.202c", to: "exit", type: "each", energy: "knowledge", multiplier: 100},*/
-    { from: "C.202c", to: "classroom", type: "each", energy: "economic", multiplier: 20},
-    { from: "C.202c", to: "classroom", type: "random", num: 10, energy: "knowledge", multiplier: 20}
+    { from: "C.230", to: "classroom", type: "each", energy: "knowledge", multiplier: "agents"},
+    //{ from: "C.202c", to: "classroom", type: "random", num: 10, energy: "knowledge", multiplier: 20}
     /*
     { from: "toilet", to: "exit", type: "random", energy: "knowledge", multiplier: 100},
     { from: "C.202c", to: "c.226", type: "random", energy: "knowledge", multiplier: 100},
@@ -90,6 +91,7 @@ function rebuildEnergyPaths(state) {
       if (!start || !end) return;
 
       multiplier = multiplier || 1;
+      //var room = state.map.getRoomById(agent.state.location);
 
       var path = graph.findShortestPath(start, end);
       if (!path || path.length == 0) return;
@@ -100,10 +102,8 @@ function rebuildEnergyPaths(state) {
       //var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
       //state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
 
-      state.entities.push({ energyPath: spline, energy: true, color: energyType.color, multiplier: multiplier});
+      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier});
   }
-
-  console.log(shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9]));
 
   function shuffleArray(arr)
   { 
