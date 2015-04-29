@@ -2,7 +2,6 @@ var R = require('ramda');
 var glu = require('pex-glu');
 var Vec3 = require('pex-geom').Vec3;
 var Vec2 = require('pex-geom').Vec2;
-var config = require('../../config');
 var Time = require('pex-sys').Time;
 
 var Context = glu.Context;

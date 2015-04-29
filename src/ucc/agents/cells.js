@@ -1,5 +1,5 @@
-var config = require('../../config');
-var style  = config.cellStyle;
+var Config = require('../../config');
+var style  = Config.cellStyle;
 var remap  = require('re-map');
 var random = require('pex-random');
 var R      = require('ramda');
@@ -29,8 +29,8 @@ SplCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -83,8 +83,8 @@ PmuCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -165,8 +165,8 @@ FysCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -257,8 +257,8 @@ SocCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -339,8 +339,8 @@ PaedCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.15, 0.55);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.15, 0.55);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
 
   crayon.save();
   crayon.translate(this.x, this.y);
@@ -425,8 +425,8 @@ DivCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.3, 0.5);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.3, 0.5);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -497,8 +497,8 @@ DipSCell.prototype.draw = function(crayon) {
     var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.3);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.3);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -560,8 +560,8 @@ DipLCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.4);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.4);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -640,8 +640,8 @@ TeacherCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.2, 0.35);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = 0;
   var x = -d;
   var y = -d;
@@ -898,8 +898,8 @@ CookCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.4, 0.8);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.4, 0.8);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
@@ -964,8 +964,8 @@ AdminCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.3, 0.4);
-  var r2 = this.size * remap(student.age, config.minStudentAge, config.maxStudentAge, 0.05, 0.15);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.3, 0.4);
+  var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
   var y = -d;
