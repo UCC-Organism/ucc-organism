@@ -59,6 +59,7 @@ var EnergyTypes = {
   'social': { color: Color.Red.clone() },
   'knowledge': { color: Color.Green.clone() },
   'economic': { color: Color.Blue.clone() },
+  'power': { color: Color.Orange.clone() },
   'dirt': { color: Color.fromHSL(0.1, 0.8, 0.4) }
 };
 
