@@ -49,6 +49,7 @@ var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
 var state = {
+  MAC: 'Unknown',
   DPI: Platform.isPlask ? 2 : 2,
 
   //data
@@ -93,6 +94,17 @@ var state = {
   debugText: null
 };
 
+try {
+  var sys_conf = uccextension.read_system_configSync(); // reads the entire (json) config file
+  var json = JSON.parse(sys_conf);          // parses the json
+  console.log("mac_address: " + json.mac_address);      // reads the mac
+  state.MAC = json.mac_address;
+}
+catch(e) {
+  console.log(e);
+  state.MAC = '' + e;
+}
+
 var GUI_OFFSET = Platform.isPlask ? 0 : 9999;
 
 sys.Window.create({
@@ -120,7 +132,9 @@ sys.Window.create({
     Time.verbose = true;
 
     this.gui = new GUI(this);
-    this.gui.setEnabled(false);
+    this.gui.setEnabled(true);
+    this.gui.addHeader('MAC');
+    this.gui.addLabel(state.MAC);
     this.gui.addHeader('Options');
     this.gui.addParam('Sway Enabled', state, 'sway');
     this.gui.addHeader('Map');
