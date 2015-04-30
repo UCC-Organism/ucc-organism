@@ -122,7 +122,6 @@ sys.Window.create({
   },
   initAll: function() {
     this.initDataClient();
-    this.initWatchdog();
     this.initLibs();
     this.initScene();
     this.initStores();
@@ -221,14 +220,6 @@ sys.Window.create({
   initDataClient: function() {
     this.client = state.client = new Client(config.serverUrl);
     this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed, state);
-  },
-  initWatchdog: function() {
-    if (typeof(uccextension) != 'undefined') {
-      window.setInterval(function() {
-        uccextension.aliveSync();
-      }, 5000);
-      console.log('WARN', 'uccextension not found');
-    }
   },
   initLibs: function() {
     Promise.longStackTraces();
