@@ -54,13 +54,15 @@ function rebuildEnergyPaths(state) {
 
     if (parseFloat(spec.fromNum)) {
       fromNum = parseFloat(spec.fromNum);
-    } else if (spec.fromNum == "all") {
+    }
+    else if (spec.fromNum == "all") {
       fromNum = startCandidates.length;
     }
 
     if (parseFloat(spec.toNum)) {
       toNum = parseFloat(spec.toNum);
-    } else if (spec.toNum == "all") {
+    }
+    else if (spec.toNum == "all") {
       toNum = endCandidates.length;
       if (spec.to == spec.from) toNum --;
     }
@@ -75,7 +77,6 @@ function rebuildEnergyPaths(state) {
       }
 
       for (var k = 0; k < toNum; k++) {
-        
         var end = endCandidates[k];
         var energyType = config.energyTypes[spec.energy];
         addPath(start, end, energyType, spec.multiplier);
@@ -83,7 +84,7 @@ function rebuildEnergyPaths(state) {
     }
   }
 
-  function getRoomNodesForIdOrType (idOrType) {
+  function getRoomNodesForIdOrType(idOrType) {
     var room = state.map.roomsById[idOrType];
     var nodes;
 
@@ -96,7 +97,7 @@ function rebuildEnergyPaths(state) {
     return roomNodesPrType[idOrType];
   }
 
-  function addPath (start, end, energyType, multiplier) {
+  function addPath(start, end, energyType, multiplier) {
       if (!start || !end) return;
 
       multiplier = multiplier || 1;
@@ -121,8 +122,7 @@ function rebuildEnergyPaths(state) {
       state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier});
   }
 
-  function shuffleArray(arr)
-  { 
+  function shuffleArray(arr) {
     if (arr.length < 2) return arr;
 
     var a = arr.slice();
