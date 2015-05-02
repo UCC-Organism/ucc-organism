@@ -52,6 +52,9 @@ function rebuildEnergyPaths(state) {
     var fromNum = 1;
     var toNum = 1;
 
+    if (spec.multiplier == 'agents' || spec.energy != 'knowledge') continue;
+    log('spec', spec.from, spec.to)
+
     if (spec.fromNum == "all") {
       fromNum = startCandidates.length;
     }
@@ -77,8 +80,7 @@ function rebuildEnergyPaths(state) {
 
       for (var k = 0; k < toNum; k++) {
         var end = endCandidates[k];
-        var energyType = Config.energyTypes[spec.energy];
-        addPath(start, end, energyType, spec.multiplier);
+        addPath(start, end, spec, spec.multiplier);
       }
     }
   }
@@ -95,8 +97,11 @@ function rebuildEnergyPaths(state) {
     return roomNodesPrType[idOrType];
   }
 
-  function addPath(start, end, energyType, multiplier) {
+  function addPath(start, end, spec, multiplier) {
       if (!start || !end) return;
+
+      var energy = spec.energy;
+      var energyType = Config.energyTypes[spec.energy];
 
       multiplier = multiplier || 1;
 
@@ -111,7 +116,7 @@ function rebuildEnergyPaths(state) {
         v.z += 0.001;
       })
       var spline = new Spline3D(pathPoints);
-      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier, num: 0, seed: Date.now()});
+      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: energy, spec: spec, color: energyType.color, multiplier: multiplier, num: 0, seed: Date.now()});
 
       var debugPathPoints = R.pluck('position')(path).map(function(v) { return v.dup(); });
       debugPathPoints.forEach(function(v) {

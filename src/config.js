@@ -56,11 +56,11 @@ var AgentTypeGroups = [
 ];
 
 var EnergyTypes = {
-  'social':    { id: 0, color: '#FF0000' },
-  'knowledge': { id: 1, color: '#00FF00' },
-  'economic':  { id: 2, color: '#0000FF' },
-  'power':     { id: 3, color: '#FF9900' },
-  'dirt':      { id: 4, color: '#904930' }
+  'social':    { id: 0, color: '#FF0000', intensity: 0.5 },
+  'knowledge': { id: 1, color: '#00FF00', intensity: 0.5 },
+  'economic':  { id: 2, color: '#0000FF', intensity: 0.5 },
+  'power':     { id: 3, color: '#FF9900', intensity: 0.5 },
+  'dirt':      { id: 4, color: '#904930', intensity: 0.5 }
 };
 
 var RoomTypes = {
@@ -248,6 +248,10 @@ var Config = {
 
   energySpriteSize: 0.5,
   agentSpriteSize: 10,
+
+  energyPointsPerPathLength: 50,
+  energyAgentCountStrength: 2,
+  energyIntensityStrength: 5,
 
   cameraRotationDuration: 120*5, //10min,
 
