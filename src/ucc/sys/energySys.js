@@ -1,16 +1,17 @@
-var R = require('ramda');
-var random = require('pex-random');
-var graph  = require('../../graph');
-var Color = require('pex-color').Color;
-var Spline3D = require('pex-geom').Spline3D;
-var Vec3 = require('pex-geom').Vec3;
+var R           = require('ramda');
+var random      = require('pex-random');
+var graph       = require('../../graph');
+var Color       = require('pex-color').Color;
+var Spline3D    = require('pex-geom').Spline3D;
+var Vec3        = require('pex-geom').Vec3;
 var LineBuilder = require('pex-gen').LineBuilder;
-var Mesh = require('pex-glu').Mesh;
-var SolidColor = require('pex-materials').SolidColor;
+var Mesh        = require('pex-glu').Mesh;
+var SolidColor  = require('pex-materials').SolidColor;
 var ShowNormals = require('pex-materials').ShowNormals;
-var config            = require('../../config');
-var util = require('util');
-var Time = require('pex-sys').Time;
+var config      = require('../../config');
+var util        = require('util');
+var Time        = require('pex-sys').Time;
+var log         = require('debug')('ucc/energySys');
 
 function removeEnergyPathsEntities(state) {
   //remove existing map meshes
@@ -105,9 +106,9 @@ function rebuildEnergyPaths(state) {
       var path = graph.findShortestPath(start, end);
       if (!path || path.length == 0)
       {
-        console.log("no valid path");
+        log("no valid path");
         return;
-      } 
+      }
       var pathPoints = R.pluck('position')(path);
       var spline = new Spline3D(pathPoints);
       var g = new LineBuilder();

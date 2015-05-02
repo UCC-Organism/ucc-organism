@@ -20,6 +20,7 @@ var GUI               = gui.GUI;
 var settings          = require('../../settings');
 
 var cells             = require('./cells');
+var log               = require('debug')('ucc/agents/main')
 
 
 var state = {
@@ -96,7 +97,7 @@ Window.create({
       this.initAgents();
     }.bind(this))
     .catch(function(e) {
-      console.log(e.stack)
+      log(e.stack)
     })
   },
   initAgents: function() {

@@ -9,8 +9,6 @@ var remap             = require('re-map');
 var plask             = require('plask');
 
 var config            = require('../../config');
-var GroupStore        = require('../stores/GroupStore');
-var ActivityStore     = require('../stores/ActivityStore');
 var Crayons           = require('../../crayons/crayons');
 var Window            = sys.Window;
 var Platform          = sys.Platform;

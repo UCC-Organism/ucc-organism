@@ -34,6 +34,8 @@ var Time              = sys.Time;
 var AddCircleExt      = require('../../geom/LineBuilderAddCircle');
 var Plane             = gen.Plane;
 
+var log               = require('debug')('ucc/mapSys');
+
 var EPSILON = 0.0001;
 
 //-----------------------------------------------------------------------------
@@ -175,7 +177,7 @@ function voronoiCellsToEdges(cells) {
 //-----------------------------------------------------------------------------
 
 function rebuildMap(state) {
-  console.log('rebuildMap');
+  log('rebuildMap');
 
   removeMapEntities(state);
 
@@ -366,7 +368,7 @@ function rebuildCells(state) {
   })
   points = roomCenterPoints.concat(points);
 
-  console.log('cellGroups', cellsRoomIds.length);
+  log('cellGroups', cellsRoomIds.length);
 
   var cellsRoomExternalType = [];
 
@@ -523,7 +525,7 @@ function rebuildCells(state) {
     }
   })
 
-  console.log('EXTERNAL voronoiCells.points', voronoiCells.points.filter(R.where({ external: true })).length);
+  log('EXTERNAL voronoiCells.points', voronoiCells.points.filter(R.where({ external: true })).length);
 
   voronoiCells.edges.forEach(function(edge) {
     state.map.selectedNodes[edge[0]].neighbors.push(state.map.selectedNodes[edge[1]])
@@ -605,7 +607,7 @@ function rebuildCells(state) {
       var cellEdgeColor = config.cellEdgeColor;
 
       if (isRoom && roomType && roomType != 'none') {
-        if (!config.roomTypes[roomType]) console.log(roomType, '' + config.roomTypes[roomType])
+        if (!config.roomTypes[roomType]) log('missing room type', roomType, '' + config.roomTypes[roomType])
         cellColor = config.roomTypes[roomType].color;
         cellCenterColor = config.roomTypes[roomType].centerColor;
         cellEdgeColor = config.roomTypes[roomType].edgeColor;
@@ -712,7 +714,7 @@ function rebuildCells(state) {
   corridorBgMesh.position.z = -0.001;
   state.entities.unshift({ name: 'corridorBgMesh', map: true, cell: true, mesh: corridorBgMesh });
 
-  console.log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
+  log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
 }
 
 //-----------------------------------------------------------------------------

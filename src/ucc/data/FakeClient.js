@@ -6,6 +6,7 @@ var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var Config = require('../../config');
 var random = require('pex-random');
+var log = require('debug')('ucc/fakeClient');
 
 var students = [
   "student663",
@@ -148,7 +149,7 @@ FakeClient.prototype.genMorning = function(state) {
   // go to classroom
   self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
-    console.log("go to classroom");
+    log("go to classroom");
 
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Classroom;
@@ -163,7 +164,7 @@ FakeClient.prototype.genMorning = function(state) {
   // go to lunch
   self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
-    console.log("go to lunch");
+    log("go to lunch");
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
@@ -173,7 +174,7 @@ FakeClient.prototype.genMorning = function(state) {
   // go home
   self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
-    console.log("go home");
+    log("go home");
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Away;
       agent.targetLocation = '';
@@ -183,12 +184,12 @@ FakeClient.prototype.genMorning = function(state) {
 
 FakeClient.prototype.clearTimers = function() 
 {
-  console.log("clear timers: " + this.timers.length);
+  log("clear timers: " + this.timers.length);
 
   for (var i = 0; i < this.timers.length; i++)
   {
     clearTimeout(this.timers[i]);
-    console.log(this.timers[i]);
+    log(this.timers[i]);
   }
 }
 

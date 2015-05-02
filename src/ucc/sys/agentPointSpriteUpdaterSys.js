@@ -64,7 +64,6 @@ function agentPointSpriteUpdaterSys(state) {
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
     if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(entity.agentIdNumber % 10, entity.typeIndex); //FIXME: agent type
 
-    //console.log(entity);
     //lineColors[entityIndex] = Config.agentLineColor;
     //fillColors[entityIndex] = Config.agentFillColor;
     lineColors[entityIndex] = entity.colorLines;

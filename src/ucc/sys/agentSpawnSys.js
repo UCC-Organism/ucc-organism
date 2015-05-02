@@ -4,9 +4,11 @@ var color       = require('pex-color');
 var Vec3        = require('pex-geom').Vec3;
 var AgentModes  = require('../agents/agentModes');
 var Config      = require('../../config');
-var Log         = require('../../utils/log');
+var log         = require('debug')('ucc/agentSpawnSys');
 
 var Color       = color.Color;
+
+var loggedMissingRooms = [];
 
 function makeAgentEntity(props) {
 
@@ -123,14 +125,20 @@ function spawnAgents(state) {
             state.entities.push(agent.entity);
           }
           else {
-            console.log('ERR: spawnAgents: Unknown programme: "' + agent.programme + '"')
+            log('ERR: spawnAgents: Unknown programme: "' + agent.programme + '"')
           }
         }
       }
     }
   })
 
-  Log.once('ERR missing rooms "', R.uniq(missingRooms), '"')
+  missingRooms = R.uniq(missingRooms).filter(function(room) {
+    return missingRooms.indexOf(room) == -1;
+  });
+  if (missingRooms.length > 0) {
+    loggedMissingRooms = loggedMissingRooms.concat(missingRooms);
+    log('ERR missing rooms "', missingRooms, '"')
+  }
 }
 
 function agentSpawnSys(state) {

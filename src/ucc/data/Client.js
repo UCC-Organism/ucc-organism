@@ -4,6 +4,7 @@ var Faye = require('faye');
 var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
+var log = require('debug')('ucc/client');
 
 function Client(serverUrl) {
   this.enabled = true;
@@ -12,7 +13,7 @@ function Client(serverUrl) {
 }
 
 Client.prototype.getJSON = function(url) {
-  console.log('Client.getJSON', url);
+  log('Client.getJSON', url);
   return new Promise(function(resolve, reject) {
     request(url, function(err, res) {
       if (err) reject(err);
@@ -22,7 +23,7 @@ Client.prototype.getJSON = function(url) {
 }
 
 Client.prototype.subscribeToEvents = function() {
-  console.log('Client.subscribeToEvents');
+  log('Client.subscribeToEvents');
   this.fayeClient = new Faye.Client(this.serverUrl + '/faye');
   this.fayeClient.subscribe('/events', this.onEvent.bind(this));
 }
@@ -39,8 +40,8 @@ Client.prototype.updateCurrentState = function() {
       setTimeout(this.updateCurrentState.bind(this), 500);
       return;
     }
-    console.log('Client.updateCurrentState agents:', agentIds.length);
-    console.log('Client.updateCurrentState', agentsState[agentIds[0]]);
+    log('Client.updateCurrentState agents:', agentIds.length);
+    log('Client.updateCurrentState', agentsState[agentIds[0]]);
 
     AgentStore.all = [];
     agentIds.forEach(function(agentId) {
@@ -67,7 +68,7 @@ Client.prototype.updateCurrentState = function() {
       AgentStore.all.push(agent);
     })
 
-    console.log('Client.updateCurrentState', AgentStore.all.length);
+    log('Client.updateCurrentState', AgentStore.all.length);
 
     this.subscribeToEvents();
   }.bind(this));
@@ -75,19 +76,19 @@ Client.prototype.updateCurrentState = function() {
 
 Client.prototype.onEvent = function(e) {
   if (!this.enabled) return;
-  console.log('Client.onEvent', e.description);
+  log('Client.onEvent', e.description);
   e.agents.forEach(function(agentId) {
     var agent = AgentStore.getAgentById(agentId);
     if (!agent) {
-      console.log('WARN', 'Client.onEvent agent not found!', agentId);
+      log('WARN', 'Client.onEvent agent not found!', agentId);
       return;
     }
     if (e.description == 'away') {
-      //console.log('Client.onEvent', agentId, 'is going away')
+      //log('Client.onEvent', agentId, 'is going away')
       agent.targetMode = AgentModes.Away;
     }
     else if (e.description == 'roaming') {
-      //console.log('Client.onEvent', agentId, 'is going roaming')
+      //log('Client.onEvent', agentId, 'is going roaming')
       agent.targetMode = AgentModes.Roaming;
     }
     else if (e.description == 'random toilet') {
@@ -97,15 +98,15 @@ Client.prototype.onEvent = function(e) {
     else if (e.description == 'random lunch') {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = e.location;
-      console.log(e);
+      log(e);
     }
     else if (e.location) {
-      //console.log('Client.onEvent', agentId, 'is going from', agent.targetLocation, 'to', e.location);
+      //log('Client.onEvent', agentId, 'is going from', agent.targetLocation, 'to', e.location);
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = e.location;
     }
     //else {
-    //  console.log('Client.onEvent', agentId, e);
+    //  log('Client.onEvent', agentId, e);
     //}
   })
 }

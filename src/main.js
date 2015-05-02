@@ -5,6 +5,8 @@ var random            = require('pex-random');
 var color             = require('pex-color');
 var gui               = require('pex-gui');
 var R                 = require('ramda');
+var debug             = require('debug').enable('ucc/*')
+var log               = require('debug')('ucc/main');
 
 //CES
 var meshRendererSys               = require('./ucc/sys/meshRendererSys');
@@ -44,6 +46,8 @@ var GUI               = gui.GUI;
 var DebugText         = require('./typo/DebugText');
 
 var Vec3              = require('pex-geom').Vec3;
+
+log('init')
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -96,11 +100,11 @@ var state = {
 try {
   var sys_conf = uccextension.read_system_configSync(); // reads the entire (json) config file
   var json = JSON.parse(sys_conf);          // parses the json
-  console.log("mac_address: " + json.mac_address);      // reads the mac
+  log("mac_address: " + json.mac_address);      // reads the mac
   state.MAC = json.mac_address;
 }
 catch(e) {
-  console.log(e);
+  log('uccextension not available');
   state.MAC = '' + e;
 }
 
@@ -117,9 +121,8 @@ sys.Window.create({
   },
   init: function() {
     this.initGUI();
-    console.log('VERSION 10');
-    console.log('MAX_VERTEX_UNIFORM_VECTORS ' + this.gl.getParameter(this.gl.MAX_VERTEX_UNIFORM_VECTORS));
-    console.log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));
+    log('MAX_VERTEX_UNIFORM_VECTORS ' + this.gl.getParameter(this.gl.MAX_VERTEX_UNIFORM_VECTORS));
+    log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));
   },
   initAll: function() {
     this.initDataClient();
@@ -254,7 +257,7 @@ sys.Window.create({
 
     }.bind(this))
     .catch(function(e) {
-      console.log(e.stack)
+      log(e.stack)
     })
   },
   initKeys: function() {
@@ -411,7 +414,7 @@ sys.Window.create({
 
     var err = this.gl.getError()
     if (err) {
-      console.log('GL ERROR ' + err);
+      log('GL ERROR ' + err);
     }
   }
 });

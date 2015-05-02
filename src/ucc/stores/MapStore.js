@@ -6,6 +6,7 @@ var geom      = require('pex-geom');
 var sys       = require('pex-sys');
 var Vec3      = geom.Vec3;
 var Platform  = sys.Platform;
+var log       = require('debug')('ucc/mapStore');
 
 var MapStore = {
   nodes: [],
@@ -18,7 +19,7 @@ var MapStore = {
   currentFloor: 7,
   dirty: true,
   init: function() {
-    console.log('MapStore.init');
+    log('init');
     return Promise.all([
       IOUtils.loadJSON(Config.dataPath + '/map/layers.json'),
       IOUtils.loadJSON(Config.dataPath + '/map/nodes.client.json')
@@ -35,7 +36,7 @@ var MapStore = {
         }
       }.bind(this));
 
-      console.log('MapStore.init nodes:' + this.nodes.length + ' rooms:' + this.rooms.length);
+      log('init nodes:' + this.nodes.length + ' rooms:' + this.rooms.length);
 
       //Transform json data to real objects
       this.nodes.forEach(function(node) {
@@ -94,7 +95,7 @@ var MapStore = {
     else {
       this.selectedNodes = this.nodes;
     }
-    console.log('MapStore.setFloor', this.currentFloor)
+    log('setFloor', this.currentFloor)
     this.dirty = true;
   },
   setFocusRoom: function(roomId) {
