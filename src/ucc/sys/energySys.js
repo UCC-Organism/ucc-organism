@@ -112,11 +112,12 @@ function rebuildEnergyPaths(state) {
       var spline = new Spline3D(pathPoints);
       var g = new LineBuilder();
 
-      /*
-      g.addPath(spline, Color.Red, 0);
-      var mesh = new Mesh(g, new SolidColor({ color: Color.Red }), { lines: true });
+      g.addPath(spline, Color.Red, pathPoints.length * 5);
+      g.vertices.forEach(function(v) {
+        v.z += 0.01;
+      })
+      var mesh = new Mesh(g, new SolidColor({ color: energyType.color }), { lines: true });
       state.entities.push({ name: 'energyPathMesh', energy: true, debug: false, mesh: mesh, lineWidth: 5 });
-      */
 
       state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier});
   }

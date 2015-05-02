@@ -1,5 +1,4 @@
 var Config = require('../../config');
-var style  = Config.cellStyle;
 var remap  = require('re-map');
 var random = require('pex-random');
 var R      = require('ramda');
@@ -11,7 +10,7 @@ var coreColor = [255, 0, 0, 255];
 
 //-----------------------------------------------------------------------------
 
-function SplCell(student, x, y, size, color) {
+function SplCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -65,7 +64,7 @@ SplCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function PmuCell(student, x, y, size, color) {
+function PmuCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -147,7 +146,7 @@ PmuCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function FysCell(student, x, y, size, color) {
+function FysCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -239,7 +238,7 @@ FysCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function SocCell(student, x, y, size, color) {
+function SocCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -321,7 +320,7 @@ SocCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function PaedCell(student, x, y, size, color) {
+function PaedCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -407,7 +406,7 @@ PaedCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function DivCell(student, x, y, size, color) {
+function DivCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -479,7 +478,7 @@ DivCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function DipSCell(student, x, y, size, color) {
+function DipSCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -542,7 +541,7 @@ DipSCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function DipLCell(student, x, y, size, color) {
+function DipLCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -622,7 +621,7 @@ DipLCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function TeacherCell(student, x, y, size, color) {
+function TeacherCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -702,7 +701,7 @@ TeacherCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function ResearcherCell(student, x, y, size, color) {
+function ResearcherCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -792,7 +791,7 @@ ResearcherCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function JanitorCell(student, x, y, size, color) {
+function JanitorCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -880,7 +879,7 @@ JanitorCell.prototype.draw = function(crayon) {
 //-----------------------------------------------------------------------------
 
 
-function CookCell(student, x, y, size, color) {
+function CookCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -946,7 +945,7 @@ CookCell.prototype.draw = function(crayon) {
   crayon.restore();
 }
 
-function AdminCell(student, x, y, size, color) {
+function AdminCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -1012,73 +1011,6 @@ AdminCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function UnknownCell(student, x, y, size, color) {
-  this.student = student;
-  this.x = x;
-  this.y = y;
-  this.vx = 0;
-  this.vy = 0;
-  this.fx = 0;
-  this.fy = 0;
-  this.baseX = x;
-  this.baseY = y;
-  this.size = size * 0.75;
-  this.seed = Math.random();
-}
-
-UnknownCell.prototype.draw = function(crayon) {
-  var r = this.size * 0.4;
-  var x = this.x;
-  var y = this.y;
-
-  crayon.fill(borderColor)
-    .circle(x, y, r + 6)
-
-  crayon.fill(primaryColor)
-    .circle(x, y, r + 5)
-
-  crayon.fill(fillColor)
-    .circle(x, y, r)
-
-  crayon.restore();
-}
-
-//-----------------------------------------------------------------------------
-
-function UnknownCell(student, x, y, size, color) {
-  this.student = student;
-  this.color = color;
-  this.x = x;
-  this.y = y;
-  this.vx = 0;
-  this.vy = 0;
-  this.fx = 0;
-  this.fy = 0;
-  this.baseX = x;
-  this.baseY = y;
-  this.size = size * 0.75;
-  this.seed = Math.random();
-}
-
-UnknownCell.prototype.draw = function(crayon) {
-  var r = this.size * 0.4;
-  var x = this.x;
-  var y = this.y;
-
-  crayon.fill(style.cellBorderEdge)
-    .circle(x, y, r + 6)
-
-  crayon.fill(this.color)
-    .circle(x, y, r + 5)
-
-  crayon.fill(style.cellInside)
-    .circle(x, y, r)
-
-  crayon.restore();
-}
-
-//-----------------------------------------------------------------------------
-
 module.exports.SplCell          = SplCell;
 module.exports.PmuCell          = PmuCell;
 module.exports.FysCell          = FysCell;
@@ -1092,4 +1024,3 @@ module.exports.ResearcherCell   = ResearcherCell;
 module.exports.JanitorCell      = JanitorCell;
 module.exports.CookCell         = CookCell;
 module.exports.AdminCell        = AdminCell;
-module.exports.UnknownCell      = UnknownCell;

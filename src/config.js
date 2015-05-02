@@ -24,19 +24,19 @@ var RoomIdMap = {
 };
 
 var AgentTypeColors = [
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'SPL - Sygeplejerskeuddannelsen',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'PMU - Psykomotorikuddannelsen',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'FYS - Fysioterapeutuddannelsen',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'SOC - Socialrådgiveruddannelsen',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'PÆD - Pædagoguddannelsen',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'DIV - Diverse aktiviteter',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Diplom S - Diplomuddannelse - Sundhed',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Diplom L - Diplomuddannelse - Ledelse',
-  [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],//'Teacher',
-  [Color.fromHex("#DD33FF"), Color.fromHex("#FF22FF")],//'Researcher',
-  [Color.fromHex("#7B5647"), Color.fromHex("#7B5647")],//'Janitor',
-  [Color.fromHex("#FF0000"), Color.fromHex("#FFFF00")],//'Cook',
-  [Color.fromHex("#0000FF"), Color.fromHex("#00FFFF")],//'Admin'
+  ["#FF0000", "#FFFF00"],//'SPL - Sygeplejerskeuddannelsen',
+  ["#FF0000", "#FFFF00"],//'PMU - Psykomotorikuddannelsen',
+  ["#FF0000", "#FFFF00"],//'FYS - Fysioterapeutuddannelsen',
+  ["#FF0000", "#FFFF00"],//'SOC - Socialrådgiveruddannelsen',
+  ["#FF0000", "#FFFF00"],//'PÆD - Pædagoguddannelsen',
+  ["#FF0000", "#FFFF00"],//'DIV - Diverse aktiviteter',
+  ["#FF0000", "#FFFF00"],//'Diplom S - Diplomuddannelse - Sundhed',
+  ["#FF0000", "#FFFF00"],//'Diplom L - Diplomuddannelse - Ledelse',
+  ["#0000FF", "#00FFFF"],//'Teacher',
+  ["#DD33FF", "#FF22FF"],//'Researcher',
+  ["#7B5647", "#7B5647"],//'Janitor',
+  ["#FF0000", "#FFFF00"],//'Cook',
+  ["#0000FF", "#00FFFF"],//'Admin'
 ];
 
 var AgentTypeGroups = [
@@ -74,22 +74,6 @@ var RoomTypes = {
   'food'     : { label: 'Food'     , color: '#FFAA00', centerColor: '#FFAA00', edgeColor: '#FFAA00' },
   'exit'     : { label: 'Exit'     , color: '#FF0000', centerColor: '#FF0000', edgeColor: '#FF0000' },
   'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' }
-};
-
-var CellStyle = {
-  bg: [ 222, 200, 39, 255 ],
-  cellBorderEdge : [ 255*0.5561439022429832, 255*0.10527327716561674, 255*0.853888654652565, 255*1.0 ],
-  cellBorder: [ 222-30, 200-30, 39-0, 255 ],
-  cellInside: [ 255, 255, 210, 200 ],
-  cellCore: [ 100, 70, 90, 200 ],
-  teacher: [39, 178, 128, 255],
-  simple: [239, 105, 108, 255],
-  teacher: [ 255, 255, 255, 150 ],
-  simple: [ 255, 255, 255, 150 ],
-  //simple: [ 255, 50, 10, 255 ],
-  //teacher: [ 255, 50, 10, 255 ],
-  //paed: [ 255, 50, 10, 255 ]
-  paed: [ 255, 255, 255, 150 ]
 };
 
 var Floors = [
@@ -240,9 +224,7 @@ var Config = {
   agentTypeColors: AgentTypeColors,
   agentTypeGroups: AgentTypeGroups,
 
-  scheduleStartDate: "2014-11-24",
-  scheduleEndDate: "2014-11-30",
-
+  //map
   cellCloseness: 0.00155,
   cellEdgeWidth: 1,
   cellColor: Color.fromHex('#696E98'),
@@ -256,18 +238,16 @@ var Config = {
   agentFillColor: new Color(1.0, 1.0, 1.0, 1.0),
   agentFillColorBasedOnAccentColor: true,
   agentInvertFillAndLineColorBasedOnGender: true,
-  agentStudentColor: new Color(1.0, 1.0, 0.3, 1.0),
-  agentTeacherColor: new Color(1.0, 0.3, 0.3, 1.0),
-  agentResearcherColor: new Color(1.0, 0.3, 0.3, 1.0),
-  agentCookColor: new Color(0.3, .9, 0.3, 1.0),
-  agentJanitorColor: new Color(0.0, 1.0, 0.0, 1.0),
+  //agentStudentColor: new Color(1.0, 1.0, 0.3, 1.0),
+  //agentTeacherColor: new Color(1.0, 0.3, 0.3, 1.0),
+  //agentResearcherColor: new Color(1.0, 0.3, 0.3, 1.0),
+  //agentCookColor: new Color(0.3, .9, 0.3, 1.0),
+  //agentJanitorColor: new Color(0.0, 1.0, 0.0, 1.0),
   membraneColor: new Color(0.9, 0.9, 0.9, 1.0),
 
   roomTypes: RoomTypes,
   floors: Floors,
   energyPaths: EnergyPaths,
-
-  cellStyle: CellStyle,
 
   minStudentAge: 18,
   maxStudentAge: 40,
@@ -279,9 +259,13 @@ var Config = {
 
   cameraRotationDuration: 120*5, //10min,
 
-
   floorId: FloorId
 };
+
+Object.keys(Config.agentTypeColors).forEach(function(i) {
+  Config.agentTypeColors[i][0] = Color.fromHex(Config.agentTypeColors[i][0]);
+  Config.agentTypeColors[i][1] = Color.fromHex(Config.agentTypeColors[i][1]);
+})
 
 Object.keys(Config.roomTypes).forEach(function(type) {
   var roomType = Config.roomTypes[type];
