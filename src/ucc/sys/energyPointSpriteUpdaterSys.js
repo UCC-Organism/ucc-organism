@@ -58,35 +58,11 @@ function energyPointSpriteUpdaterSys(state) {
 
   var energyPathEntities = R.filter(R.where({ energyPath: R.identity }), state.entities);
 
-
   energyPathEntities.forEach(function(entity) {
 
-     random.seed(0)
-    var numTarget = 10;
+    random.seed(0)
 
-    if (parseFloat(entity.multiplier)) {
-      numTarget *= entity.multiplier;
-    } else {
-      // base on num agents in room
-      numTarget *= state.map.getRoomById(entity.startRoomId).agentCount * 2;
-    }
-
-    var num = entity.num || 0;
-
-    if (num != numTarget) {
-      if (num < numTarget) {
-        num += 4;
-        if (num > numTarget) num = numTarget;
-      }
-      else {
-        num -= 4;
-        if (num < 0) num = 0;
-      }
-    }
-
-    entity.num = num;
-
-    for(var i=0; i<num; i++) {
+    for(var i=0; i<entity.num; i++) {
       var t = random.float();
       var len = entity.energyPath.getLength();
       var speed = random.float(0.005/len, 0.01/len);

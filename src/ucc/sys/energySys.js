@@ -44,11 +44,8 @@ function rebuildEnergyPaths(state) {
 
     if (!startCandidates || !endCandidates || !startCandidates.length || !endCandidates.length) continue;
 
-    if (spec.random) { // randomize element
-      startCandidates = shuffleArray(startCandidates);
-      endCandidates = shuffleArray(endCandidates);
-      num = spec.num || 1;
-    }
+    startCandidates = shuffleArray(startCandidates);
+    endCandidates = shuffleArray(endCandidates);
 
     var fromNum = 1;
     var toNum = 1;
@@ -88,8 +85,7 @@ function rebuildEnergyPaths(state) {
     var room = state.map.roomsById[idOrType];
     var nodes;
 
-    if (room)
-    {
+    if (room) {
       nodes = state.map.selectedNodes.filter(R.where({ roomId: idOrType }))
       if (nodes) return nodes;
     }
@@ -119,7 +115,7 @@ function rebuildEnergyPaths(state) {
       var mesh = new Mesh(g, new SolidColor({ color: energyType.color }), { lines: true });
       state.entities.push({ name: 'energyPathMesh', energy: true, debug: true, mesh: mesh, lineWidth: 5 });
 
-      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier});
+      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier, num: 0});
   }
 
   function shuffleArray(arr) {
@@ -129,8 +125,7 @@ function rebuildEnergyPaths(state) {
     var newArr = [];
     var num = a.length;
 
-    for (var i = 0; i < num; i++)
-    {
+    for (var i = 0; i < num; i++) {
       random.seed(Time.seconds);
       var el = random.element(a);
       a.splice(a.indexOf(el), 1);
@@ -141,7 +136,7 @@ function rebuildEnergyPaths(state) {
   }
 }
 
-function update(state) {
+function energySys(state) {
   if (!state.map.nodes.length) {
     return;
   }
@@ -151,4 +146,4 @@ function update(state) {
   }
 }
 
-module.exports = update;
+module.exports = energySys;

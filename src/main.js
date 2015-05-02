@@ -12,6 +12,7 @@ var log               = require('debug')('ucc/main');
 var meshRendererSys               = require('./ucc/sys/meshRendererSys');
 var mapSys                        = require('./ucc/sys/mapSys');
 var energySys                     = require('./ucc/sys/energySys');
+var energyUpdaterSys              = require('./ucc/sys/energyUpdaterSys');
 var energyPointSpriteUpdaterSys   = require('./ucc/sys/energyPointSpriteUpdaterSys');
 var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys');
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
@@ -382,6 +383,7 @@ sys.Window.create({
       agentDebugInfoUpdaterSys(state);
       mapSys(state);
       energySys(state);
+      energyUpdaterSys(state);
       agentSpawnSys(state);
       agentTargetNodeUpdaterSys(state);
       agentKillSys(state);
