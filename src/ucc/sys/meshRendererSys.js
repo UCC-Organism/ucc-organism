@@ -1,9 +1,9 @@
-var R = require('ramda');
-var glu = require('pex-glu');
-var Vec3 = require('pex-geom').Vec3;
-var Vec2 = require('pex-geom').Vec2;
-var Time = require('pex-sys').Time;
-var Config = require('../../config');
+var R       = require('ramda');
+var glu     = require('pex-glu');
+var Vec3    = require('pex-geom').Vec3;
+var Vec2    = require('pex-geom').Vec2;
+var Time    = require('pex-sys').Time;
+var Config  = require('../../config');
 
 var Context = glu.Context;
 
@@ -47,7 +47,7 @@ function meshRendererSys(state) {
     }
 
     if (entity.mesh.material.program.uniforms["weakDisplacePoints[0]"]) {
-      entity.mesh.material.uniforms.glowColor = new Vec3(Config.glowColor.r, Config.glowColor.g, Config.glowColor.b); 
+      entity.mesh.material.uniforms.glowColor = new Vec3(1,1,1);
       var n = agents.length;
       if (n > Config.maxDistortPoints) n = Config.maxDistortPoints;
 

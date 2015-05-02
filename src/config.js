@@ -56,11 +56,11 @@ var AgentTypeGroups = [
 ];
 
 var EnergyTypes = {
-  'social':    { id: 0, color: Color.Red.clone() },
-  'knowledge': { id: 1, color: Color.Green.clone() },
-  'economic':  { id: 2, color: Color.Blue.clone() },
-  'power':     { id: 3, color: Color.Orange.clone() },
-  'dirt':      { id: 4, color: Color.fromHSL(0.1, 0.8, 0.4) }
+  'social':    { id: 0, color: '#FF0000' },
+  'knowledge': { id: 1, color: '#00FF00' },
+  'economic':  { id: 2, color: '#0000FF' },
+  'power':     { id: 3, color: '#FF9900' },
+  'dirt':      { id: 4, color: '#904930' }
 };
 
 var RoomTypes = {
@@ -227,23 +227,17 @@ var Config = {
   //map
   cellCloseness: 0.00155,
   cellEdgeWidth: 1,
-  cellColor: Color.fromHex('#696E98'),
-  cellCenterColor: Color.fromHex('#696E98'),
-  cellEdgeColor: Color.fromHex('#FF00FF'),
-  bgColor: Color.fromHex('#312D2D'),
-  corridorColor: Color.fromHex('#FFFF00'),
+  cellColor: '#696E98',
+  cellCenterColor: '#696E98',
+  cellEdgeColor: '#FF00FF',
+  bgColor: '#312D2D',
+  corridorColor: '#FFFF00',
+  membraneColor: '#EEEEEE',
 
-  glowColor: Color.fromHex('#FF0000'),
-  agentLineColor: new Color(0.0, 0.0, 0.0, 1.0),
-  agentFillColor: new Color(1.0, 1.0, 1.0, 1.0),
+  agentLineColor: '#000000',
+  agentFillColor: '#FFFFFF',
   agentFillColorBasedOnAccentColor: true,
   agentInvertFillAndLineColorBasedOnGender: true,
-  //agentStudentColor: new Color(1.0, 1.0, 0.3, 1.0),
-  //agentTeacherColor: new Color(1.0, 0.3, 0.3, 1.0),
-  //agentResearcherColor: new Color(1.0, 0.3, 0.3, 1.0),
-  //agentCookColor: new Color(0.3, .9, 0.3, 1.0),
-  //agentJanitorColor: new Color(0.0, 1.0, 0.0, 1.0),
-  membraneColor: new Color(0.9, 0.9, 0.9, 1.0),
 
   roomTypes: RoomTypes,
   floors: Floors,
@@ -259,19 +253,40 @@ var Config = {
 
   cameraRotationDuration: 120*5, //10min,
 
-  floorId: FloorId
+  floorId: FloorId,
+
+  parseColors: parseColors
 };
 
-Object.keys(Config.agentTypeColors).forEach(function(i) {
-  Config.agentTypeColors[i][0] = Color.fromHex(Config.agentTypeColors[i][0]);
-  Config.agentTypeColors[i][1] = Color.fromHex(Config.agentTypeColors[i][1]);
-})
+function parseColors() {
+  Object.keys(Config).forEach(function(key) {
+    var value = Config[key];
+    if (value && value.length && value[0] == '#') {
+      Config[key] = Color.fromHex(Config[key]);
+    }
+  })
 
-Object.keys(Config.roomTypes).forEach(function(type) {
-  var roomType = Config.roomTypes[type];
-  roomType.color = Color.fromHex(roomType.color);
-  roomType.centerColor = Color.fromHex(roomType.centerColor);
-  roomType.edgeColor = Color.fromHex(roomType.edgeColor);
-});
+  Object.keys(Config.energyTypes).forEach(function(type) {
+    if (Config.energyTypes[type].color[0] == '#') {
+      Config.energyTypes[type].color = Color.fromHex(Config.energyTypes[type].color);
+    }
+  })
+
+  Object.keys(Config.agentTypeColors).forEach(function(i) {
+    if (Config.agentTypeColors[i][0][0] == '#') {
+      Config.agentTypeColors[i][0] = Color.fromHex(Config.agentTypeColors[i][0]);
+      Config.agentTypeColors[i][1] = Color.fromHex(Config.agentTypeColors[i][1]);
+    }
+  })
+
+  Object.keys(Config.roomTypes).forEach(function(type) {
+    var roomType = Config.roomTypes[type];
+    if (roomType.color[0] =='#') roomType.color = Color.fromHex(roomType.color);
+    if (roomType.centerColor[0] =='#') roomType.centerColor = Color.fromHex(roomType.centerColor);
+    if (roomType.edgeColor[0] =='#') roomType.edgeColor = Color.fromHex(roomType.edgeColor);
+  });
+}
+
+Config.parseColors();
 
 module.exports = Config;
