@@ -100,8 +100,6 @@ var FloorId = {
 
 var EnergyPaths = [
   //Knowledge (in all views)
-  //each classroom (*agents) -> random exit
-  { from: "classroom", to: "exit", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "agents", view: "all"},
   //each lab (*agents) -> random classroom
   { from: "research", to: "classroom", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "agents", view: "all"},
   //each lab (*agents) -> random exit
