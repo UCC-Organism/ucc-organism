@@ -182,7 +182,6 @@ sys.Window.create({
     this.gui.addParam('Cell', config, 'cellColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Center', config, 'cellCenterColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Edge', config, 'cellEdgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Glow', config, 'glowColor', {}, this.onColorChange.bind(this));
     this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
@@ -371,6 +370,32 @@ sys.Window.create({
       }
     });
   },
+  updateSystems: function() {
+    agentDebugInfoUpdaterSys(state);
+    mapSys(state);
+    energySys(state);
+    energyUpdaterSys(state);
+    agentSpawnSys(state);
+    agentTargetNodeUpdaterSys(state);
+    agentKillSys(state);
+    roomInfoUpdaterSys(state);
+    agentTargetNodeFollowerSys(state);
+    agentPositionUpdaterSys(state);
+
+    agentFlockingSys(state);
+    agentPointSpriteUpdaterSys(state);
+    energyPointSpriteUpdaterSys(state);
+
+    flufSys(state);
+
+    displacePointUpdaterSys(state);
+
+    meshRendererSys(state);
+
+    this.fakeClient.update(state);
+
+    state.map.dirty = false;
+  },
   draw: function() {
     this.update();
 
@@ -380,30 +405,12 @@ sys.Window.create({
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.map.selectedNodes) {
-      agentDebugInfoUpdaterSys(state);
-      mapSys(state);
-      energySys(state);
-      energyUpdaterSys(state);
-      agentSpawnSys(state);
-      agentTargetNodeUpdaterSys(state);
-      agentKillSys(state);
-      roomInfoUpdaterSys(state);
-      agentTargetNodeFollowerSys(state);
-      agentPositionUpdaterSys(state);
-
-      agentFlockingSys(state);
-      agentPointSpriteUpdaterSys(state);
-      energyPointSpriteUpdaterSys(state);
-
-      flufSys(state);
-
-      displacePointUpdaterSys(state);
-
-      meshRendererSys(state);
-
-      this.fakeClient.update(state);
-
-      state.map.dirty = false;
+      try {
+        this.updateSystems();
+      }
+      catch(e) {
+        log(e);
+      }
     }
 
     if (state.showLabels) {
