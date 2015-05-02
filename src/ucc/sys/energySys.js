@@ -72,7 +72,6 @@ function rebuildEnergyPaths(state) {
       var endCand = endCandidates.slice();
 
       if (spec.to == spec.from){
-        console.log("remove duplicates");
         endCand.splice(endCand.indexOf(start), 1);
       }
 
