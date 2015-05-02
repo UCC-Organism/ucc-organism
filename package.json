@@ -24,6 +24,7 @@
     "pex-sys": "^0.3.0",
     "ramda": "^0.6.0",
     "re-map": "^0.1.1",
+    "shuffle-array": "^0.1.0",
     "signals": "^1.0.0",
     "superagent": "^1.1.0",
     "vinyl-source-stream": "0.1.1",

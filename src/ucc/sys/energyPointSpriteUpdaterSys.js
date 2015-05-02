@@ -60,7 +60,7 @@ function energyPointSpriteUpdaterSys(state) {
 
   energyPathEntities.forEach(function(entity) {
 
-    random.seed(0)
+    random.seed(entity.seed)
 
     for(var i=0; i<entity.num; i++) {
       var t = random.float();

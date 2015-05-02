@@ -12,6 +12,7 @@ var Config      = require('../../config');
 var util        = require('util');
 var Time        = require('pex-sys').Time;
 var log         = require('debug')('ucc/energySys');
+var shuffle     = require('shuffle-array');
 
 function removeEnergyPathsEntities(state) {
   //remove existing map meshes
@@ -26,6 +27,7 @@ function removeEnergyPathsEntities(state) {
 
 function rebuildEnergyPaths(state) {
   removeEnergyPathsEntities(state);
+  random.seed(Date.now());
 
   var specs = Config.energyPaths;
 
@@ -44,25 +46,25 @@ function rebuildEnergyPaths(state) {
 
     if (!startCandidates || !endCandidates || !startCandidates.length || !endCandidates.length) continue;
 
-    startCandidates = shuffleArray(startCandidates);
-    endCandidates = shuffleArray(endCandidates);
+    startCandidates = shuffle(startCandidates);
+    endCandidates = shuffle(endCandidates);
 
     var fromNum = 1;
     var toNum = 1;
 
-    if (parseFloat(spec.fromNum)) {
-      fromNum = parseFloat(spec.fromNum);
-    }
-    else if (spec.fromNum == "all") {
+    if (spec.fromNum == "all") {
       fromNum = startCandidates.length;
     }
-
-    if (parseFloat(spec.toNum)) {
-      toNum = parseFloat(spec.toNum);
+    else {
+      fromNum = spec.fromNum;
     }
-    else if (spec.toNum == "all") {
+
+    if (spec.toNum == "all") {
       toNum = endCandidates.length;
       if (spec.to == spec.from) toNum --;
+    }
+    else {
+      toNum = spec.toNum;
     }
 
     for (var j = 0; j < fromNum; j++) {
@@ -106,33 +108,21 @@ function rebuildEnergyPaths(state) {
       }
       var pathPoints = R.pluck('position')(path).map(function(v) { return v.dup(); });
       pathPoints.forEach(function(v) {
-        v.z += 0.005 * (1 + energyType.id);
+        v.z += 0.001;
       })
       var spline = new Spline3D(pathPoints);
+      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier, num: 0, seed: Date.now()});
+
+      var debugPathPoints = R.pluck('position')(path).map(function(v) { return v.dup(); });
+      debugPathPoints.forEach(function(v) {
+        v.z += 0.005 * (1 + energyType.id);
+      })
+      var debugSpline = new Spline3D(debugPathPoints);
       var g = new LineBuilder();
-
-      g.addPath(spline, Color.Red, pathPoints.length * 5);
+      g.addPath(debugSpline, Color.Red, pathPoints.length * 5);
       var mesh = new Mesh(g, new SolidColor({ color: energyType.color }), { lines: true });
+
       state.entities.push({ name: 'energyPathMesh', energy: true, debug: true, mesh: mesh, lineWidth: 5 });
-
-      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: true, color: energyType.color, multiplier: multiplier, num: 0});
-  }
-
-  function shuffleArray(arr) {
-    if (arr.length < 2) return arr;
-
-    var a = arr.slice();
-    var newArr = [];
-    var num = a.length;
-
-    for (var i = 0; i < num; i++) {
-      random.seed(Time.seconds);
-      var el = random.element(a);
-      a.splice(a.indexOf(el), 1);
-      newArr.push(el)
-    }
-
-    return newArr;
   }
 }
 
