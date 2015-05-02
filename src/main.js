@@ -84,7 +84,6 @@ var state = {
   showNodes: false,
   showCorridors: false,
   showLabels: false,
-  clearBg: true,
   sway: 0,
 
   //ui
@@ -269,10 +268,7 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
-        case 'b': state.clearBg = !state.clearBg; break;
         case 'q': config.bgColor = Color.fromHex('#FF0000'); config.cellColor = Color.fromHex('#FF0000'); this.onColorChange(); break;
-        //case ' ': this.killAllAgents(); break;
-        case ' ': this.toggleClass(); break;
         case 'S': this.gui.save(config.settingsFile); break;
         case 'L': this.gui.load(config.settingsFile); break;
       }
@@ -353,20 +349,6 @@ sys.Window.create({
       state.entities.splice(state.entities.indexOf(agent), 1);
     })
   },
-  toggleClass: function() {
-    console.log('toggleClass');
-    var agents = R.filter(R.where({ agent: R.identity }), state.entities);
-    agents.forEach(function(agent) {
-      agent.targetNodeList.length = 0;
-      agent.targetNode = null;
-      if (agent.mode == AgentModes.Wander) {
-        agent.mode = AgentModes.Classroom;
-      }
-      else {
-        agent.mode = AgentModes.Wander;
-      }
-    })
-  },
   update: function() {
     if (this.client) {
       this.client.enabled = state.liveData;
@@ -390,7 +372,7 @@ sys.Window.create({
 
     var agents = R.filter(R.where({ agent: true }), state.entities);
 
-    if (state.clearBg) glu.clearColorAndDepth(config.bgColor);
+    glu.clearColorAndDepth(config.bgColor);
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.map.selectedNodes) {
