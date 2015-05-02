@@ -7,7 +7,7 @@ attribute vec3 position;
 attribute vec4 color;
 varying vec4 vColor;
 
-#define N_DISTORT_POINTS 100
+#define N_DISTORT_POINTS 10
 
 uniform vec3 strongDisplacePoints[N_DISTORT_POINTS];
 uniform vec2 strongDisplaceProps[N_DISTORT_POINTS];

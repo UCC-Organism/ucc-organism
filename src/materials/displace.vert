@@ -116,7 +116,7 @@ attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
 
-#define N_DISTORT_POINTS 100
+#define N_DISTORT_POINTS 10
 
 uniform vec3 weakDisplacePoints[N_DISTORT_POINTS];
 uniform vec2 weakDisplaceProps[N_DISTORT_POINTS];

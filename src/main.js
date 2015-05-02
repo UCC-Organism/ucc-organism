@@ -77,13 +77,13 @@ var state = {
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 1 : 0.5,
   agentSpeed: Platform.isPlask ? 0.01 : 0.01/2,
-  debug: false,
   showCells: true,
-  showCorridors: false,
-  showNodes: false,
   showAgents: true,
   showEnergy: true,
-  showLabels: true,
+  debug: false,
+  showNodes: false,
+  showCorridors: false,
+  showLabels: false,
   clearBg: true,
   sway: 0,
 
@@ -116,9 +116,11 @@ sys.Window.create({
     highdpi: state.DPI,
     borderless: true,
   },
-  bla: 0,
   init: function() {
     this.initGUI();
+    console.log('VERSION 10');
+    console.log('MAX_VERTEX_UNIFORM_VECTORS ' + this.gl.getParameter(this.gl.MAX_VERTEX_UNIFORM_VECTORS));
+    console.log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));
   },
   initAll: function() {
     this.initDataClient();
@@ -128,7 +130,7 @@ sys.Window.create({
     this.initKeys();
   },
   initGUI: function() {
-    Time.verbose = true;
+    //Time.verbose = true;
 
     this.gui = new GUI(this);
     this.gui.setEnabled(true);
@@ -160,6 +162,14 @@ sys.Window.create({
     ], function(liveData) {
       this.killAllAgents();
     }.bind(this));
+    this.gui.addHeader('Debug');
+    this.gui.addParam('debug', state, 'debug');
+    this.gui.addParam('showCells', state, 'showCells');
+    this.gui.addParam('showCorridors', state, 'showCorridors');
+    this.gui.addParam('showNodes', state, 'showNodes');
+    this.gui.addParam('showAgents', state, 'showAgents');
+    this.gui.addParam('showEnergy', state, 'showEnergy');
+    this.gui.addParam('showLabels', state, 'showLabels');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addHeader('Global Colors');
@@ -218,7 +228,7 @@ sys.Window.create({
     state.debugText = new DebugText(this.width, this.height);
   },
   initDataClient: function() {
-    this.client = state.client = new Client(config.serverUrl);
+    //this.client = state.client = new Client(config.serverUrl);
     this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed, state);
   },
   initLibs: function() {
@@ -394,13 +404,6 @@ sys.Window.create({
       agentTargetNodeFollowerSys(state);
       agentPositionUpdaterSys(state);
 
-      //speed up x3
-      agentTargetNodeFollowerSys(state);
-      agentPositionUpdaterSys(state);
-      agentTargetNodeFollowerSys(state);
-      agentPositionUpdaterSys(state);
-      //end of speedup
-
       agentFlockingSys(state);
       agentPointSpriteUpdaterSys(state);
       energyPointSpriteUpdaterSys(state);
@@ -423,5 +426,10 @@ sys.Window.create({
       state.debugText.texts = []; //clear!
     }
     this.gui.draw();
+
+    var err = this.gl.getError()
+    if (err) {
+      console.log('GL ERROR ' + err);
+    }
   }
 });

@@ -4,6 +4,7 @@ uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 uniform float pointSize;
 attribute vec3 position;
+
 attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
@@ -20,11 +21,12 @@ varying vec4 vLineColor;
 varying vec4 vFillColor;
 varying vec4 vAccentColor;
 
-#define N_DISTORT_POINTS 100
+#define N_DISTORT_POINTS 10
 
 uniform vec3 strongDisplacePoints[N_DISTORT_POINTS];
 uniform vec2 strongDisplaceProps[N_DISTORT_POINTS];
 uniform int numStrongDisplacePoints;
+
 
 void main() {
 
@@ -66,7 +68,14 @@ void main() {
   vFillColor = fillColor;
   vAccentColor = accentColor;
 }
-
+/*
+void main() {
+  vec3 pos = position;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+  //gl_PointSize = pointSize * scale;
+  gl_PointSize = pointSize;
+}
+*/
 #endif
 
 #ifdef FRAG
@@ -124,5 +133,11 @@ void main() {
 
   if (gl_FragColor.a == 0.0) discard;
 }
+
+/*
+void main() {
+  gl_FragColor = vec4(0.5, 0.0, 0.0, 1.0);
+}
+*/
 
 #endif

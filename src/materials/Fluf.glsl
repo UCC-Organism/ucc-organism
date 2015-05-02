@@ -20,7 +20,7 @@ varying vec4 vLineColor;
 varying vec4 vFillColor;
 varying vec4 vAccentColor;
 
-#define N_DISTORT_POINTS 100
+#define N_DISTORT_POINTS 10
 
 uniform vec3 strongDisplacePoints[N_DISTORT_POINTS];
 uniform vec2 strongDisplaceProps[N_DISTORT_POINTS];
