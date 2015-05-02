@@ -11,19 +11,24 @@ var Mesh = require('pex-glu').Mesh;
 var Cube = require('pex-gen').Cube;
 var SolidColor = require('pex-materials').SolidColor;
 var glu = require('pex-glu');
+var Color = require('pex-color').Color;
 
-function DebugText(windowWidth, windowHeight) {
+function DebugText(windowWidth, windowHeight, scale) {
   this.windowWidth = windowWidth;
   this.windowHeight = windowHeight;
 
   var fontTex = this.fontTex = Texture2D.load(FontPath + '/' + Font.pages[0], { mipmaps: true, flip: true }, function(fontTex) {});
 
   this.text = new SpriteTextBox('hello world', {
-    fontSize: 20,
+    fontSize: (scale == 2) ? 20 : 12,
     lineHeight: 1.2,
     font: Font,
     textures: [ fontTex ],
-    position3d: new Vec3(-1, 0, -1)
+    position3d: new Vec3(-1, 0, -1),
+    color: (scale == 2) ? Color.White : Color.Red,
+    bgColor: (scale == 2) ? Color.White : Color.Red,
+    border: (scale == 2) ? Color.Black : Color.Transparent,
+    smoothing: (scale == 2) ? 1/16 : 1/4,
   })
 
   this.camera2d = new OrthographicCamera(0, 0, this.windowWidth, this.windowHeight);
@@ -41,6 +46,11 @@ DebugText.prototype.drawText = function(str, position) {
 DebugText.prototype.draw = function(camera) {
   glu.enableAlphaBlending(true);
   this.fontTex.bind(); //TODO: bind font texture!!!!
+
+  SpriteTextBox.fontMaterial.uniforms.color = this.text.opts.color;
+  //SpriteTextBox.fontMaterial.uniforms.bgColor = this.text.opts.bgColor;
+  SpriteTextBox.fontMaterial.uniforms.border = this.text.opts.border;
+  SpriteTextBox.fontMaterial.uniforms.smoothing = this.text.opts.smoothing;
 
   this.texts.forEach(function(text) {
     this.text.rebuild(text.str);

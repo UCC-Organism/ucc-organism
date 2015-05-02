@@ -5,6 +5,7 @@ var random            = require('pex-random');
 var color             = require('pex-color');
 var gui               = require('pex-gui');
 var R                 = require('ramda');
+var plask             = require('plask');
 var debug             = require('debug').enable('ucc/*')
 var log               = require('debug')('ucc/main');
 
@@ -55,7 +56,7 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
 var state = {
   MAC: 'Unknown',
-  DPI: Platform.isPlask ? 2 : 2,
+  DPI: Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
 
   //data
   liveData: false,
@@ -227,7 +228,7 @@ sys.Window.create({
 
     this.gui.load(config.settingsFile, this.initAll.bind(this));
 
-    state.debugText = new DebugText(this.width, this.height);
+    state.debugText = new DebugText(this.width, this.height, state.DPI);
   },
   initDataClient: function() {
     //this.client = state.client = new Client(config.serverUrl);

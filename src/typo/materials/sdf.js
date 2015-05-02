@@ -15,6 +15,8 @@ function SDF(uniforms) {
   var program = new Program(SDFGLSL);
   var defaults = {
     color: Color.White,
+    bgColor: new Color(1,1,1,0),
+    border: new Color(0,0,0,0),
     smoothing: 1/16
   };
   uniforms = merge(defaults, uniforms);

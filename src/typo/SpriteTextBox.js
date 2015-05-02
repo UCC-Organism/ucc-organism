@@ -15,6 +15,7 @@ function SpriteTextBox(text, opts) {
   this.opts.scale = this.opts.scale || 1;
   this.opts.lineHeight = this.opts.lineHeight || 1;
   this.opts.color = this.opts.color || Color.White;
+  this.opts.bgColor = this.opts.bgColor || new Color(1,1,1,0);
   if (this.opts.fontSize) {
     this.opts.scale = this.opts.fontSize / this.opts.font.info.size;
   }
@@ -195,6 +196,7 @@ SpriteTextBox.prototype.draw = function(camera) {
   SpriteTextBox.fontMaterial.uniforms.texture = this.opts.textures[0];
   SpriteTextBox.fontMaterial.uniforms.smoothing = this.smoothing;
   SpriteTextBox.fontMaterial.uniforms.color = this.opts.color;
+  SpriteTextBox.fontMaterial.uniforms.bgColor = this.opts.bgColor;
   this.mesh.draw(camera);
 }
 
