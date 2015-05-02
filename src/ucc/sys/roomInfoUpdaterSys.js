@@ -21,7 +21,9 @@ function roomInfoUpdaterSys(state) {
   state.map.rooms.forEach(function(room) {
    var roomNode = R.find(R.where({roomId: room.id}), state.map.selectedNodes);
    if (roomNode) {
-     state.debugText.drawText(room.id + ' / ' + room.agentCount, roomNode.position);
+      var name = room.id;
+      if (name.indexOf('room') == 0) name = room.type;
+      state.debugText.drawText(name + ' / ' + room.agentCount, roomNode.position);
    }
  })
 }
