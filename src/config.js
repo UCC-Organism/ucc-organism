@@ -56,11 +56,11 @@ var AgentTypeGroups = [
 ];
 
 var EnergyTypes = {
-  'social': { color: Color.Red.clone() },
-  'knowledge': { color: Color.Green.clone() },
-  'economic': { color: Color.Blue.clone() },
-  'power': { color: Color.Orange.clone() },
-  'dirt': { color: Color.fromHSL(0.1, 0.8, 0.4) }
+  'social':    { id: 0, color: Color.Red.clone() },
+  'knowledge': { id: 1, color: Color.Green.clone() },
+  'economic':  { id: 2, color: Color.Blue.clone() },
+  'power':     { id: 3, color: Color.Orange.clone() },
+  'dirt':      { id: 4, color: Color.fromHSL(0.1, 0.8, 0.4) }
 };
 
 var RoomTypes = {
