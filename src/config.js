@@ -109,7 +109,7 @@ var EnergyPaths = [
   //The Library (*agents) -> each exit
   { from: "library", to: "exit", fromNum: 'all', toNum: 10, energy: "knowledge", multiplier: "agents", view: "all"},
   //each exit (*random*intensity) -> The Library
-  { from: "exit", to: "Library", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity", view: "all"},
+  { from: "exit", to: "library", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity", view: "all"},
   //each exit (*random*intensity) -> random lab
   { from: "exit", to: "research", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity", view: "all"},
   //each exit (*random*intensity) -> random teacher room
