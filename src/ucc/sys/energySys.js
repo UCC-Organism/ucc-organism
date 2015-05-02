@@ -52,9 +52,6 @@ function rebuildEnergyPaths(state) {
     var fromNum = 1;
     var toNum = 1;
 
-    if (spec.multiplier == 'agents' || spec.energy != 'knowledge') continue;
-    log('spec', spec.from, spec.to)
-
     if (spec.fromNum == "all") {
       fromNum = startCandidates.length;
     }
