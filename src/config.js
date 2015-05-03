@@ -198,6 +198,30 @@ var EnergyPaths = [
   { from: "library", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
 ];
 
+var AgentInteractions = [
+  //Knowledge Energy
+  { from: 'teacher', to: 'student', energy: 'knowledge' },
+  { from: 'teacher', to: 'teacher', energy: 'knowledge' },
+  { from: 'researcher', to: 'teacher', energy: 'knowledge' },
+  { from: 'researcher', to: 'researcher', energy: 'knowledge' },
+
+  //Social Energy
+  { from: 'student', to: 'student', energy: 'social' },
+  { from: 'student', to: 'cook', energy: 'social' },
+  { from: 'student', to: 'janitor', energy: 'social' },
+  { from: 'cook', to: 'cook', energy: 'social' },
+  { from: 'janitor', to: 'janitor', energy: 'social' },
+
+  //Power Energy
+  { from: 'admin', to: 'student', energy: 'social' },
+  { from: 'admin', to: 'teacher', energy: 'social' },
+  { from: 'admin', to: 'researcher', energy: 'social' },
+  { from: 'admin', to: 'cook', energy: 'social' },
+  { from: 'admin', to: 'janitor', energy: 'social' },
+  { from: 'admin', to: 'admin', energy: 'social' }
+];
+
+
 var Config = {
   serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
   settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
@@ -205,6 +229,7 @@ var Config = {
   roomIdMap: RoomIdMap,
   energyTypes: EnergyTypes,
   agentTypes: AgentTypes,
+  agentInteractions: AgentInteractions,
 
   //map
   cellCloseness: 0.00155,

@@ -35,10 +35,12 @@ function agentPointSpriteUpdaterSys(state) {
     pointSpriteGeometry.addAttrib("fillColors", "fillColor", []);
     pointSpriteGeometry.addAttrib("scales", "scale", []);
     var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/10, 1/15), texOffset: new Vec2(1/10, 1/15) });
+    var agentMesh = new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } );
+    agentMesh.position.z = 0.003;
     state.pointSpriteMeshEntity = {
       agentMesh: true,
       disableDepthTest: true,
-      mesh: new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } )
+      mesh: agentMesh
     }
     state.entities.push(state.pointSpriteMeshEntity);
   }

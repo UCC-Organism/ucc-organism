@@ -21,7 +21,7 @@ function agentFlockingSys(state) {
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(0,0,0));
     var image = Platform.isPlask ? __dirname + '/../../../assets/lasers.png' : 'assets/lasers.png';
     var mesh = new Mesh(lineBuilder, new Textured({ scale: new Vec2(200, 1), offset: new Vec2(0, 0), texture: Texture2D.load(image, { repeat: true })}), { lines: true });
-    mesh.position.z = 0.002;
+    mesh.position.z = 0.001;
     state.agentInteractionsMeshEntity = {
       disableDepthTest: true,
       lineWidth: 2 * state.DPI,
@@ -39,15 +39,20 @@ function agentFlockingSys(state) {
   var tmpDir = new Vec3();
   var up = new Vec3(0, 0, 1);
   var agentSize = Config.agentSpriteSize * state.DPI * 0.0003;
-  var minDist = agentSize * 4;
-  var minDistSqr = minDist * minDist;
+  var repulsionDist = agentSize * 2;
+  var repulsionDistSqr = repulsionDist * repulsionDist;
+  var interactionDist = agentSize * 4;
+  var interactionDistSqr = interactionDist * interactionDist;
+
+
+
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
 
     for(var j=i+1; j<agents.length; j++) {
       anotherAgent = agents[j];
       var distSqr = agent.position.squareDistance(anotherAgent.position);
-      if (distSqr < minDistSqr) {
+      if (distSqr < repulsionDistSqr) {
         var dist = Math.sqrt(distSqr);
         if (dist > 0) {
           tmpDir.copy(agent.position).sub(anotherAgent.position);
@@ -61,15 +66,28 @@ function agentFlockingSys(state) {
             //normal repulsion
             agent.force.add(tmpDir.scale(0.001));
           }
-
-          var energy;
-          if (agent.type == 'teacher' || anotherAgent.type == 'teacher') {
-            energy = Config.energyTypes.knowledge;
+        }
+      }
+      if (distSqr < interactionDistSqr) {
+        for(var k=0; k<Config.agentInteractions.length; k++) {
+          var interaction = Config.agentInteractions[k];
+          var from1, from2, to1, to2;
+          from1 = (interaction.from == agent.type);
+          from2 = (interaction.from == 'student') && Config.agentTypes[agent.type].student;
+          to1 = (interaction.to == anotherAgent.type)
+          to2 = (interaction.to == 'student') && Config.agentTypes[anotherAgent.type].student;
+          if ((from1 || from2) && (to1 || to2)) {
+            lineBuilder.addLine(agent.position, anotherAgent.position, Config.energyTypes[interaction.energy].color);
+            break;
           }
-          else {
-            energy = Config.energyTypes.social;
+          from1 = (interaction.from == anotherAgent.type);
+          from2 = (interaction.from == 'student') && Config.agentTypes[anotherAgent.type].student;
+          to1 = (interaction.to == agent.type)
+          to2 = (interaction.to == 'student') && Config.agentTypes[agent.type].student;
+          if ((from1 || from2) && (to1 || to2)) {
+            lineBuilder.addLine(anotherAgent.position, agent.position, Config.energyTypes[interaction.energy].color);
+            break;
           }
-          lineBuilder.addLine(agent.position, anotherAgent.position, energy.color);
         }
       }
 

@@ -407,9 +407,8 @@ sys.Window.create({
     roomInfoUpdaterSys(state);
     agentTargetNodeFollowerSys(state);
     agentPositionUpdaterSys(state);
-
-    agentPointSpriteUpdaterSys(state);
     agentFlockingSys(state);
+    agentPointSpriteUpdaterSys(state);
     energyPointSpriteUpdaterSys(state);
 
     flufSys(state);
