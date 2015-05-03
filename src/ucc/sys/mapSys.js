@@ -688,15 +688,11 @@ function rebuildCells(state) {
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
   state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
 
-  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: config.corridorColor }), { lines: true });
-  state.entities.unshift({ map: true, corridor: true, mesh: edgeMesh, lineWidth: 2 });
+  var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: Color.Pink }), { lines: true });
+  state.entities.unshift({ map: true, corridor: true, debug: true, mesh: edgeMesh, lineWidth: 2 });
 
   var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColorOrig({ color: config.corridorColor, pointSize: 5 }), { points: true });
   state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
-
-  MapSys.edgeMesh = edgeMesh;
-  MapSys.cellMesh = cellMesh;
-  MapSys.cellEdgeMesh = cellEdgeMesh;
 
   var floorBBox = BoundingBox.fromPoints(cellMesh.geometry.vertices);
 
@@ -714,7 +710,7 @@ function rebuildCells(state) {
   corridorBgMesh.position.z = -0.001;
   state.entities.unshift({ name: 'corridorBgMesh', map: true, cell: true, mesh: corridorBgMesh });
 
-  log('rebuildMap', 'edgeMesh:', MapSys.edgeMesh.geometry.vertices.length, 'cellMesh:', MapSys.cellMesh.geometry.vertices.length, 'cellEdgeMesh:', MapSys.cellEdgeMesh.geometry.vertices.length)
+  log('rebuildMap', 'edgeMesh:', edgeMesh.geometry.vertices.length, 'cellMesh:', cellMesh.geometry.vertices.length, 'cellEdgeMesh:', cellEdgeMesh.geometry.vertices.length)
 }
 
 //-----------------------------------------------------------------------------

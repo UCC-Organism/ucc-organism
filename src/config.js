@@ -212,7 +212,6 @@ var Config = {
   cellCenterColor: '#696E98',
   cellEdgeColor: '#FF00FF',
   bgColor: '#312D2D',
-  corridorColor: '#FFFF00',
   membraneColor: '#EEEEEE',
 
   agentLineColor: '#000000',
