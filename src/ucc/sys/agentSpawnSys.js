@@ -63,7 +63,6 @@ function getAgentTypeForProgramme(programme) {
   if (index != -1) {
     type = keys[index];
   }
-  log(type);
   return type;
 }
 

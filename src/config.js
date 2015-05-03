@@ -25,10 +25,10 @@ var RoomIdMap = {
 
 var AgentTypes = {
   'spl'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'SPL - Sygeplejerskeuddannelsen' },
-  'pmu'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'PMU - Psykomotorikuddannelsen' },
-  'fys'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'FYS - Fysioterapeutuddannelsen' },
-  'soc'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'SOC - Socialrådgiveruddannelsen' },
-  'paed'        : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'PÆD - Pædagoguddannelsen' },
+  'pmu'         : { colors: ["#FFAA00", "#FFFF00"], student: true,  programme: 'PMU - Psykomotorikuddannelsen' },
+  'fys'         : { colors: ["#FF00FF", "#FFAAFF"], student: true,  programme: 'FYS - Fysioterapeutuddannelsen' },
+  'soc'         : { colors: ["#00DDFF", "#DAFFFF"], student: true,  programme: 'SOC - Socialrådgiveruddannelsen' },
+  'paed'        : { colors: ["#F0F9F5", "#F0F9F5"], student: true,  programme: 'PÆD - Pædagoguddannelsen' },
   'div'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'DIV - Diverse aktiviteter' },
   'diplomS'     : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'Diplom S - Diplomuddannelse - Sundhed' },
   'diplomL'     : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'Diplom L - Diplomuddannelse - Ledelse' },

@@ -63,7 +63,8 @@ var state = {
   liveData: false,
 
   //scene
-  initFloor: 7,
+  initFloor: config.floorId.C_1,
+  guiCurrentFloor: config.floorId.C_1,
   camera: null,
   cameraPosZ: 0.30,
   cameraRotation: 0,
@@ -78,7 +79,7 @@ var state = {
 
   //map config
   minNodeDistance: 0.001,
-  maxAgentCount: Platform.isPlask ? 500 : 500,
+  maxAgentCount: Platform.isPlask ? 500 : 200,
 
   //state
   currentTime: 0,
@@ -93,8 +94,6 @@ var state = {
   showLabels: false,
   sway: 0,
 
-  //ui
-  guiCurrentFloor: 7,
 
   //debug
   debugText: null

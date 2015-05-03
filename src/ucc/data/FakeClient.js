@@ -194,22 +194,25 @@ FakeClient.prototype.clearTimers = function()
   }
 }
 
-FakeClient.prototype.genOneEachClassRoom = function() {
+FakeClient.prototype.genOneEachClassRoom = function(state) {
   var self = this;
   if (!self.enabled) return;
 
   var studentProgrammes = R.pluck('programme', R.filter(R.where({ student: true }), R.values(Config.agentTypes)));
 
+  var classroomIds = this.findRoomIdsByType(state, 'classroom');
+  classroomIds = classroomIds.slice(0, studentProgrammes.length);
+
   for (var i = 0; i < 100; i++)
   {
     AgentStore.all.push({
       id: 'student' + i,
-      programme: random.element(studentProgrammes),
+      programme: studentProgrammes[i % studentProgrammes.length],
       end: "2018-01-31 00:00:00.0000000",
       gender: random.int(0, 2),
       age: random.int(20, 30),
       targetMode: AgentModes.Classroom,
-      targetLocation: 'C.201'
+      targetLocation: classroomIds[i % studentProgrammes.length]
     })
   }
 
@@ -217,9 +220,9 @@ FakeClient.prototype.genOneEachClassRoom = function() {
     if (!self.enabled) return;
     AgentStore.all.forEach(function(agent) {
       agent.targetMode = AgentModes.Lunch;
-      agent.targetLocation = 'Kantine';
+      agent.targetLocation = 'canteen';
     })
-  }, 10000 / this.timeSpeed))
+  }, 100000 / this.timeSpeed))
 }
 
 FakeClient.prototype.genB2 = function(state) {
