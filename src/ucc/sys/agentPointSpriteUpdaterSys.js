@@ -75,10 +75,8 @@ function agentPointSpriteUpdaterSys(state) {
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
     if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(entity.agentIdNumber % 10, entity.typeIndex);
 
-    //lineColors[entityIndex] = Config.agentLineColor;
-    //fillColors[entityIndex] = Config.agentFillColor;
-    lineColors[entityIndex] = entity.colorLines;
-    fillColors[entityIndex] = entity.colorFill;
+    lineColors[entityIndex] = Config.agentLineColor;
+    fillColors[entityIndex] = Config.agentFillColor;
     colors[entityIndex].copy(color1).lerp(color2, entity.random);
     accentColors[entityIndex] = colors[entityIndex];
 

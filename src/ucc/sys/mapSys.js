@@ -678,7 +678,7 @@ function rebuildCells(state) {
   })
 
   var membraneGeometry = new LineBuilder();
-  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.globalColors.membraneColor, membranePoints.length*2)
+  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.membraneColor, membranePoints.length*2)
   membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
@@ -699,7 +699,7 @@ function rebuildCells(state) {
   centerCamera(state, floorBBox);
 
   var corridorBg = new Plane(floorBBox.getSize().x * 1.4, floorBBox.getSize().y * 1.2, 14, 14, 'x', 'y');
-  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.globalColors.bgColor}));
+  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.bgColor}));
   corridorBg.addAttrib('normals', 'normal', corridorBg.vertices.map(function() { return new Vec3(1, 0, 0)}));
   corridorBg.addAttrib('texCoords', 'texCoords', corridorBg.vertices.map(function() { return new Vec2(1, 0)}));
   var center = floorBBox.getCenter();

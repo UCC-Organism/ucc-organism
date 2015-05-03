@@ -180,10 +180,10 @@ sys.Window.create({
 
     this.gui.addHeader('Global Colors');
     this.gui.addParam('Cell Edge Width',  config, 'cellEdgeWidth', { min: 0.5, max: 5 });
-    this.gui.addParam('BgColor',          config.globalColors, 'bgColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Agent line',       config.globalColors, 'agentLineColor');
-    this.gui.addParam('Agent fill',       config.globalColors, 'agentFillColor');
-    this.gui.addParam('Corridor',         config.globalColors, 'corridorColor');
+    this.gui.addParam('BgColor',          config, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Agent line',       config, 'agentLineColor');
+    this.gui.addParam('Agent fill',       config, 'agentFillColor');
+    this.gui.addParam('Corridor',         config, 'corridorColor');
     this.gui.addParam('Cell',             config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Cell Center',      config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Edge',        config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));

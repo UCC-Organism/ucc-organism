@@ -4,14 +4,6 @@ var color     = require('pex-color');
 var Platform  = sys.Platform;
 var Color     = color.Color;
 
-var GlobalColors = {
-  bgColor: '#312D2D',
-  membraneColor: '#EEEEEE',
-
-  agentLineColor: '#000000',
-  agentFillColor: '#FFFFFF'
-}
-
 var RoomIdMap = {
   //'Afleveres i Wiseflow',
   'Bevægelse B.001' : 'B.001',
@@ -213,12 +205,15 @@ var Config = {
   roomIdMap: RoomIdMap,
   energyTypes: EnergyTypes,
   agentTypes: AgentTypes,
-  globalColors: GlobalColors,
 
   //map
   cellCloseness: 0.00155,
   cellEdgeWidth: 1,
+  bgColor: '#312D2D',
+  membraneColor: '#EEEEEE',
 
+  agentLineColor: '#000000',
+  agentFillColor: '#FFFFFF',
   agentFillColorBasedOnAccentColor: true,
   agentInvertFillAndLineColorBasedOnGender: true,
 
@@ -246,10 +241,10 @@ var Config = {
 };
 
 function parseColors() {
-  Object.keys(Config.globalColors).forEach(function(key) {
-    var value = Config.globalColors[key];
+  Object.keys(Config).forEach(function(key) {
+    var value = Config[key];
     if (value && value.length && value[0] == '#') {
-      Config.globalColors[key] = Color.fromHex(Config.globalColors[key]);
+      Config[key] = Color.fromHex(Config[key]);
     }
   })
 
