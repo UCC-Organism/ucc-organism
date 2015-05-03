@@ -76,8 +76,8 @@ function flufSys(state) {
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
     if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(random.int(0, 2), random.int(0, 2));
 
-    lineColors[entityIndex] = Config.agentLineColor;
-    fillColors[entityIndex] = Config.agentFillColor;
+    lineColors[entityIndex] = Color.White; //TODO: remove me
+    fillColors[entityIndex] = Color.White; //TODO: remove me
     accentColors[entityIndex] = entity.color;
 
     if (Config.agentFillColorBasedOnAccentColor)

@@ -177,13 +177,17 @@ sys.Window.create({
     this.gui.addParam('showLabels', state, 'showLabels');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+
     this.gui.addHeader('Global Colors');
-    this.gui.addParam('Cell Edge Width', config, 'cellEdgeWidth', { min: 0.5, max: 5 });
-    this.gui.addParam('BgColor', config, 'bgColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Corridor', config, 'corridorColor');
-    this.gui.addParam('Cell', config, 'cellColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Cell Center', config, 'cellCenterColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Cell Edge', config, 'cellEdgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Edge Width',  config, 'cellEdgeWidth', { min: 0.5, max: 5 });
+    this.gui.addParam('BgColor',          config.globalColors, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Agent line',       config.globalColors, 'agentLineColor');
+    this.gui.addParam('Agent fill',       config.globalColors, 'agentFillColor');
+    this.gui.addParam('Corridor',         config.globalColors, 'corridorColor');
+    this.gui.addParam('Cell',             config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Cell Center',      config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Edge',        config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));
+
     this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
@@ -197,6 +201,7 @@ sys.Window.create({
     this.gui.addParam('Knowledge',        config.roomTypes.knowledge, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Knowledge Center', config.roomTypes.knowledge, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Knowledge Edge',   config.roomTypes.knowledge, 'edgeColor', {}, this.onColorChange.bind(this));
+
     this.gui.addHeader('Other room colors').setPosition(520 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Admin',            config.roomTypes.admin, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Admin Center',     config.roomTypes.admin, 'centerColor', {}, this.onColorChange.bind(this));
@@ -210,11 +215,11 @@ sys.Window.create({
     this.gui.addParam('Exit',             config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Exit Center',      config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Exit Edge',        config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Agents 1').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addHeader('Agents Color 1').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     Object.keys(config.agentTypes).forEach(function(agentType) {
       this.gui.addParam(agentType + ' 0', config.agentTypes[agentType].colors, '0');
     }.bind(this));
-    this.gui.addHeader('Agents 2').setPosition(860 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addHeader('Agents Color 2').setPosition(860 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     Object.keys(config.agentTypes).forEach(function(agentType) {
       this.gui.addParam(agentType + ' 1', config.agentTypes[agentType].colors, '1');
     }.bind(this));

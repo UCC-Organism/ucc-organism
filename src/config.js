@@ -4,6 +4,14 @@ var color     = require('pex-color');
 var Platform  = sys.Platform;
 var Color     = color.Color;
 
+var GlobalColors = {
+  bgColor: '#312D2D',
+  membraneColor: '#EEEEEE',
+
+  agentLineColor: '#000000',
+  agentFillColor: '#FFFFFF'
+}
+
 var RoomIdMap = {
   //'Afleveres i Wiseflow',
   'Bevægelse B.001' : 'B.001',
@@ -58,7 +66,8 @@ var RoomTypes = {
   'closet'   : { label: 'Closet'   , color: '#996600', centerColor: '#996600', edgeColor: '#996600' },
   'food'     : { label: 'Food'     , color: '#FFAA00', centerColor: '#FFAA00', edgeColor: '#FFAA00' },
   'exit'     : { label: 'Exit'     , color: '#FF0000', centerColor: '#FF0000', edgeColor: '#FF0000' },
-  'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' }
+  'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' },
+  'cell'     : { label: 'Cell'     , color: '#696E98', centerColor: '#696E98', edgeColor: '#FF00FF' }
 };
 
 var Floors = [
@@ -204,18 +213,12 @@ var Config = {
   roomIdMap: RoomIdMap,
   energyTypes: EnergyTypes,
   agentTypes: AgentTypes,
+  globalColors: GlobalColors,
 
   //map
   cellCloseness: 0.00155,
   cellEdgeWidth: 1,
-  cellColor: '#696E98',
-  cellCenterColor: '#696E98',
-  cellEdgeColor: '#FF00FF',
-  bgColor: '#312D2D',
-  membraneColor: '#EEEEEE',
 
-  agentLineColor: '#000000',
-  agentFillColor: '#FFFFFF',
   agentFillColorBasedOnAccentColor: true,
   agentInvertFillAndLineColorBasedOnGender: true,
 
@@ -243,12 +246,13 @@ var Config = {
 };
 
 function parseColors() {
-  Object.keys(Config).forEach(function(key) {
-    var value = Config[key];
+  Object.keys(Config.globalColors).forEach(function(key) {
+    var value = Config.globalColors[key];
     if (value && value.length && value[0] == '#') {
-      Config[key] = Color.fromHex(Config[key]);
+      Config.globalColors[key] = Color.fromHex(Config.globalColors[key]);
     }
   })
+
 
   Object.keys(Config.energyTypes).forEach(function(type) {
     if (Config.energyTypes[type].color[0] == '#') {

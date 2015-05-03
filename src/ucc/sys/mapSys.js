@@ -602,12 +602,15 @@ function rebuildCells(state) {
       var vidx = cellVertices.length;
       var eidx = cellEdgeVertices.length;
 
-      var cellColor = config.cellColor;
-      var cellCenterColor = config.cellCenterColor;
-      var cellEdgeColor = config.cellEdgeColor;
+      var cellColor = config.roomTypes.cell.color;
+      var cellCenterColor = config.roomTypes.cell.centerColor;
+      var cellEdgeColor = config.roomTypes.cell.edgeColor;
 
       if (isRoom && roomType && roomType != 'none') {
-        if (!config.roomTypes[roomType]) log('missing room type', roomType, '' + config.roomTypes[roomType])
+        if (!config.roomTypes[roomType]) {
+          log('missing room type', roomType, '' + config.roomTypes[roomType]);
+          continue;
+        }
         cellColor = config.roomTypes[roomType].color;
         cellCenterColor = config.roomTypes[roomType].centerColor;
         cellEdgeColor = config.roomTypes[roomType].edgeColor;
@@ -675,7 +678,7 @@ function rebuildCells(state) {
   })
 
   var membraneGeometry = new LineBuilder();
-  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.membraneColor, membranePoints.length*2)
+  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.globalColors.membraneColor, membranePoints.length*2)
   membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
@@ -691,15 +694,12 @@ function rebuildCells(state) {
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: Color.Pink }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, debug: true, mesh: edgeMesh, lineWidth: 2 });
 
-  var pointsMesh = new Mesh(new Geometry({ vertices: voronoiCells.points }), new SolidColorOrig({ color: config.corridorColor, pointSize: 5 }), { points: true });
-  state.entities.unshift({ map: true, node: true, mesh: pointsMesh });
-
   var floorBBox = BoundingBox.fromPoints(cellMesh.geometry.vertices);
 
   centerCamera(state, floorBBox);
 
   var corridorBg = new Plane(floorBBox.getSize().x * 1.4, floorBBox.getSize().y * 1.2, 14, 14, 'x', 'y');
-  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.bgColor}));
+  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.globalColors.bgColor}));
   corridorBg.addAttrib('normals', 'normal', corridorBg.vertices.map(function() { return new Vec3(1, 0, 0)}));
   corridorBg.addAttrib('texCoords', 'texCoords', corridorBg.vertices.map(function() { return new Vec2(1, 0)}));
   var center = floorBBox.getCenter();
