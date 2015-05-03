@@ -175,6 +175,8 @@ sys.Window.create({
     this.gui.addParam('showAgents', state, 'showAgents');
     this.gui.addParam('showEnergy', state, 'showEnergy');
     this.gui.addParam('showLabels', state, 'showLabels');
+    this.gui.addHeader('Debug modes');
+    this.gui.addButton('Night colors', this, 'setNightMode');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
 
@@ -382,6 +384,10 @@ sys.Window.create({
     if (state.camera) {
       state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
     }
+  },
+  setNightMode: function() {
+    config.nightColors();
+    this.onColorChange();
   },
   onColorChange: function() {
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), state.entities);

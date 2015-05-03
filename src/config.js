@@ -237,7 +237,8 @@ var Config = {
 
   floorId: FloorId,
 
-  parseColors: parseColors
+  parseColors: parseColors,
+  nightColors: nightColors
 };
 
 function parseColors() {
@@ -267,6 +268,46 @@ function parseColors() {
     if (roomType.color[0] =='#') roomType.color = Color.fromHex(roomType.color);
     if (roomType.centerColor[0] =='#') roomType.centerColor = Color.fromHex(roomType.centerColor);
     if (roomType.edgeColor[0] =='#') roomType.edgeColor = Color.fromHex(roomType.edgeColor);
+  });
+}
+
+function darkenColor(color) {
+  var hsl = color.getHSL();
+  hsl.l *= 0.25;
+  color.setHSL(hsl.h, hsl.s, hsl.l);
+}
+
+function desaturateColor(color) {
+  var hsl = color.getHSL();
+  hsl.s *= 0.8;
+  color.setHSL(hsl.h, hsl.s, hsl.l);
+}
+
+function nightColors() {
+  console.log('nightColors');
+  var tmp = new Color();
+
+  Object.keys(Config).forEach(function(key) {
+    var value = Config[key];
+    if (value && value.r) {
+      darkenColor(Config[key])
+    }
+  })
+
+  Object.keys(Config.energyTypes).forEach(function(type) {
+    darkenColor(Config.energyTypes[type].color);
+  })
+
+  Object.keys(Config.agentTypes).forEach(function(agentType) {
+    desaturateColor(Config.agentTypes[agentType].colors[0]);
+    desaturateColor(Config.agentTypes[agentType].colors[1]);
+  })
+
+  Object.keys(Config.roomTypes).forEach(function(type) {
+    var roomType = Config.roomTypes[type];
+    darkenColor(roomType.color);
+    darkenColor(roomType.centerColor);
+    darkenColor(roomType.edgeColor);
   });
 }
 
