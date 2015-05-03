@@ -24,7 +24,7 @@ function agentFlockingSys(state) {
     mesh.position.z = 0.002;
     state.agentInteractionsMeshEntity = {
       disableDepthTest: true,
-      lineWidth: 4,
+      lineWidth: 2 * state.DPI,
       mesh: mesh
     };
     state.entities.push(state.agentInteractionsMeshEntity);
@@ -39,7 +39,7 @@ function agentFlockingSys(state) {
   var tmpDir = new Vec3();
   var up = new Vec3(0, 0, 1);
   var agentSize = Config.agentSpriteSize * state.DPI * 0.0003;
-  var minDist = agentSize * 2;
+  var minDist = agentSize * 4;
   var minDistSqr = minDist * minDist;
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
