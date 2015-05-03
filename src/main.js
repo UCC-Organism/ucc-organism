@@ -110,7 +110,7 @@ catch(e) {
   state.MAC = '' + e;
 }
 
-var GUI_OFFSET = Platform.isPlask ? 0 : 9999;
+var GUI_OFFSET = 0;
 
 sys.Window.create({
   settings: {
