@@ -26,6 +26,7 @@ var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys'
 var displacePointUpdaterSys       = require('./ucc/sys/displacePointUpdaterSys');
 var roomInfoUpdaterSys            = require('./ucc/sys/roomInfoUpdaterSys');
 var flufSys                       = require('./ucc/sys/flufSys');
+var GUIControlExt                 = require('./gui/GUIControlExt');
 
 //Stores
 var MapStore          = require('./ucc/stores/MapStore');
@@ -209,11 +210,17 @@ sys.Window.create({
     this.gui.addParam('Exit',             config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Exit Center',      config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Exit Edge',        config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Energy colors').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    this.gui.addParam('Social Energy',    config.energyTypes.social, 'color');
-    this.gui.addParam('Knowledge Energy', config.energyTypes.knowledge, 'color');
-    this.gui.addParam('Economic Energy',  config.energyTypes.economic, 'color');
-    this.gui.addParam('Dirt Energy',      config.energyTypes.dirt, 'color');
+    this.gui.addHeader('Energies').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Social',    config.energyTypes.social, 'color');
+    this.gui.addParam('Knowledge', config.energyTypes.knowledge, 'color');
+    this.gui.addParam('Economic',  config.energyTypes.economic, 'color');
+    this.gui.addParam('Power',      config.energyTypes.power, 'color');
+    this.gui.addParam('Dirt',      config.energyTypes.dirt, 'color');
+    this.gui.addParam('Social Intensity',    config.energyTypes.social, 'intensity');
+    this.gui.addParam('Knowledge Intensity',    config.energyTypes.knowledge, 'intensity');
+    this.gui.addParam('Economic Intensity',    config.energyTypes.economic, 'intensity');
+    this.gui.addParam('Power Intensity',    config.energyTypes.power, 'intensity');
+    this.gui.addParam('Dirt Intensity',    config.energyTypes.dirt, 'intensity');
     this.gui.addHeader('Programme colors')
 
     /*
