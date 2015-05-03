@@ -20,7 +20,7 @@ function agentFlockingSys(state) {
     var lineBuilder = new LineBuilder();
     lineBuilder.addLine(new Vec3(0, 0, 0), new Vec3(0,0,0));
     var image = Platform.isPlask ? __dirname + '/../../../assets/lasers.png' : 'assets/lasers.png';
-    var mesh = new Mesh(lineBuilder, new Textured({ scale: new Vec2(3000, 1), offset: new Vec2(0, 0), texture: Texture2D.load(image, { repeat: true, nearest: true })}), { lines: true });
+    var mesh = new Mesh(lineBuilder, new Textured({ scale: new Vec2(200, 1), offset: new Vec2(0, 0), texture: Texture2D.load(image, { repeat: true })}), { lines: true });
     mesh.position.z = 0.002;
     state.agentInteractionsMeshEntity = {
       disableDepthTest: true,

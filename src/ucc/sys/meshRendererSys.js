@@ -31,7 +31,8 @@ function meshRendererSys(state) {
   var agents = R.filter(R.where({ agent: true }), visibleEntities);
 
   glu.enableDepthReadAndWrite(false);
-  glu.enableAlphaBlending(true);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
   entitiesWithMesh.forEach(function(entity) {
     if (entity.mesh.geometry.vertices.length == 0) {

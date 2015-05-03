@@ -42,6 +42,7 @@ LineBuilder.prototype.addLine = function(a, b, colorA, colorB) {
   this.texCoords.push(new Vec2(a.distance(b), 0));
   this.vertices.dirty = true;
   this.colors.dirty = true;
+  this.texCoords.dirty = true;
   return this;
 };
 
@@ -102,6 +103,7 @@ LineBuilder.prototype.addCross = function(pos, size, color) {
 LineBuilder.prototype.reset = function() {
   this.vertices.length = 0;
   this.colors.length = 0;
+  this.texCoords.length = 0;
   this.vertices.dirty = true;
   this.colors.dirty = true;
   this.texCoords.dirty = true;
