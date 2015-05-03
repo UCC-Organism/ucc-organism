@@ -80,7 +80,7 @@ FakeClient.prototype.update = function(state) {
   if (state.map.currentFloor == Config.floorId.B_0) { this.genMorning(state); }
   if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
   if (state.map.currentFloor == Config.floorId.C_0) { this.genMorning(state); }
-  if (state.map.currentFloor == Config.floorId.C_1) { this.genMorning(state); }
+  if (state.map.currentFloor == Config.floorId.C_1) { this.genOneEachClassRoom(state); }
   if (state.map.currentFloor == Config.floorId.C_2) { this.genC2(state); }
 }
 
@@ -113,12 +113,14 @@ FakeClient.prototype.genMorning = function(state) {
   var roomIds = this.findRoomIds(state);
   var classroomIds = this.findRoomIdsByType(state, 'classroom');
 
+  var studentProgrammes = R.pluck('programme', R.filter(R.where({ student: true }), R.values(Config.agentTypes)));
+
   for (var i = 0; i < classroomIds.length; i++)
   {
     //add teacher
     AgentStore.all.push({
       id: 'teacher' + i,
-      programme: Config.agentTypeGroups[8],
+      programme: 'Teacher',
       end: "2018-01-31 00:00:00.0000000",
       gender: random.int(0, 2),
       age: 25,
@@ -135,8 +137,7 @@ FakeClient.prototype.genMorning = function(state) {
       random.seed(Date.now());
       AgentStore.all.push({
         id: 'student' + i,
-        programme: Config.agentTypeGroups[Math.floor(random.int(0, 7))],
-        //programme: Config.agentTypeGroups[0],
+        programme: random.element(studentProgrammes),
         end: "2018-01-31 00:00:00.0000000",
         gender: random.int(0,2),
         age: random.int(20, 30),
@@ -197,12 +198,13 @@ FakeClient.prototype.genOneEachClassRoom = function() {
   var self = this;
   if (!self.enabled) return;
 
+  var studentProgrammes = R.pluck('programme', R.filter(R.where({ student: true }), R.values(Config.agentTypes)));
+
   for (var i = 0; i < 100; i++)
   {
     AgentStore.all.push({
       id: 'student' + i,
-      programme: Config.agentTypeGroups[Math.floor(random.int(0, 10))],
-      //programme: Config.agentTypeGroups[0],
+      programme: random.element(studentProgrammes),
       end: "2018-01-31 00:00:00.0000000",
       gender: random.int(0, 2),
       age: random.int(20, 30),
@@ -244,7 +246,6 @@ FakeClient.prototype.genB2 = function(state) {
       AgentStore.all.push({
         id: programme + '' + random.int(0, 99),
         programme: programme,
-        //programme: Config.agentTypeGroups[0],
         end: "2018-01-31 00:00:00.0000000",
         gender: random.int(0, 2),
         age: 25,
@@ -273,7 +274,6 @@ FakeClient.prototype.genC2 = function() {
   AgentStore.all.push({
     id: 'janitor1',
     programme: "Janitor",
-    //programme: Config.agentTypeGroups[0],
     end: "2018-01-31 00:00:00.0000000",
     gender: random.int(0, 2),
     age: 25,
@@ -283,8 +283,7 @@ FakeClient.prototype.genC2 = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[6],
-      //programme: Config.agentTypeGroups[0],
+      programme: Config.agentTypes.spl.programme,
       end: "2018-01-31 00:00:00.0000000",
       gender: random.int(0, 2),
       age: random.int(20, 30),
@@ -295,7 +294,7 @@ FakeClient.prototype.genC2 = function() {
   //add teacher
   AgentStore.all.push({
     id: 'teacher01',
-    programme: Config.agentTypeGroups[8],
+    programme: 'Teacher',
     end: "2018-01-31 00:00:00.0000000",
     gender: random.int(0, 2),
     age: 25,
@@ -326,7 +325,7 @@ FakeClient.prototype.genStudents = function() {
   students.forEach(function(id) {
     AgentStore.all.push({
       id: id,
-      programme: Config.agentTypeGroups[1],
+      programme: Config.agentTypes.pmu.programme,
       end: "2018-01-31 00:00:00.0000000",
       gender: random.int(0, 2),
       age: random.int(20, 30),
@@ -337,7 +336,7 @@ FakeClient.prototype.genStudents = function() {
   //add teacher
   AgentStore.all.push({
     id: 'teacher01',
-    programme: Config.agentTypeGroups[8],
+    programme: 'Teacher',
     end: "2018-01-31 00:00:00.0000000",
     gender: random.int(0, 2),
     age: random.int(20, 30),
