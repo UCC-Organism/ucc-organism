@@ -116,6 +116,7 @@ function spawnAgents(state) {
           agent.entity = makeAgentEntity({ position: position, id: agent.id, state: agent })
           agent.entity.type = getAgentTypeForProgramme(agent.programme);
           agent.entity.typeIndex = R.keys(Config.agentTypes).indexOf(agent.entity.type);
+          agent.entity.color = Color.White.clone();
 
           if (Config.agentFillColorBasedOnAccentColor)
           {

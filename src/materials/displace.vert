@@ -109,7 +109,6 @@ float snoise(vec3 v)
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
-uniform vec3 glowColor;
 uniform float pointSize;
 attribute vec3 position;
 attribute vec3 normal;

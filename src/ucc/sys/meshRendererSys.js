@@ -47,7 +47,6 @@ function meshRendererSys(state) {
     }
 
     if (entity.mesh.material.program.uniforms["weakDisplacePoints[0]"]) {
-      entity.mesh.material.uniforms.glowColor = new Vec3(1,1,1);
       var n = agents.length;
       if (n > Config.maxDistortPoints) n = Config.maxDistortPoints;
 

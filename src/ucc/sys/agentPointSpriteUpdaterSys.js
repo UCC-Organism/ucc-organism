@@ -68,6 +68,7 @@ function agentPointSpriteUpdaterSys(state) {
   entitiesWithPointSprite.forEach(function(entity, entityIndex) {
     var color1 = Config.agentTypes[entity.type].colors[0];
     var color2 = Config.agentTypes[entity.type].colors[1];
+    entity.color.copy(color1).lerp(color2, entity.random);
 
     if (vertices[entityIndex]) vertices[entityIndex].copy(entity.position);
     else vertices[entityIndex] = entity.position.clone();
@@ -77,8 +78,8 @@ function agentPointSpriteUpdaterSys(state) {
 
     lineColors[entityIndex] = Config.agentLineColor;
     fillColors[entityIndex] = Config.agentFillColor;
-    colors[entityIndex].copy(color1).lerp(color2, entity.random);
-    accentColors[entityIndex] = colors[entityIndex];
+    colors[entityIndex] = entity.color;
+    accentColors[entityIndex] = entity.color;
 
     /*
     if (Config.agentFillColorBasedOnAccentColor)
