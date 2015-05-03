@@ -16,7 +16,7 @@ var shuffle     = require('shuffle-array');
 
 function removeEnergyPathsEntities(state) {
   //remove existing map meshes
-  state.entities.filter(R.where({ energy: true })).forEach(function(entity) {
+  state.entities.filter(R.where({ energy: R.identity })).forEach(function(entity) {
     if (entity.mesh) {
       entity.mesh.material.program.dispose();
       entity.mesh.dispose();
