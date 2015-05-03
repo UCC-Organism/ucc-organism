@@ -23,37 +23,22 @@ var RoomIdMap = {
   'Kantine': 'KantineS'  //TODO: Fix 'KantineS'
 };
 
-var AgentTypeColors = [
-  ["#FF0000", "#FFFF00"],//'SPL - Sygeplejerskeuddannelsen',
-  ["#FF0000", "#FFFF00"],//'PMU - Psykomotorikuddannelsen',
-  ["#FF0000", "#FFFF00"],//'FYS - Fysioterapeutuddannelsen',
-  ["#FF0000", "#FFFF00"],//'SOC - Socialrådgiveruddannelsen',
-  ["#FF0000", "#FFFF00"],//'PÆD - Pædagoguddannelsen',
-  ["#FF0000", "#FFFF00"],//'DIV - Diverse aktiviteter',
-  ["#FF0000", "#FFFF00"],//'Diplom S - Diplomuddannelse - Sundhed',
-  ["#FF0000", "#FFFF00"],//'Diplom L - Diplomuddannelse - Ledelse',
-  ["#0000FF", "#00FFFF"],//'Teacher',
-  ["#DD33FF", "#FF22FF"],//'Researcher',
-  ["#7B5647", "#7B5647"],//'Janitor',
-  ["#FF0000", "#FFFF00"],//'Cook',
-  ["#0000FF", "#00FFFF"],//'Admin'
-];
-
-var AgentTypeGroups = [
-  'SPL - Sygeplejerskeuddannelsen',           //0
-  'PMU - Psykomotorikuddannelsen',            //1
-  'FYS - Fysioterapeutuddannelsen',           //2
-  'SOC - Socialrådgiveruddannelsen',          //3
-  'PÆD - Pædagoguddannelsen',                 //4
-  'DIV - Diverse aktiviteter',                //5
-  'Diplom S - Diplomuddannelse - Sundhed',    //6
-  'Diplom L - Diplomuddannelse - Ledelse',    //7
-  'Teacher',                                  //8
-  'Researcher',                               //9
-  'Janitor',                                  //10
-  'Cook',                                     //11
-  'Admin'                                     //12
-];
+var AgentTypes = {
+  'spl'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'SPL - Sygeplejerskeuddannelsen' },
+  'pmu'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'PMU - Psykomotorikuddannelsen' },
+  'fys'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'FYS - Fysioterapeutuddannelsen' },
+  'soc'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'SOC - Socialrådgiveruddannelsen' },
+  'paed'        : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'PÆD - Pædagoguddannelsen' },
+  'div'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'DIV - Diverse aktiviteter' },
+  'diplomS'     : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'Diplom S - Diplomuddannelse - Sundhed' },
+  'diplomL'     : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'Diplom L - Diplomuddannelse - Ledelse' },
+  'teacher'     : { colors: ["#0000FF", "#00FFFF"], student: false, programme: 'Teacher' },
+  'researcher'  : { colors: ["#DD33FF", "#FF22FF"], student: false, programme: 'Researcher' },
+  'janitor'     : { colors: ["#7B5647", "#7B5647"], student: false, programme: 'Janitor' },
+  'cook'        : { colors: ["#FF0000", "#FFFF00"], student: false, programme: 'Cook' },
+  'admin'       : { colors: ["#0000FF", "#00FFFF"], student: false, programme: 'Admin' },
+  'unknown'     : { colors: ["#FFFFFF", "#FFFFFF"], student: false, programme: '' },
+}
 
 var EnergyTypes = {
   'social':    { id: 0, color: '#FF0000', intensity: 0.5 },
@@ -218,9 +203,7 @@ var Config = {
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
   energyTypes: EnergyTypes,
-
-  agentTypeColors: AgentTypeColors,
-  agentTypeGroups: AgentTypeGroups,
+  agentTypes: AgentTypes,
 
   //map
   cellCloseness: 0.00155,
@@ -274,10 +257,10 @@ function parseColors() {
     }
   })
 
-  Object.keys(Config.agentTypeColors).forEach(function(i) {
-    if (Config.agentTypeColors[i][0][0] == '#') {
-      Config.agentTypeColors[i][0] = Color.fromHex(Config.agentTypeColors[i][0]);
-      Config.agentTypeColors[i][1] = Color.fromHex(Config.agentTypeColors[i][1]);
+  Object.keys(Config.agentTypes).forEach(function(agentType) {
+    if (Config.agentTypes[agentType].colors[0][0] == '#') {
+      Config.agentTypes[agentType].colors[0] = Color.fromHex(Config.agentTypes[agentType].colors[0]);
+      Config.agentTypes[agentType].colors[1] = Color.fromHex(Config.agentTypes[agentType].colors[1]);
     }
   })
 

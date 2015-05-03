@@ -210,7 +210,15 @@ sys.Window.create({
     this.gui.addParam('Exit',             config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Exit Center',      config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Exit Edge',        config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Energies').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addHeader('Agents 1').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    Object.keys(config.agentTypes).forEach(function(agentType) {
+      this.gui.addParam(agentType + ' 0', config.agentTypes[agentType].colors, '0');
+    }.bind(this));
+    this.gui.addHeader('Agents 2').setPosition(860 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    Object.keys(config.agentTypes).forEach(function(agentType) {
+      this.gui.addParam(agentType + ' 1', config.agentTypes[agentType].colors, '1');
+    }.bind(this));
+    this.gui.addHeader('Energies').setPosition(1030 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Social',    config.energyTypes.social, 'color');
     this.gui.addParam('Knowledge', config.energyTypes.knowledge, 'color');
     this.gui.addParam('Economic',  config.energyTypes.economic, 'color');

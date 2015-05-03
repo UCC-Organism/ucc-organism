@@ -14,13 +14,13 @@ function makeAgentEntity(props) {
 
   var scale = 1;
 
-  var prog = props.state.programme;
+  var programme = props.state.programme;
 
-  if (prog == "Teacher")
+  if (programme == "Teacher")
   {
     scale = random.float(1.2, 1.8);
   }
-  else if (prog == "Researcher" || prog == "Janitor" || prog == "Cook" || prog == "Admin")
+  else if (programme == "Researcher" || programme == "Janitor" || programme == "Cook" || programme == "Admin")
   {
     scale = random.float(1.0, 1.5);
   }
@@ -29,10 +29,10 @@ function makeAgentEntity(props) {
     scale = .5 + (((props.state.age - 20.0) / 10.0) * 1.0);
   }
 
-  var studentAgent = {
+  var agent = {
     agent: true,
     pointSize: 3,
-    typeIndex: 0,
+    type: '',
     mode: AgentModes.Wander,
     position: props.position.dup(),
     prevPosition: props.position.dup(),
@@ -48,7 +48,22 @@ function makeAgentEntity(props) {
     life: 0
   };
 
-  return studentAgent;
+  random.seed(agent.agentIdNumber);
+  agent.random = random.float();
+
+  return agent;
+}
+
+function getAgentTypeForProgramme(programme) {
+  var keys = R.keys(Config.agentTypes)
+  var values = R.values(Config.agentTypes);
+  var index = R.findIndex(R.where({ programme: programme }), values);
+  var type = 'unknown';
+  if (index != -1) {
+    type = keys[index];
+  }
+  log(type);
+  return type;
 }
 
 function spawnAgents(state) {
@@ -99,10 +114,8 @@ function spawnAgents(state) {
         if ((room.floor == state.map.currentFloor) || (state.map.currentFloor == -1)) {
           //position = R.find(R.where({ roomId: room.id }), state.map.selectedNodes).position;
           agent.entity = makeAgentEntity({ position: position, id: agent.id, state: agent })
-          agent.entity.typeIndex = Config.agentTypeGroups.indexOf(agent.programme);
-          var c1 = Config.agentTypeColors[agent.entity.typeIndex][0];
-          var c2 = Config.agentTypeColors[agent.entity.typeIndex][1];
-          agent.entity.color = new Color(random.float(c1.r, c2.r), random.float(c1.g, c2.g), random.float(c1.b, c2.b));
+          agent.entity.type = getAgentTypeForProgramme(agent.programme);
+          agent.entity.typeIndex = R.keys(Config.agentTypes).indexOf(agent.entity.type);
           agent.entity.colorLines = Config.agentLineColor;
           agent.entity.colorFill = Config.agentFillColor;
 
@@ -121,7 +134,7 @@ function spawnAgents(state) {
           }
 
 
-          if (agent.entity.typeIndex !== -1) {
+          if (agent.entity.type !== 'unknown') {
             state.entities.push(agent.entity);
           }
           else {
