@@ -311,7 +311,7 @@ FakeClient.prototype.genC2 = function() {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 20000 / this.timeSpeed))
+  }, 50000 / this.timeSpeed))
 
   self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
@@ -319,7 +319,7 @@ FakeClient.prototype.genC2 = function() {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 30000 / this.timeSpeed))
+  }, 100000 / this.timeSpeed))
 }
 
 FakeClient.prototype.genStudents = function() {

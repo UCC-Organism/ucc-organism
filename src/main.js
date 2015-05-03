@@ -83,7 +83,7 @@ var state = {
 
   //state
   currentTime: 0,
-  timeSpeed: Platform.isPlask ? 1 : 0.5,
+  timeSpeed: Platform.isPlask ? 1 : 0.75,
   agentSpeed: Platform.isPlask ? 0.01 : 0.01/2,
   showCells: true,
   showAgents: true,
