@@ -63,8 +63,8 @@ var state = {
   liveData: false,
 
   //scene
-  initFloor: config.floorId.C_1,
-  guiCurrentFloor: config.floorId.C_1,
+  initFloor: config.floorId.C_2,
+  guiCurrentFloor: config.floorId.C_2,
   camera: null,
   cameraPosZ: 0.30,
   cameraRotation: 0,
@@ -137,7 +137,7 @@ sys.Window.create({
     //Time.verbose = true;
 
     this.gui = new GUI(this);
-    this.gui.setEnabled(true);
+    this.gui.setEnabled(false);
     this.gui.addHeader('MAC');
     this.gui.addLabel(state.MAC);
     this.gui.addHeader('Options');
@@ -408,8 +408,8 @@ sys.Window.create({
     agentTargetNodeFollowerSys(state);
     agentPositionUpdaterSys(state);
 
-    agentFlockingSys(state);
     agentPointSpriteUpdaterSys(state);
+    agentFlockingSys(state);
     energyPointSpriteUpdaterSys(state);
 
     flufSys(state);
