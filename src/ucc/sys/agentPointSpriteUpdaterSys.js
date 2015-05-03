@@ -74,7 +74,9 @@ function agentPointSpriteUpdaterSys(state) {
     else vertices[entityIndex] = entity.position.clone();
     if (!colors[entityIndex]) colors[entityIndex] = Color.White.clone();
     if (!normals[entityIndex]) normals[entityIndex] = new Vec3(0, 0, 0);
-    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2(entity.agentIdNumber % 10, entity.typeIndex);
+    if (!texCoords[entityIndex]) texCoords[entityIndex] = new Vec2();
+    texCoords[entityIndex].x = entity.agentIdNumber % 10;
+    texCoords[entityIndex].y = entity.typeIndex;
 
     lineColors[entityIndex] = Config.agentLineColor;
     fillColors[entityIndex] = Config.agentFillColor;
@@ -94,8 +96,8 @@ function agentPointSpriteUpdaterSys(state) {
     scales[entityIndex] = entity.scale * entity.life;
 
     dir.copy(entity.prevPosition).sub(entity.position).normalize();
-    var agentRotation = Math.atan2(-dir.z, dir.x) + Time.seconds * 1;
-    normals[entityIndex].x = (normals[entityIndex].x * 5 + agentRotation) / 6;
+    entity.rotation = (entity.rotation * 5 + Math.atan2(-dir.z, dir.x) + Time.seconds * 1)/6;
+    normals[entityIndex].x = entity.rotation;
   });
 
   vertices.dirty = true;

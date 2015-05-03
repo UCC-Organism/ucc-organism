@@ -38,6 +38,7 @@ function makeAgentEntity(props) {
     prevPosition: props.position.dup(),
     velocity: new Vec3(0, 0, 0),
     force: new Vec3(0, 0, 0),
+    rotation: 0,
     color: Color.White,
     targetNode: null,
     agentId: props.id,
