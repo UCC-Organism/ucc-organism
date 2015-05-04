@@ -172,7 +172,7 @@ var AgentInteractions = [
 ];
 
 var Screens = [
-  { client_id: '0', showFloor: 'All', cameraDistance: 1.3 },
+  { client_id: '0', showFloor: 'All', cameraDistance: 2.0 },
   { client_id: '1', showFloor: 'A 0', cameraDistance: 0.5 },
   { client_id: '2', showFloor: 'B 1', cameraDistance: 0.5 },
   { client_id: '3', showFloor: 'C 1', cameraDistance: 0.5 },
