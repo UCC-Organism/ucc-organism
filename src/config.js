@@ -271,7 +271,7 @@ function nightColors() {
   })
 
   Object.keys(Config.energyTypes).forEach(function(type) {
-    darkenColor(Config.energyTypes[type].color);
+    desaturateColor(Config.energyTypes[type].color);
   })
 
   Object.keys(Config.agentTypes).forEach(function(agentType) {
