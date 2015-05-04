@@ -214,7 +214,7 @@ var Config = {
   energySpriteSize: 0.5,
   agentSpriteSize: 10,
 
-  energyPointsPerPathLength: 50,
+  energyPointsPerPathLength: 20,
   energyAgentCountStrength: 2,
   energyIntensityStrength: 5,
 
