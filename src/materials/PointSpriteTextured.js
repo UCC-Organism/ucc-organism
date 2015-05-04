@@ -11,7 +11,6 @@ var merge = require('merge');
 var fs = require('fs');
 
 var PointSpriteTexturedGLSL = fs.readFileSync(__dirname + '/PointSpriteTextured.glsl', 'utf8');
-var displaceVert = fs.readFileSync(__dirname + '/displace.vert', 'utf8');
 
 function PointSpriteTextured(uniforms) {
   this.gl = Context.currentContext;

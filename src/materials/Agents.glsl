@@ -48,7 +48,7 @@ void main() {
     float distortionStrength = strongDisplaceProps[i].y;
     float maxDist = strongDisplaceProps[i].x;
   
-    if (dist < maxDist)
+    if (dist < maxDist && maxDist > 0.0)
     {
       vec3 dir = normalize(pos - c);
       float rat = pow(1.0 - dist / maxDist, 4.0);

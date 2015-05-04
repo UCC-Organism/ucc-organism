@@ -128,7 +128,6 @@ uniform int numStrongDisplacePoints;
 
 uniform vec4 glowColors[N_DISTORT_POINTS];
 
-
 uniform float time;
 uniform float sway;
 
@@ -167,7 +166,7 @@ void main()
     }
   }
 
-  if (maxWeakDisplacement > 0.0 && length(displacement) > maxWeakDisplacement)
+  if ((maxWeakDisplacement > 0.0) && (length(displacement) > maxWeakDisplacement))
   {
     displacement = normalize(displacement) * maxWeakDisplacement;
   }

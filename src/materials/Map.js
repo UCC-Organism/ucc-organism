@@ -8,11 +8,10 @@ var merge = require('merge');
 var fs = require('fs');
 
 var MapGLSL = fs.readFileSync(__dirname + '/Map.glsl', 'utf8');
-var displaceVert = fs.readFileSync(__dirname + '/displace.vert', 'utf8');
 
 function ShowColors(uniforms) {
   this.gl = Context.currentContext;
-  var program = new Program(displaceVert, MapGLSL);
+  var program = new Program(MapGLSL);
   var defaults = { pointSize: 1 };
   uniforms = merge(defaults, uniforms);
   Material.call(this, program, uniforms);
