@@ -643,7 +643,7 @@ function rebuildCells(state) {
       var c = Color.fromHSL(0, 1, 0.5);
       if (focusRoomCenter) {
         var dist = p.distance(focusRoomCenter);
-        if (dist > 0.12) return; //FIXME: hardcoded
+        //if (dist > 0.12) return; //FIXME: hardcoded
         dist = Math.floor(dist * 20)/20;
         c = Color.fromHSL(dist*2, 0.7, 0.5);
         cellColors.push(cellColor);
