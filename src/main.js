@@ -295,7 +295,6 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
-        case 'q': Config.bgColor = Color.fromHex('#FF0000'); Config.cellColor = Color.fromHex('#FF0000'); this.onColorChange(); break;
         case 'S': this.gui.save(Config.settingsFile); break;
         case 'L': this.gui.load(Config.settingsFile); break;
       }
