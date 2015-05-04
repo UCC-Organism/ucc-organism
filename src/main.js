@@ -140,8 +140,8 @@ sys.Window.create({
 
     this.gui = new GUI(this);
     this.gui.setEnabled(false);
-    this.gui.addHeader('MAC');
-    this.gui.addLabel(state.MAC);
+    this.gui.addHeader('Client ID');
+    this.clientIdLabel = this.gui.addLabel(state.client_id);
     this.gui.addHeader('Options');
     this.gui.addHeader('Map');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', Config.floors.map(function(floor) {
@@ -374,7 +374,7 @@ sys.Window.create({
           }
           state.cameraDistance = screenInfo.cameraDistance;
           state.cameraDistanceOverride = screenInfo.cameraDistance;
-          this.gui.items[0].dirty = true;
+          this.clientIdLabel.setTitle(state.client_id)
           this.killAllAgents();
         }
       }.bind(this))

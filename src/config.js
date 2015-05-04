@@ -177,9 +177,9 @@ var Screens = [
   { client_id: '2', showFloor: 'B 1', cameraDistance: 0.5 },
   { client_id: '3', showFloor: 'C 1', cameraDistance: 0.5 },
   { client_id: '4', showFloor: 'C 2', cameraDistance: 0.5 },
-  { client_id: '5', showRoom: 'C.230', cameraDistance: 0.1 },
-  { client_id: '6', showRoom: 'canteen', cameraDistance: 0.1 },
-  { client_id: '7', showRoom: 'library', cameraDistance: 0.1 }
+  { client_id: '5', showRoom: 'C.230', cameraDistance: 0.15 },
+  { client_id: '6', showRoom: 'canteen', cameraDistance: 0.15 },
+  { client_id: '7', showRoom: 'library', cameraDistance: 0.15 }
 ];
 
 var Config = {
