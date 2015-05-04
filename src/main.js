@@ -421,3 +421,7 @@ sys.Window.create({
     }
   }
 });
+
+process.on('uncaughtException', function(e) {
+  log('ERR' + e);
+})
