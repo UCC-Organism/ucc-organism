@@ -56,7 +56,9 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var state = {
   client_id: 'Unknown',
   new_client_id: 'Unknown',
-  DPI: Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
+  api_server: '',
+  api_server_ip: '',
+  DPI: 1,//Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
 
   //data
   liveData: false,
@@ -107,7 +109,11 @@ try {
   var sys_conf = uccextension.read_system_configSync();
   var json = JSON.parse(sys_conf);
   log("client_id: " + json.client_id);
+  log("api_server: " + json.api_server);
+  log("api_server_port: " + json.api_server_port);
   state.new_client_id = json.client_id;
+  state.api_server = json.api_server;
+  state.api_server_port = json.api_server_port;
 }
 catch(e) {
   log('uccextension not available');
