@@ -55,10 +55,16 @@ function agentFlockingSys(state) {
         if (dist > 0) {
           tmpDir.copy(agent.position).sub(anotherAgent.position);
           if (agent.mode == AgentModes.Studying || agent.mode == AgentModes.Eating) {
-            tmpDir.normalize().cross(up).scale(0.00001);
+            tmpDir.normalize().cross(up).scale(0.01);
             agent.force.add(tmpDir);
             anotherAgent.force.add(tmpDir.scale(-2));
             agent.force.add(tmpDir.scale(0.1));
+          }
+          else if (agent.state.mode == AgentModes.Away
+            || anotherAgent.state.mode == AgentModes.Away
+            || agent.state.mode == AgentModes.None
+            || anotherAgent.state.mode == AgentModes.None) {
+            //no repulsion
           }
           else {
             //normal repulsion
