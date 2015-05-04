@@ -114,6 +114,10 @@ try {
   state.new_client_id = json.client_id;
   state.api_server = json.api_server;
   state.api_server_port = json.api_server_port;
+
+  if (api_server != '') {
+    state.liveData = 1;
+  }
 }
 catch(e) {
   log('uccextension not available');
