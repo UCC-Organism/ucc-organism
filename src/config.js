@@ -172,14 +172,14 @@ var AgentInteractions = [
 ];
 
 var Screens = [
-  { client_id: '0', showFloor: 'All', distance: 1 },
-  { client_id: '1', showFloor: 'A 0', distance: 0.5 },
-  { client_id: '2', showFloor: 'B 1', distance: 0.5 },
-  { client_id: '3', showFloor: 'C 1', distance: 0.5 },
-  { client_id: '4', showFloor: 'C 2', distance: 0.5 },
-  { client_id: '5', showRoom: 'C.230', distance: 0.1 },
-  { client_id: '6', showRoom: 'canteen', distance: 0.1 },
-  { client_id: '7', showRoom: 'library', distance: 0.1 }
+  { client_id: '0', showFloor: 'All', cameraDistance: 1.3 },
+  { client_id: '1', showFloor: 'A 0', cameraDistance: 0.5 },
+  { client_id: '2', showFloor: 'B 1', cameraDistance: 0.5 },
+  { client_id: '3', showFloor: 'C 1', cameraDistance: 0.5 },
+  { client_id: '4', showFloor: 'C 2', cameraDistance: 0.5 },
+  { client_id: '5', showRoom: 'C.230', cameraDistance: 0.1 },
+  { client_id: '6', showRoom: 'canteen', cameraDistance: 0.1 },
+  { client_id: '7', showRoom: 'library', cameraDistance: 0.1 }
 ];
 
 var Config = {

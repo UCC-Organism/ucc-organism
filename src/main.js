@@ -152,13 +152,11 @@ sys.Window.create({
       this.killAllAgents();
 
     }.bind(this));
-    var roomList = [
-      { name: 'None', value: null },
-      { name: 'C.117', value: 'C.117' }
-    ]
-    this.gui.addRadioList('Room', state, 'focusedRoom', roomList, function(roomId) {
-      state.map.setFocusRoom(roomId);
-    })
+
+    this.gui.addRadioList('Example Screens', state, 'new_client_id', Config.screens.map(function(screen) {
+      var name = screen.showFloor || screen.showRoom;
+      return { name: screen.client_id + ' "' + name + '"', value: screen.client_id };
+    }));
 
     this.gui.addHeader('Data');
     this.gui.addRadioList('Source', state, 'liveData', [
@@ -167,19 +165,9 @@ sys.Window.create({
     ], function(liveData) {
       this.killAllAgents();
     }.bind(this));
-    this.gui.addHeader('Debug');
-    this.gui.addParam('debug', state, 'debug');
-    this.gui.addParam('showCells', state, 'showCells');
-    this.gui.addParam('showCorridors', state, 'showCorridors');
-    this.gui.addParam('showNodes', state, 'showNodes');
-    this.gui.addParam('showAgents', state, 'showAgents');
-    this.gui.addParam('showEnergy', state, 'showEnergy');
-    this.gui.addParam('showLabels', state, 'showLabels');
-    this.gui.addHeader('Debug modes');
-    this.gui.addButton('Night colors', this, 'setNightMode');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 1 });
+    this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 2 });
     this.gui.addParam('Camera Rotation', state, 'cameraRotationOverride', { min: 0, max: 360 });
     this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
 
@@ -192,6 +180,17 @@ sys.Window.create({
     this.gui.addParam('Cell',             Config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Cell Center',      Config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Cell Edge',        Config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));
+
+    this.gui.addHeader('Debug');
+    this.gui.addParam('debug', state, 'debug');
+    this.gui.addParam('showCells', state, 'showCells');
+    this.gui.addParam('showCorridors', state, 'showCorridors');
+    this.gui.addParam('showNodes', state, 'showNodes');
+    this.gui.addParam('showAgents', state, 'showAgents');
+    this.gui.addParam('showEnergy', state, 'showEnergy');
+    this.gui.addParam('showLabels', state, 'showLabels');
+    this.gui.addHeader('Debug modes');
+    this.gui.addButton('Night colors', this, 'setNightMode');
 
     this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Classroom',        Config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
@@ -364,7 +363,7 @@ sys.Window.create({
   update: function() {
     if (state.new_client_id != state.client_id) {
       state.client_id = state.new_client_id;
-      config.screens.forEach(function(screenInfo) {
+      Config.screens.forEach(function(screenInfo) {
         if (screenInfo.client_id == state.client_id) {
           if (screenInfo.showFloor) {
             state.map.setFocusRoom(null);
@@ -373,8 +372,12 @@ sys.Window.create({
           if (screenInfo.showRoom) {
             state.map.setFocusRoom(screenInfo.showRoom);
           }
+          state.cameraDistance = screenInfo.cameraDistance;
+          state.cameraDistanceOverride = screenInfo.cameraDistance;
+          this.gui.items[0].dirty = true;
+          this.killAllAgents();
         }
-      })
+      }.bind(this))
     }
     if (this.client) {
       this.client.enabled = state.liveData;
