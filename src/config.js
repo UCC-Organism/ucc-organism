@@ -206,6 +206,9 @@ var Config = {
   agentFillColorBasedOnAccentColor: true,
   agentInvertFillAndLineColorBasedOnGender: true,
 
+  repulsionDistance: 0.01,
+  interactionDistance: 0.03,
+
   roomTypes: RoomTypes,
   floors: Floors,
   energyPaths: EnergyPaths,

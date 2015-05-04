@@ -166,22 +166,6 @@ sys.Window.create({
       this.killAllAgents();
     }.bind(this));
 
-    this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 2 });
-    this.gui.addParam('Camera Rotation', state, 'cameraRotationOverride', { min: 0, max: 360 });
-    this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
-
-    this.gui.addHeader('Global Colors');
-    this.gui.addParam('Cell Edge Width',  Config, 'cellEdgeWidth', { min: 0.5, max: 5 });
-    this.gui.addParam('BgColor',          Config, 'bgColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Membrane color',   Config, 'membraneColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Agent line',       Config, 'agentLineColor');
-    this.gui.addParam('Agent fill',       Config, 'agentFillColor');
-    this.gui.addParam('Corridor',         Config, 'corridorColor');
-    this.gui.addParam('Cell',             Config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Cell Center',      Config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Cell Edge',        Config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));
-
     this.gui.addHeader('Debug');
     this.gui.addParam('debug', state, 'debug');
     this.gui.addParam('showCells', state, 'showCells');
@@ -193,6 +177,25 @@ sys.Window.create({
     this.gui.addParam('showAgentTargets', state, 'showAgentTargets');
     this.gui.addHeader('Debug modes');
     this.gui.addButton('Night colors', this, 'setNightMode');
+
+    this.gui.addHeader('Camera').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 2 });
+    this.gui.addParam('Camera Rotation', state, 'cameraRotationOverride', { min: 0, max: 360 });
+    this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
+    this.gui.addHeader('Agents')
+    this.gui.addParam('Repulsion Distance', Config, 'repulsionDistance', { min: 0, max: 0.1 });
+    this.gui.addParam('Interaction Distance', Config, 'interactionDistance', { min: 0, max: 0.1 });
+
+    this.gui.addHeader('Global Colors');
+    this.gui.addParam('Cell Edge Width',  Config, 'cellEdgeWidth', { min: 0.5, max: 5 });
+    this.gui.addParam('BgColor',          Config, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Membrane color',   Config, 'membraneColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Agent line',       Config, 'agentLineColor');
+    this.gui.addParam('Agent fill',       Config, 'agentFillColor');
+    this.gui.addParam('Corridor',         Config, 'corridorColor');
+    this.gui.addParam('Cell',             Config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Cell Center',      Config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Edge',        Config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));
 
     this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Classroom',        Config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))

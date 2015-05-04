@@ -38,10 +38,9 @@ function agentFlockingSys(state) {
 
   var tmpDir = new Vec3();
   var up = new Vec3(0, 0, 1);
-  var agentSize = Config.agentSpriteSize * state.DPI * 0.0003;
-  var repulsionDist = agentSize * 2;
+  var repulsionDist = Config.repulsionDistance;
   var repulsionDistSqr = repulsionDist * repulsionDist;
-  var interactionDist = agentSize * 4;
+  var interactionDist = Config.interactionDistance;
   var interactionDistSqr = interactionDist * interactionDist;
 
   for(var i=0; i<agents.length; i++) {
