@@ -150,7 +150,7 @@ void main()
 
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
-    if (i > numWeakDisplacePoints) break;
+    if (i >= numWeakDisplacePoints) break;
 
     c = weakDisplacePoints[i];
     float dist = distance(pos, c);
@@ -178,7 +178,7 @@ void main()
 
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
-    if (i > numStrongDisplacePoints) break;
+    if (i >= numStrongDisplacePoints) break;
 
     c = strongDisplacePoints[i];
 

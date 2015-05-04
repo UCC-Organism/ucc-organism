@@ -29,7 +29,7 @@ void main() {
 
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
-    if (i > numStrongDisplacePoints) break;
+    if (i >= numStrongDisplacePoints) break;
     
     c = strongDisplacePoints[i];
 
