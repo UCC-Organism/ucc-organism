@@ -34,7 +34,7 @@ function agentPointSpriteUpdaterSys(state) {
     pointSpriteGeometry.addAttrib("accentColors", "accentColor", []);
     pointSpriteGeometry.addAttrib("fillColors", "fillColor", []);
     pointSpriteGeometry.addAttrib("scales", "scale", []);
-    var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/20, 1/20), texOffset: new Vec2(1/20, 1/20) });
+    var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false, mipmap: true }), texSize: new Vec2(1/20, 1/20), texOffset: new Vec2(1/20, 1/20) });
     var agentMesh = new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } );
     agentMesh.position.z = 0.003;
     state.pointSpriteMeshEntity = {
