@@ -705,8 +705,8 @@ function rebuildCells(state) {
 
   var cellMaterial = new MapMaterial({ pointSize: 5});
   //TODO: Temporary dynamic shader
-  var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
-  var cellMaterial = new Material(Program.load(materialsPath + '/Map.glsl', null, { autoreload: true }), { pointSize: 5});
+  //var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
+  //var cellMaterial = new Material(Program.load(materialsPath + '/Map.glsl', null, { autoreload: true }), { pointSize: 5});
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, cellMaterial, { lines: true });
   var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });

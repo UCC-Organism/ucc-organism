@@ -40,9 +40,9 @@ function agentPointSpriteUpdaterSys(state) {
     var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false, mipmap: true }), texSize: new Vec2(1/20, 1/20), texOffset: new Vec2(1/20, 1/20) });
 
     //TODO: Temporary dynamic shader
-    var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
-    var agentsMaterial = new Material(Program.load(materialsPath + '/Agents.glsl', null, { autoreload: true }), pointSpriteMaterial.uniforms);
-    pointSpriteMaterial = agentsMaterial;
+    //var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
+    //var agentsMaterial = new Material(Program.load(materialsPath + '/Agents.glsl', null, { autoreload: true }), pointSpriteMaterial.uniforms);
+    //pointSpriteMaterial = agentsMaterial;
 
     var agentMesh = new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } );
     agentMesh.position.z = 0.003;
