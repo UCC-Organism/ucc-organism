@@ -104,7 +104,6 @@ function centerCamera(state, floorBBox) {
 
   //organism
   if (state.map.currentFloor == -1) {
-    distance = 1.3;
   }
   //classrom
   else if (state.map.focusRoomId != null) {
@@ -123,8 +122,28 @@ function centerCamera(state, floorBBox) {
   }
 
   state.camera.setUp(new Vec3(0, 0, -1));
+}
 
-  state.arcball.setDistance(distance);
+//-----------------------------------------------------------------------------
+
+function updateCamera(state) {
+  if (state.map.dirty) {
+    state.cameraRotation = Math.PI/2;
+  }
+  state.cameraRotation += Time.delta/Config.cameraRotationDuration;
+  if (state.cameraRotationOverride) {
+    state.cameraRotation = state.cameraRotationOverride * Math.PI / 180;
+  }
+  state.cameraTilt = Config.cameraMaxTilt/10 * Math.cos(2*Math.PI*Time.seconds/Config.cameraTiltDuration);
+  if (state.cameraTiltOverride) {
+    state.cameraTilt = state.cameraTiltOverride/10;
+  }
+  if (state.cameraDistanceOverride) {
+    state.cameraDistance = state.cameraDistanceOverride;
+  }
+  state.arcball.setOrientation(new Vec3(0, state.cameraTilt, 1))
+  state.arcball.setDistance(state.cameraDistance);
+  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation)));
 }
 
 //-----------------------------------------------------------------------------
@@ -711,24 +730,6 @@ function rebuildCells(state) {
   state.entities.unshift({ name: 'corridorBgMesh', map: true, cell: true, mesh: corridorBgMesh });
 
   log('rebuildMap', 'edgeMesh:', edgeMesh.geometry.vertices.length, 'cellMesh:', cellMesh.geometry.vertices.length, 'cellEdgeMesh:', cellEdgeMesh.geometry.vertices.length)
-}
-
-//-----------------------------------------------------------------------------
-
-function updateCamera(state) {
-  if (state.map.dirty) {
-    state.cameraRotation = Math.PI/2;
-  }
-  state.cameraRotation += Time.delta/Config.cameraRotationDuration;
-  if (state.cameraRotationOverride) {
-    state.cameraRotation = state.cameraRotationOverride * Math.PI / 180;
-  }
-  state.cameraTilt = Config.cameraMaxTilt/10 * Math.cos(2*Math.PI*Time.seconds/Config.cameraTiltDuration);
-  if (state.cameraTiltOverride) {
-    state.cameraTilt = state.cameraTiltOverride/10;
-  }
-  state.arcball.setOrientation(new Vec3(0, state.cameraTilt, 1))
-  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation)));
 }
 
 //-----------------------------------------------------------------------------

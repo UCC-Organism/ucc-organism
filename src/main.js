@@ -66,7 +66,8 @@ var state = {
   initFloor: Config.floorId.C_2,
   guiCurrentFloor: Config.floorId.C_2,
   camera: null,
-  cameraPosZ: 0.30,
+  cameraDistance: 0.4,
+  cameraDistanceOverride: 0,
   cameraRotation: 0,
   cameraRotationOverride: 0,
   cameraTilt: 0,
@@ -145,7 +146,6 @@ sys.Window.create({
     this.gui.addHeader('MAC');
     this.gui.addLabel(state.MAC);
     this.gui.addHeader('Options');
-    this.gui.addParam('Sway Enabled', state, 'sway');
     this.gui.addHeader('Map');
     this.gui.addRadioList('Floor', state, 'guiCurrentFloor', Config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };
@@ -182,6 +182,7 @@ sys.Window.create({
     this.gui.addButton('Night colors', this, 'setNightMode');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 1 });
     this.gui.addParam('Camera Rotation', state, 'cameraRotationOverride', { min: 0, max: 360 });
     this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
 
