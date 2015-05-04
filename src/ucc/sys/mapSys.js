@@ -720,12 +720,15 @@ function updateCamera(state) {
     state.cameraRotation = Math.PI/2;
   }
   state.cameraRotation += Time.delta/Config.cameraRotationDuration;
+  if (state.cameraRotationOverride) {
+    state.cameraRotation = state.cameraRotationOverride * Math.PI / 180;
+  }
   state.cameraTilt = Config.cameraMaxTilt/10 * Math.cos(2*Math.PI*Time.seconds/Config.cameraTiltDuration);
   if (state.cameraTiltOverride) {
     state.cameraTilt = state.cameraTiltOverride/10;
   }
-  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation)));
   state.arcball.setOrientation(new Vec3(0, state.cameraTilt, 1))
+  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation)));
 }
 
 //-----------------------------------------------------------------------------

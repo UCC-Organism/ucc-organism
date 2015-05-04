@@ -68,7 +68,9 @@ var state = {
   camera: null,
   cameraPosZ: 0.30,
   cameraRotation: 0,
+  cameraRotationOverride: 0,
   cameraTilt: 0,
+  cameraTiltOverride: 0,
   cameraTiltOverride: 0,
   arcball: null,
   zoom: 1,
@@ -180,6 +182,7 @@ sys.Window.create({
     this.gui.addButton('Night colors', this, 'setNightMode');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Camera Rotation', state, 'cameraRotationOverride', { min: 0, max: 360 });
     this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
 
     this.gui.addHeader('Global Colors');
