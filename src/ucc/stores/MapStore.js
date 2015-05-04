@@ -85,7 +85,18 @@ var MapStore = {
       return this;
     }.bind(this));
   },
-  setFloor: function(floorId) {
+  setFloor: function(floor) {
+    var floorId;
+    if (!isNaN(floor)) {
+      floorId = floor;
+    }
+    else {
+      Config.floors.forEach(function(floorInfo) {
+        if (floorInfo.name == floor) {
+          floorId = floorInfo.id;
+        }
+      })
+    }
     this.currentFloor = floorId;
     if (this.currentFloor != -1) {
       this.selectedNodes = this.nodes.filter(function(node) {

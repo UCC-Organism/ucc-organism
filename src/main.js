@@ -54,7 +54,8 @@ var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
 var state = {
-  MAC: 'Unknown',
+  client_id: 'Unknown',
+  new_client_id: 'Unknown',
   DPI: Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
 
   //data
@@ -102,14 +103,13 @@ var state = {
 };
 
 try {
-  var sys_conf = uccextension.read_system_configSync(); // reads the entire (json) config file
-  var json = JSON.parse(sys_conf);          // parses the json
-  log("mac_address: " + json.mac_address);      // reads the mac
-  state.MAC = json.mac_address;
+  var sys_conf = uccextension.read_system_configSync();
+  var json = JSON.parse(sys_conf);
+  log("client_id: " + json.client_id);
+  state.new_client_id = json.client_id;
 }
 catch(e) {
   log('uccextension not available');
-  state.MAC = '' + e;
 }
 
 var GUI_OFFSET = 0;
@@ -352,23 +352,6 @@ sys.Window.create({
         z: hit3.z
       };
     }.bind(this));
-
-    /*
-    state.entities.push({
-      type: 'mouse',
-      mesh: mouseMesh
-    })
-
-    state.entities.push({
-      type: 'mouse',
-      mesh: mouseMesh2
-    })
-
-    state.entities.push({
-      type: 'mouse',
-      mesh: mouseMesh3
-    })
-*/
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
@@ -379,6 +362,20 @@ sys.Window.create({
     })
   },
   update: function() {
+    if (state.new_client_id != state.client_id) {
+      state.client_id = state.new_client_id;
+      config.screens.forEach(function(screenInfo) {
+        if (screenInfo.client_id == state.client_id) {
+          if (screenInfo.showFloor) {
+            state.map.setFocusRoom(null);
+            state.map.setFloor(screenInfo.showFloor);
+          }
+          if (screenInfo.showRoom) {
+            state.map.setFocusRoom(screenInfo.showRoom);
+          }
+        }
+      })
+    }
     if (this.client) {
       this.client.enabled = state.liveData;
       this.fakeClient.enabled = !state.liveData;

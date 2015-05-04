@@ -171,6 +171,16 @@ var AgentInteractions = [
   { from: 'admin', to: 'admin', energy: 'social' }
 ];
 
+var Screens = [
+  { client_id: '0', showFloor: 'All', distance: 1 },
+  { client_id: '1', showFloor: 'A 0', distance: 0.5 },
+  { client_id: '2', showFloor: 'B 1', distance: 0.5 },
+  { client_id: '3', showFloor: 'C 1', distance: 0.5 },
+  { client_id: '4', showFloor: 'C 2', distance: 0.5 },
+  { client_id: '5', showRoom: 'C.230', distance: 0.1 },
+  { client_id: '6', showRoom: 'canteen', distance: 0.1 },
+  { client_id: '7', showRoom: 'library', distance: 0.1 }
+];
 
 var Config = {
   serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
@@ -180,6 +190,7 @@ var Config = {
   energyTypes: EnergyTypes,
   agentTypes: AgentTypes,
   agentInteractions: AgentInteractions,
+  screens: Screens,
 
   //map
   cellCloseness: 0.00155,
