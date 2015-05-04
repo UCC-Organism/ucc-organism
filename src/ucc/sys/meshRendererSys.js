@@ -63,6 +63,7 @@ function meshRendererSys(state) {
     }
 
     if (entity.mesh.material.program.uniforms["strongDisplacePoints[0]"]) {
+      //console.log(entity.mesh.material.program.uniforms)
       var numStrongDisplacePoints = state.map.strongDisplacePoints.length;
       for(var i = 0; i < numStrongDisplacePoints; i++) {
         entity.mesh.material.uniforms["strongDisplacePoints[" + i + "]"] = state.map.strongDisplacePoints[i].position;

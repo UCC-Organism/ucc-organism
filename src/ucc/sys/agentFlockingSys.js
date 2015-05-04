@@ -44,8 +44,6 @@ function agentFlockingSys(state) {
   var interactionDist = agentSize * 4;
   var interactionDistSqr = interactionDist * interactionDist;
 
-
-
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
 

@@ -26,13 +26,13 @@ void main() {
   for (int i = 0; i < N_DISTORT_POINTS; i++)
   {
     if (i >= numStrongDisplacePoints) break;
-    
+
     c = strongDisplacePoints[i];
 
     float dist = distance(pos, c);
     float distortionStrength = strongDisplaceProps[i].y;
     float maxDist = strongDisplaceProps[i].x;
-  
+
     if (dist < maxDist)
     {
       vec3 dir = normalize(pos - c);
