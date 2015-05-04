@@ -5,6 +5,8 @@ var Vec3        = require('pex-geom').Vec3;
 var AgentModes  = require('../agents/agentModes');
 var Config      = require('../../config');
 var log         = require('debug')('ucc/agentSpawnSys');
+var clamp       = require('clamp');
+var remap       = require('re-map');
 
 var Color       = color.Color;
 
@@ -26,7 +28,8 @@ function makeAgentEntity(props) {
   }
   else // Student
   {
-    scale = .5 + (((props.state.age - 20.0) / 10.0) * 1.0);
+    var age = clamp(props.state.age, 20, 40);
+    scale = remap(age, 20, 40, 0.5, 1.5);
   }
 
   var agent = {
