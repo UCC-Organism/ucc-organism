@@ -78,7 +78,7 @@ SkCanvasCrayon.prototype.circle = function(x, y, r) {
   return this;
 };
 
-//TODO: SkCanvasCrayon.drawEllipse
+//Missing: SkCanvasCrayon.drawEllipse
 
 SkCanvasCrayon.prototype.text = function(str, x, y) {
   this.canvas.drawText(this.currentStyle, str, x, y);

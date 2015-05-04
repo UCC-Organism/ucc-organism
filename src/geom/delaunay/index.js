@@ -239,7 +239,7 @@ function AddVertex( vertex, triangles )
 // Internal: remove duplicate edges from an array
 function UniqueEdges( edges )
 {
-  // TODO: This is O(n^2), make it O(n) with a hash or some such
+  // This is O(n^2), make it O(n) with a hash or some such
   var uniqueEdges = [];
   for( var i in edges )
   {
