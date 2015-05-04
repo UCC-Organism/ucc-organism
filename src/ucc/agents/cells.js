@@ -10,6 +10,7 @@ var coreColor = [255, 0, 0, 255];
 
 //-----------------------------------------------------------------------------
 
+
 function SplCell(student, x, y, size) {
   this.student = student;
   this.x = x;
@@ -28,11 +29,11 @@ SplCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.3, 0.5);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
   var x2 = d;
   var y2 = d;
 
@@ -40,24 +41,42 @@ SplCell.prototype.draw = function(crayon) {
   crayon.translate(this.x, this.y);
   crayon.rotate(360 * seed - 0.5);
 
+  var num = Math.ceil(random.float(1, 6));
+  var angleStep = 360 / num;
+  var legLength = random.float(16, 24);
+
   crayon.fill(borderColor)
-    .circle(x, y, r + 6)
-    .circle(x2, y2, r2 + 6);
+    .circle(0, 0, r)
 
   crayon.fill(primaryColor)
-    .circle(x, y, r + 5)
-    .circle(x2, y2, r2 + 5);
-
-  crayon.fill(fillColor)
-    .circle(x, y, r)
-    .circle(x2, y2, r2);
-
-  var x3 = x + Math.random()
-
-  var corePos = random.vec2(r - r/4)
+    .circle(0, 0, r-2);
 
   crayon.fill(coreColor)
-    .circle(x + corePos.x, y + corePos.y, r/4)
+    .circle(0, 0, r-12);
+
+  for (var i = 0; i < num; i++)
+  {
+    crayon.save();
+    crayon.rotate(i *  angleStep);
+
+    crayon.fill(borderColor)
+    .roundRect(r-10, -6, legLength, 12, 5);
+
+    crayon.fill(fillColor)
+    .roundRect(r-8, -5, legLength-4, 10, 5);
+
+    crayon.fill(primaryColor)
+    .circle(r, 0, random.float(1, 4));
+
+    var ran = random.float(4, 12);
+    var ran2 = random.float(4, 12);
+    crayon
+      .stroke(borderColor)
+      .line(r - 10 + legLength, 0, r - 10 + legLength + random.float(3, 8), 0)
+
+
+    crayon.restore();
+  }
 
   crayon.restore();
 }
@@ -85,14 +104,14 @@ PmuCell.prototype.draw = function(crayon) {
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
 
   crayon.save();
   crayon.translate(this.x, this.y);
   crayon.rotate(360 * seed - 0.5);
 
-  var numLegs = random.int(3, 7);
+  var numLegs = random.int(2, 7);
 
   crayon.fill(borderColor)
     .circle(x, y, r + 6)
@@ -103,6 +122,11 @@ PmuCell.prototype.draw = function(crayon) {
   crayon.fill(fillColor)
     .circle(x, y, r)
 
+  var sizes = [];
+  for(var i=0; i<numLegs; i++) {
+    sizes[i] = random.float(0, 3);
+  }
+
   for(var i=0; i<numLegs; i++) {
     var a = i/numLegs * 360;
     crayon.save()
@@ -111,7 +135,7 @@ PmuCell.prototype.draw = function(crayon) {
       .rotate(a)
       .translate(r, 0)
       .fill(borderColor)
-      .circle(0, 0, r - 2)
+      .circle(0, 0, r - 2 - sizes[i])
     crayon.restore();
   }
 
@@ -123,7 +147,7 @@ PmuCell.prototype.draw = function(crayon) {
       .rotate(a)
       .translate(r, 0)
       .fill(primaryColor)
-      .circle(0, 0, r - 3)
+      .circle(0, 0, r - 3 - sizes[i])
     crayon.restore();
   }
 
@@ -146,7 +170,7 @@ PmuCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function FysCell(student, x, y, size) {
+function DipSCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -160,15 +184,15 @@ function FysCell(student, x, y, size) {
   this.seed = Math.random();
 }
 
-FysCell.prototype.draw = function(crayon) {
+DipSCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
 
   crayon.save();
   crayon.translate(this.x, this.y);
@@ -183,8 +207,7 @@ FysCell.prototype.draw = function(crayon) {
   crayon.fill(fillColor)
     .circle(x, y, r)
 
-  var numLegs = random.int(3, 7);
-  if (numLegs % 2 == 0) numLegs++;
+  var numLegs = random.int(1, 7);
 
   for(var i=0; i<numLegs; i++) {
     var a = i/numLegs * 360;
@@ -238,7 +261,7 @@ FysCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function SocCell(student, x, y, size) {
+function DipLCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -252,15 +275,15 @@ function SocCell(student, x, y, size) {
   this.seed = Math.random();
 }
 
-SocCell.prototype.draw = function(crayon) {
+DipLCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
 
   crayon.save();
   crayon.translate(this.x, this.y);
@@ -276,7 +299,6 @@ SocCell.prototype.draw = function(crayon) {
     .circle(x, y, r)
 
   var numLegs = random.int(3, 7);
-  if (numLegs % 2 == 0) numLegs++;
 
   for(var i=0; i<numLegs; i++) {
     var a = i/numLegs * 360;
@@ -352,8 +374,10 @@ PaedCell.prototype.draw = function(crayon) {
   var armLengths = [random.float(8, 16), random.float(8, 16), random.float(8, 16), random.float(8, 16)];
   var circleRads = [random.float(6, 9), random.float(6, 9), random.float(6, 9), random.float(6, 9)];
 
+  var numLegs = random.int(2, 5);
+
   crayon.save();
-  for (var i = 0; i < 4; i++)
+  for (var i = 0; i < numLegs; i++)
   {
     var rad = circleRads[i];
     crayon.rotate(90.0);
@@ -368,7 +392,7 @@ PaedCell.prototype.draw = function(crayon) {
     .roundRect(-s, -s, s*2, s*2, 5);
 
   crayon.save();
-  for (var i = 0; i < 4; i++)
+  for (var i = 0; i < numLegs; i++)
   {
     var rad = circleRads[i];
     crayon.rotate(90.0);
@@ -406,6 +430,7 @@ PaedCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
+
 function DivCell(student, x, y, size) {
   this.student = student;
   this.x = x;
@@ -424,7 +449,7 @@ DivCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
-  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.3, 0.5);
+  var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
   var x = -d;
@@ -434,51 +459,61 @@ DivCell.prototype.draw = function(crayon) {
 
   crayon.save();
   crayon.translate(this.x, this.y);
-  crayon.rotate(360 * seed - 0.5);
 
-  var num = Math.ceil(random.float(2, 6));
-  var angleStep = 360 / num;
-  var legLength = random.float(16, 24);
+  var n = random.int(1, 5);
+  var rotations = [];
+  var shifts = [];
+  for(var i=0; i<n; i++) {
+    rotations[i] = random.float(0, 360);
+    shifts[i] = random.float(2, 8);
+  }
 
-  crayon.fill(borderColor)
-    .circle(0, 0, r)
-
-  crayon.fill(primaryColor)
-    .circle(0, 0, r-2);
-
-  crayon.fill(coreColor)
-    .circle(0, 0, r-12);
-
-  for (var i = 0; i < num; i++)
-  {
-    crayon.save();
-    crayon.rotate(i *  angleStep);
-
+  crayon.save();
+  for(var i=0; i<n; i++) {
+    crayon.rotate(rotations[i]);
     crayon.fill(borderColor)
-    .roundRect(r-10, -6, legLength, 12, 5);
+      .circle(x, y, r + shifts[i])
+      .circle(x2, y2, r2 + shifts[i]);
+  }
+  crayon.restore();
+
+  crayon.save();
+  for(var i=0; i<n; i++) {
+    crayon.rotate(rotations[i]);
+    crayon.fill(primaryColor)
+      .circle(x, y, r + shifts[i] - 1)
+      .circle(x2, y2, r2 + shifts[i] - 1);
+  }
+  crayon.restore();
+
+  crayon.save();
+  for(var i=0; i<n; i++) {
+    crayon.rotate(rotations[i]);
 
     crayon.fill(fillColor)
-    .roundRect(r-8, -5, legLength-4, 10, 5);
+      .circle(x, y, r + shifts[i] - 4)
+      .circle(x2, y2, r2 + shifts[i] - 4);
+  }
+  crayon.restore();
 
-    crayon.fill(primaryColor)
-    .circle(r, 0, random.float(1, 4));
+  var x3 = x + Math.random()
 
-    var ran = random.float(4, 12);
-    var ran2 = random.float(4, 12);
-    crayon
-      .stroke(borderColor)
-      .line(r - 10 + legLength, 0, r - 10 + legLength + random.float(3, 8), 0)
+  var corePos = random.vec2(r - r/4)
 
+  var m = random.int(1, 5);
 
-    crayon.restore();
+  for(var i=0; i<m; i++) {
+  crayon.fill(coreColor)
+    .circle(random.float(-r/3, r/3), random.float(-r/3, r/3), r/4)
   }
 
   crayon.restore();
 }
 
+
 //-----------------------------------------------------------------------------
 
-function DipSCell(student, x, y, size) {
+function FysCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -492,15 +527,15 @@ function DipSCell(student, x, y, size) {
   this.seed = Math.random();
 }
 
-DipSCell.prototype.draw = function(crayon) {
+FysCell.prototype.draw = function(crayon) {
     var student = this.student;
   var seed = this.seed;
   random.seed(seed);
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.3);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
   var x2 = d;
   var y2 = d;
 
@@ -541,7 +576,7 @@ DipSCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function DipLCell(student, x, y, size) {
+function SocCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -555,15 +590,15 @@ function DipLCell(student, x, y, size) {
   this.seed = Math.random();
 }
 
-DipLCell.prototype.draw = function(crayon) {
+SocCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.4);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
   var x2 = d;
   var y2 = d;
 
@@ -642,8 +677,8 @@ TeacherCell.prototype.draw = function(crayon) {
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.2, 0.35);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = 0;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
   var x2 = d;
   var y2 = d;
 
@@ -701,7 +736,7 @@ TeacherCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function ResearcherCell(student, x, y, size) {
+function AdminCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -715,7 +750,7 @@ function ResearcherCell(student, x, y, size) {
   this.seed = Math.random();
 }
 
-ResearcherCell.prototype.draw = function(crayon) {
+AdminCell.prototype.draw = function(crayon) {
   var r = this.size * 0.4;
   var x = this.x;
   var y = this.y;
@@ -878,7 +913,6 @@ JanitorCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-
 function CookCell(student, x, y, size) {
   this.student = student;
   this.x = x;
@@ -900,8 +934,8 @@ CookCell.prototype.draw = function(crayon) {
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.4, 0.8);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
   var x2 = d;
   var y2 = d;
 
@@ -945,7 +979,9 @@ CookCell.prototype.draw = function(crayon) {
   crayon.restore();
 }
 
-function AdminCell(student, x, y, size) {
+//-----------------------------------------------------------------------------
+
+function ResearcherCell(student, x, y, size) {
   this.student = student;
   this.x = x;
   this.y = y;
@@ -959,15 +995,15 @@ function AdminCell(student, x, y, size) {
   this.seed = Math.random();
 }
 
-AdminCell.prototype.draw = function(crayon) {
+ResearcherCell.prototype.draw = function(crayon) {
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
   var r = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.3, 0.4);
   var r2 = this.size * remap(student.age, Config.minStudentAge, Config.maxStudentAge, 0.05, 0.15);
   var d = (r + r2)*0.5*0.5;
-  var x = -d;
-  var y = -d;
+  var x = 0;
+  var y = 0;
   var x2 = d;
   var y2 = d;
 

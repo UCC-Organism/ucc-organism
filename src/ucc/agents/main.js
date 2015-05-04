@@ -24,7 +24,6 @@ var log               = require('debug')('ucc/agents/main')
 
 
 var state = {
-
 };
 
 var lineHeight = 1.0;
@@ -50,8 +49,8 @@ function matrixLayout(w, h, n, lineHeight) {
 
 Window.create({
   settings: {
-    width: 1280*1,
-    height: 1280*1.5,
+    width: 2048,
+    height: 2048,
     //height: 1280,
     type: '2d3d',
     highdpi: 2,
@@ -101,7 +100,7 @@ Window.create({
     })
   },
   initAgents: function() {
-    var layout = matrixLayout(this.width, this.height, 10, lineHeight);
+    var layout = matrixLayout(this.width, this.height, 20, lineHeight);
     var index = 0;
 
     var cellTypes = [
@@ -142,7 +141,7 @@ Window.create({
 
     var groupIndex = 0;
     cellTypes.forEach(function(CellType, cellTypeIndex) {
-      students = R.range(0, 10).map(function() {
+      students = R.range(0, 20).map(function() {
         return {
           age: 25,
           gender: 0
@@ -150,7 +149,7 @@ Window.create({
       })
       students.forEach(function(student) {
         var pos = layout(index++);
-        this.cells.push(new CellType(student, pos.x, pos.y, pos.width*0.7))
+        this.cells.push(new CellType(student, pos.x, pos.y, pos.width*0.9))
       }.bind(this));
 
     }.bind(this));
@@ -187,13 +186,13 @@ Window.create({
     }
 
     this.cells.forEach(function(cell) {
-        cell.vx *= 0.9;
-        cell.vy *= 0.9;
-        cell.vx += cell.fx;
-        cell.vy += cell.fy;
-        cell.x += cell.vx;
-        cell.y += cell.vy;
-      }.bind(this));
+      cell.vx *= 0.9;
+      cell.vy *= 0.9;
+      cell.vx += cell.fx;
+      cell.vy += cell.fy;
+      cell.x += cell.vx;
+      cell.y += cell.vy;
+    }.bind(this));
 
     var crayon = this.crayon;
 
@@ -203,17 +202,30 @@ Window.create({
       this.canvas.drawColor(255, 0,0, 0, this.paint.kClearMode);
     }
 
+    var layout = matrixLayout(this.width, this.height, 20, lineHeight);
     //crayon.save();
     //crayon.scale(1, 1);
-    this.cells.forEach(function(cell) {
+    this.cells.forEach(function(cell, cellIndex) {
       cell.draw(this.crayon);
+      var rect = layout(cellIndex);
+      var w = rect.width;
+      var h = rect.height;
+      var x = rect.x - w/2;
+      var y = rect.y - h/2;
+      //this.crayon.stroke([0,0,0,255])
+      //  .line(x, y, x + w, y)
+      //  .line(x, y + h, x + w, y + h)
+      //  .line(x, y, x + w, y + h)
+      //  .line(x + w, y, x, y + h)
+      //  .line(x, y, x, y + h)
+      //  .line(x + w, y, x + w, y + h)
     }.bind(this));
 
 
     if (!this.saveFrame) {
       this.programmeLabels.forEach(function(label, i) {
         var x = 24;
-        var y = lineHeight * this.width/10 * (i + 1);
+        var y = lineHeight * this.width/20 * (i + 1);
         this.crayon.fill([0, 0, 0]).font('Arial', 20).text(label, x, y);
       }.bind(this));
     }

@@ -28,13 +28,13 @@ Color.prototype.lerp = function(c, t) {
 
 function agentPointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
-    var image = Platform.isPlask ? __dirname + '/../../../assets/agents_5.png' : 'assets/agents_5.png';
+    var image = Platform.isPlask ? __dirname + '/../../../assets/agents_6.png' : 'assets/agents_5.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
     pointSpriteGeometry.addAttrib("lineColors", "lineColor", []);
     pointSpriteGeometry.addAttrib("accentColors", "accentColor", []);
     pointSpriteGeometry.addAttrib("fillColors", "fillColor", []);
     pointSpriteGeometry.addAttrib("scales", "scale", []);
-    var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/10, 1/15), texOffset: new Vec2(1/10, 1/15) });
+    var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/20, 1/20), texOffset: new Vec2(1/20, 1/20) });
     var agentMesh = new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } );
     agentMesh.position.z = 0.003;
     state.pointSpriteMeshEntity = {
