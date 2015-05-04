@@ -28,7 +28,7 @@ Color.prototype.lerp = function(c, t) {
 
 function agentPointSpriteUpdaterSys(state) {
   if (!state.pointSpriteMeshEntity) {
-    var image = Platform.isPlask ? __dirname + '/../../../assets/agents_6.png' : 'assets/agents_5.png';
+    var image = Platform.isPlask ? __dirname + '/../../../assets/agents_6.png' : 'assets/agents_6.png';
     var pointSpriteGeometry = new Geometry({ vertices: true, colors: true, normals: true, texCoords: true });
     pointSpriteGeometry.addAttrib("lineColors", "lineColor", []);
     pointSpriteGeometry.addAttrib("accentColors", "accentColor", []);
