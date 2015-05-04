@@ -25,9 +25,9 @@ function DebugText(windowWidth, windowHeight, scale) {
     font: Font,
     textures: [ fontTex ],
     position3d: new Vec3(-1, 0, -1),
-    color: (scale == 2) ? Color.White : Color.Red,
-    bgColor: (scale == 2) ? Color.White : Color.Red,
-    border: (scale == 2) ? Color.Black : Color.Transparent,
+    color: (scale == 2) ? Color.White : Color.White,
+    bgColor: (scale == 2) ? Color.White : Color.White,
+    border: (scale == 2) ? Color.Black : Color.Black,
     smoothing: (scale == 2) ? 1/16 : 1/4,
   })
 
