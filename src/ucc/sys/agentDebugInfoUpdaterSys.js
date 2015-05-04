@@ -16,9 +16,6 @@ function agentDebugInfoUpdaterSys(state) {
   if (!state.agentDebugInfoMeshEntity) {
     var lineBuilder = new LineBuilder();
     lineBuilder.addLine(new Vec3(0, 0, 0), random.vec3());
-    lineBuilder.addLine(new Vec3(0, 0, 0), random.vec3());
-    lineBuilder.addLine(new Vec3(0, 0, 0), random.vec3());
-    lineBuilder.addLine(new Vec3(0, 0, 0), random.vec3());
     var mesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
     state.agentDebugInfoMeshEntity = {
       mesh: mesh
@@ -29,13 +26,21 @@ function agentDebugInfoUpdaterSys(state) {
   var lineBuilder = state.agentDebugInfoMeshEntity.mesh.geometry;
   lineBuilder.reset();
 
+  if (state.showLabels) {
+    var agents = R.filter(R.where({ agent: R.identity }), state.entities);
+    agents.forEach(function(agent) {
+      state.debugText.drawText(agent.type + '/' + agent.state.mode, agent.position);
+    });
+  }
+
   if (state.debug) {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
     agents.forEach(function(agent) {
       if (agent.targetNode) {
         lineBuilder.addLine(agent.position, agent.targetNode.position, Color.Green);
       }
-      if (agent.targetNodeList) {
+      if (agent.targetNodeList && agent.targetNodeList.length > 0) {
+        lineBuilder.addLine(agent.position, agent.targetNodeList[agent.targetNodeList.length-1].position, Color.Pink);
         for(var i=0; i<agent.targetNodeList.length-1; i++) {
           var p = agent.targetNodeList[i].position;
           var np = agent.targetNodeList[i+1].position;
