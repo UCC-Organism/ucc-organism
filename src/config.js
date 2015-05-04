@@ -41,7 +41,6 @@ var AgentTypes = {
 var EnergyTypes = {
   'social':    { id: 0, color: '#FF0000', intensity: 0.5 },
   'knowledge': { id: 1, color: '#00FF00', intensity: 0.5 },
-  'economic':  { id: 2, color: '#0000FF', intensity: 0.5 },
   'power':     { id: 3, color: '#FF9900', intensity: 0.5 },
   'dirt':      { id: 4, color: '#904930', intensity: 0.5 }
 };
