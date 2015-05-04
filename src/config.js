@@ -218,7 +218,7 @@ var Config = {
 
   maxDistortPoints: 10,
 
-  energySpriteSize: 0.5,
+  energySpriteSize: 1,
   agentSpriteSize: 10,
 
   energyPointsPerPathLength: 30,
