@@ -171,14 +171,18 @@ var AgentInteractions = [
 ];
 
 var Screens = [
-  { client_id: '0', showFloor: 'All', cameraDistance: 2.0 },
-  { client_id: '1', showFloor: 'A 0', cameraDistance: 0.5 },
-  { client_id: '2', showFloor: 'B 1', cameraDistance: 0.5 },
-  { client_id: '3', showFloor: 'C 1', cameraDistance: 0.5 },
-  { client_id: '4', showFloor: 'C 2', cameraDistance: 0.5 },
-  { client_id: '5', showRoom: 'C.230', cameraDistance: 0.15 },
-  { client_id: '6', showRoom: 'canteen', cameraDistance: 0.15 },
-  { client_id: '7', showRoom: 'library', cameraDistance: 0.15 }
+  { client_id: '0', showFloor: 'C 2', cameraDistance: 0.5 },
+  { client_id: '1', showFloor: 'All', cameraDistance: 2.0 },
+  { client_id: '2', showFloor: 'A 0', cameraDistance: 0.5 },
+  { client_id: '3', showFloor: 'A 1', cameraDistance: 0.5 },
+  { client_id: '4', showFloor: 'B 0', cameraDistance: 0.5 },
+  { client_id: '5', showFloor: 'B 1', cameraDistance: 0.5 },
+  { client_id: '6', showFloor: 'C 0', cameraDistance: 0.5 },
+  { client_id: '7', showFloor: 'C 1', cameraDistance: 0.5 },
+  { client_id: '8', showFloor: 'C 2', cameraDistance: 0.5 },
+  { client_id: '9', showRoom: 'C.230', cameraDistance: 0.15 },
+  { client_id: '10', showRoom: 'canteen', cameraDistance: 0.15 },
+  { client_id: '11', showRoom: 'library', cameraDistance: 0.15 }
 ];
 
 var Config = {

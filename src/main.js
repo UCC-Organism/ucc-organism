@@ -146,14 +146,6 @@ sys.Window.create({
     this.clientIdLabel = this.gui.addLabel(state.client_id);
     this.gui.addHeader('Options');
     this.gui.addHeader('Map');
-    this.gui.addRadioList('Floor', state, 'guiCurrentFloor', Config.floors.map(function(floor) {
-      return { name: floor.name, value: floor.id };
-    }), function(floor) {
-      state.map.setFocusRoom(null);
-      state.map.setFloor(floor);
-      this.killAllAgents();
-
-    }.bind(this));
 
     this.gui.addRadioList('Example Screens', state, 'new_client_id', Config.screens.map(function(screen) {
       var name = screen.showFloor || screen.showRoom;
@@ -256,7 +248,7 @@ sys.Window.create({
     state.debugText = new DebugText(this.width, this.height, state.DPI);
   },
   initDataClient: function() {
-    //this.client = state.client = new Client(Config.serverUrl);
+    this.client = state.client = new Client(Config.serverUrl);
     this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed, state);
   },
   initLibs: function() {
