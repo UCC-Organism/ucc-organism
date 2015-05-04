@@ -241,7 +241,6 @@ sys.Window.create({
     this.gui.addParam('Knowledge Intensity',    Config.energyTypes.knowledge, 'intensity');
     this.gui.addParam('Power Intensity',    Config.energyTypes.power, 'intensity');
     this.gui.addParam('Dirt Intensity',    Config.energyTypes.dirt, 'intensity');
-    this.gui.addHeader('Programme colors')
 
     /*
     Object.keys(Config.programmeColors).forEach(function(programme, programmeIndex) {
