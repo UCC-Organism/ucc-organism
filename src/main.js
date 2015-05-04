@@ -141,9 +141,6 @@ sys.Window.create({
     log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));
   },
   initAll: function() {
-    Object.keys(Config.agentTypes).forEach(function(agentType) {
-      console.log(agentType.substr(0,3), Config.agentTypes[agentType].colors[0].getHex(), Config.agentTypes[agentType].colors[1].getHex());
-    })
     this.initDataClient();
     this.initLibs();
     this.initScene();
