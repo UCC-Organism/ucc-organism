@@ -95,9 +95,15 @@ function spawnAgents(state) {
       if (!agent.programme) {
         if (!agent.programmeRequest) {
           agent.programmeRequest = true;
-          state.client.getAgentInfo(agent.id).then(function(agentInfo) {
-            agent.programme = agentInfo.programme;
-          })
+          if (state.client && state.client.enabled) {
+            setTimeout(function() {
+              state.client.getAgentInfo(agent.id).then(function(agentInfo) {
+                agent.gender = agentInfo.gender;
+                agent.age = agentInfo.age || 20;
+                agent.programme = agentInfo.programme;
+              })
+            }, random.int(100, 5000));
+          }
         }
         return;
       }
