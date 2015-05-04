@@ -30,7 +30,7 @@ var Spline3D          = geom.Spline3D;
 var Mesh              = glu.Mesh;
 var SolidColor        = require('../../materials/SolidColor');
 var SolidColorOrig    = materials.SolidColor;
-var ShowColors        = require('../../materials/Map');
+var MapMaterial       = require('../../materials/Map');
 var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 var Time              = sys.Time;
@@ -703,11 +703,9 @@ function rebuildCells(state) {
   membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, membranePoints.length*2)
   membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
-  //var cellMaterial = new ShowColors({ pointSize: 5});
   var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
-
-  //var cellMaterial = new Material(Program.load(materialsPath + '/ShowColors.glsl', null, { autoreload: true }), { pointSize: 5});
-  var cellMaterial = new ShowColors();
+  var cellMaterial = new Material(Program.load(materialsPath + '/Map.glsl', null, { autoreload: true }), { pointSize: 5});
+  //var cellMaterial = new MapMaterial();
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, cellMaterial, { lines: true });
   var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });
@@ -734,7 +732,7 @@ function rebuildCells(state) {
   corridorBg.vertices.forEach(function(v) {
     v.add(center)
   })
-  var corridorBgMesh = new Mesh(corridorBg, new ShowColors(), { faces: true })
+  var corridorBgMesh = new Mesh(corridorBg, new MapMaterial(), { faces: true })
   corridorBgMesh.position.z = -0.001;
   state.entities.unshift({ name: 'corridorBgMesh', map: true, cell: true, mesh: corridorBgMesh });
 
