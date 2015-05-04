@@ -3,7 +3,6 @@ mkdir build
 echo "2/4 Copying static assets..."
 cp static/index.html build/index.html
 cp static/manifest.json build/manifest.json
-cp src/settings.json build/settings.json
 cp package.json build/package.json
 cp icon.png build/icon.png
 cp -r assets build/assets

@@ -117,7 +117,7 @@ try {
 }
 catch(e) {
   log('uccextension not available');
-  //state.new_client_id = 0;
+  state.new_client_id = 0;
 }
 
 var GUI_OFFSET = 0;
@@ -137,6 +137,9 @@ sys.Window.create({
     log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));
   },
   initAll: function() {
+    Object.keys(Config.agentTypes).forEach(function(agentType) {
+      console.log(agentType.substr(0,3), Config.agentTypes[agentType].colors[0].getHex(), Config.agentTypes[agentType].colors[1].getHex());
+    })
     this.initDataClient();
     this.initLibs();
     this.initScene();
@@ -252,7 +255,7 @@ sys.Window.create({
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
-    this.gui.load(Config.settingsFile, this.initAll.bind(this));
+    this.initAll();
 
     state.debugText = new DebugText(this.width, this.height, state.DPI);
   },
@@ -300,8 +303,6 @@ sys.Window.create({
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
         case 't': state.showAgentTargets = !state.showAgentTargets; break;
-        case 'S': this.gui.save(Config.settingsFile); break;
-        case 'L': this.gui.load(Config.settingsFile); break;
       }
     }.bind(this));
   },

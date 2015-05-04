@@ -30,8 +30,8 @@ var AgentTypes = {
   'div'         : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'DIV - Diverse aktiviteter' },
   'diplomS'     : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'Diplom S - Diplomuddannelse - Sundhed' },
   'diplomL'     : { colors: ["#FF0000", "#FFAA00"], student: true,  programme: 'Diplom L - Diplomuddannelse - Ledelse' },
-  'teacher'     : { colors: ["#0000FF", "#00FFFF"], student: false, programme: 'Teacher' },
-  'researcher'  : { colors: ["#DD33FF", "#FF22FF"], student: false, programme: 'Researcher' },
+  'teacher'     : { colors: ["#46DA00", "#00FF53"], student: false, programme: 'Teacher' },
+  'researcher'  : { colors: ["#32FFFB", "#00C37B"], student: false, programme: 'Researcher' },
   'janitor'     : { colors: ["#7B5647", "#7B5647"], student: false, programme: 'Janitor' },
   'cook'        : { colors: ["#FF0000", "#FFFF00"], student: false, programme: 'Cook' },
   'admin'       : { colors: ["#0000FF", "#00FFFF"], student: false, programme: 'Admin' },
@@ -47,17 +47,17 @@ var EnergyTypes = {
 
 var RoomTypes = {
   ''         : { label: 'Other'    , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
-  'classroom': { label: 'Classroom', color: '#00FF00', centerColor: '#00FF00', edgeColor: '#00FF00' },
-  'toilet'   : { label: 'Toilet'   , color: '#FF0000', centerColor: '#0055DD', edgeColor: '#0055DD' },
-  'research' : { label: 'Research' , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
-  'knowledge': { label: 'Knowledge', color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
+  'classroom': { label: 'Classroom', color: '#949494', centerColor: '#9C9C9C', edgeColor: '#999999' },
+  'toilet'   : { label: 'Toilet'   , color: '#252F35', centerColor: '#110F17', edgeColor: '#85A6AF' },
+  'research' : { label: 'Research' , color: '#0C6150', centerColor: '#02120D', edgeColor: '#191919' },
+  'knowledge': { label: 'Knowledge', color: '#00FF00', centerColor: '#021916', edgeColor: '#191919' },
   'teacher'  : { label: 'Teacher'  , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
-  'admin'    : { label: 'Admin'    , color: '#112f28', centerColor: '#122120', edgeColor: '#3333FF' },
-  'closet'   : { label: 'Closet'   , color: '#996600', centerColor: '#996600', edgeColor: '#996600' },
-  'food'     : { label: 'Food'     , color: '#FFAA00', centerColor: '#FFAA00', edgeColor: '#FFAA00' },
-  'exit'     : { label: 'Exit'     , color: '#FF0000', centerColor: '#FF0000', edgeColor: '#FF0000' },
+  'admin'    : { label: 'Admin'    , color: '#1A2646', centerColor: '#0A0B12', edgeColor: '#191919' },
+  'closet'   : { label: 'Closet'   , color: '#313131', centerColor: '#2E1100', edgeColor: '#923B00' },
+  'food'     : { label: 'Food'     , color: '#2B2A1B', centerColor: '#050301', edgeColor: '#FFBC2D' },
+  'exit'     : { label: 'Exit'     , color: '#252525', centerColor: '#000000', edgeColor: '#191919' },
   'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' },
-  'cell'     : { label: 'Cell'     , color: '#696E98', centerColor: '#696E98', edgeColor: '#FF00FF' }
+  'cell'     : { label: 'Cell'     , color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#FFFFFF' }
 };
 
 var Floors = [
@@ -187,7 +187,6 @@ var Screens = [
 
 var Config = {
   serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
-  settingsFile: Platform.isPlask ? __dirname + '/settings.json' : 'settings.json',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,
   energyTypes: EnergyTypes,
@@ -197,8 +196,8 @@ var Config = {
 
   //map
   cellCloseness: 0.00155,
-  cellEdgeWidth: 1,
-  bgColor: '#312D2D',
+  cellEdgeWidth: 1.75,
+  bgColor: '#FFFFFF',
   membraneColor: '#DDDDDD',
 
   agentLineColor: '#000000',
