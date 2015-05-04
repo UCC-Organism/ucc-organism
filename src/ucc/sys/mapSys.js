@@ -19,6 +19,9 @@ var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
 var Config            = require('../../config');
 var hull              = require('hull.js');
 
+var Platform          = sys.Platform;
+var Material          = glu.Material;
+var Program           = glu.Program;
 var Geometry          = geom.Geometry;
 var BoundingBox       = geom.BoundingBox;
 var Vec2              = geom.Vec2;
@@ -407,7 +410,7 @@ function rebuildCells(state) {
   // add extra blobs outside map
   if (state.map.currentFloor == -1) {
     random.seed(0);
-    for(var i=0; i<30; i++) {
+    for(var i=0; i<60; i++) {
       var a = random.float(0, 360);
       var pos = new Vec2(random.float(-2, 2), random.float(-2, 2));
       pos.external = true;
@@ -700,15 +703,21 @@ function rebuildCells(state) {
   membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, membranePoints.length*2)
   membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
-  var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
-  var cellMesh = new Mesh(cellGeometry, new ShowColors(), { faces: true });
-  var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
-  var membraneMesh = new Mesh(membraneGeometry, new ShowColors(), { lines: true });
+  //var cellMaterial = new ShowColors({ pointSize: 5});
+  var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
+
+  //var cellMaterial = new Material(Program.load(materialsPath + '/ShowColors.glsl', null, { autoreload: true }), { pointSize: 5});
+  var cellMaterial = new ShowColors();
+
+  var cellEdgeMesh = new Mesh(cellEdgeGeometry, cellMaterial, { lines: true });
+  var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });
+  var debugNodesMesh = new Mesh(debugNodesGeometry, cellMaterial, { points: true });
+  var membraneMesh = new Mesh(membraneGeometry, cellMaterial, { lines: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
-  state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
   state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
+  //TEMP//state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: Color.Pink }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, debug: true, mesh: edgeMesh, lineWidth: 2 });
