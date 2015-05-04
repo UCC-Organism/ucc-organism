@@ -110,6 +110,7 @@ try {
 }
 catch(e) {
   log('uccextension not available');
+  //state.new_client_id = 0;
 }
 
 var GUI_OFFSET = 0;
@@ -361,7 +362,7 @@ sys.Window.create({
     })
   },
   update: function() {
-    if (state.new_client_id != state.client_id) {
+    if (state.new_client_id != state.client_id && state.map) {
       state.client_id = state.new_client_id;
       Config.screens.forEach(function(screenInfo) {
         if (screenInfo.client_id == state.client_id) {
