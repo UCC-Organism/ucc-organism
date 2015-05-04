@@ -135,7 +135,10 @@ var MapStore = {
   getSelectedNodeByRoomId: function(id) {
     targetNode = R.find(R.where({ roomId: id }), this.selectedNodes);
     if (!targetNode) {
-      targetNode = R.find(R.where({ roomId: Config.roomIdMap[id] }), this.selectedNodes);
+      var roomId = Config.roomIdMap[id];
+      if (roomId) {
+        targetNode = R.find(R.where({ roomId: roomId }), this.selectedNodes);
+      }
     }
     return targetNode;
   }
