@@ -50,8 +50,6 @@ var DebugText         = require('./typo/DebugText');
 
 var Vec3              = require('pex-geom').Vec3;
 
-log('init')
-
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
@@ -98,7 +96,6 @@ var state = {
   showCorridors: false,
   showLabels: false,
   sway: 0,
-
 
   //debug
   debugText: null
