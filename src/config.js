@@ -258,7 +258,9 @@ var Config = {
   energyAgentCountStrength: 2,
   energyIntensityStrength: 5,
 
-  cameraRotationDuration: 120*5, //10min,
+  cameraRotationDuration: 60*10, //60s*10 = 10min,
+  cameraTiltDuration: 60*10,//60s*10 = 10min
+  cameraMaxTilt: 2,
 
   floorId: FloorId,
 

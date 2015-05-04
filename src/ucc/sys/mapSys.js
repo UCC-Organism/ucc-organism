@@ -16,7 +16,7 @@ var GeomUtils         = require('../../geom/GeomUtils');
 var Rect              = require('../../geom/Rect');
 
 var BoundingBoxHelper = require('../../helpers/BoundingBoxHelper');
-var config            = require('../../config');
+var Config            = require('../../config');
 var hull              = require('hull.js');
 
 var Geometry          = geom.Geometry;
@@ -585,7 +585,7 @@ function rebuildCells(state) {
 
     var center = GeomUtils.centroid(splinePoints);
 
-    var cellCloseness = roomType != 'none' ? config.cellCloseness / 2 : config.cellCloseness;
+    var cellCloseness = roomType != 'none' ? Config.cellCloseness / 2 : Config.cellCloseness;
 
     var cell = {
       vertices: [],
@@ -602,18 +602,18 @@ function rebuildCells(state) {
       var vidx = cellVertices.length;
       var eidx = cellEdgeVertices.length;
 
-      var cellColor = config.roomTypes.cell.color;
-      var cellCenterColor = config.roomTypes.cell.centerColor;
-      var cellEdgeColor = config.roomTypes.cell.edgeColor;
+      var cellColor = Config.roomTypes.cell.color;
+      var cellCenterColor = Config.roomTypes.cell.centerColor;
+      var cellEdgeColor = Config.roomTypes.cell.edgeColor;
 
       if (isRoom && roomType && roomType != 'none') {
-        if (!config.roomTypes[roomType]) {
-          log('missing room type', roomType, '' + config.roomTypes[roomType]);
+        if (!Config.roomTypes[roomType]) {
+          log('missing room type', roomType, '' + Config.roomTypes[roomType]);
           continue;
         }
-        cellColor = config.roomTypes[roomType].color;
-        cellCenterColor = config.roomTypes[roomType].centerColor;
-        cellEdgeColor = config.roomTypes[roomType].edgeColor;
+        cellColor = Config.roomTypes[roomType].color;
+        cellCenterColor = Config.roomTypes[roomType].centerColor;
+        cellEdgeColor = Config.roomTypes[roomType].edgeColor;
       }
 
       if (roomId == state.map.focusRoomId) {
@@ -678,7 +678,7 @@ function rebuildCells(state) {
   })
 
   var membraneGeometry = new LineBuilder();
-  membraneGeometry.addPath(new Spline3D(membranePoints, true), config.membraneColor, membranePoints.length*2)
+  membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, membranePoints.length*2)
   membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, new ShowColors({pointSize:5}), { lines: true });
@@ -686,7 +686,7 @@ function rebuildCells(state) {
   var debugNodesMesh = new Mesh(debugNodesGeometry, new ShowColors({ pointSize: 10 }), { points: true });
   var membraneMesh = new Mesh(membraneGeometry, new ShowColors(), { lines: true });
 
-  state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: config.cellEdgeWidth });
+  state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
   state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
@@ -699,7 +699,7 @@ function rebuildCells(state) {
   centerCamera(state, floorBBox);
 
   var corridorBg = new Plane(floorBBox.getSize().x * 1.4, floorBBox.getSize().y * 1.2, 14, 14, 'x', 'y');
-  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return config.bgColor}));
+  corridorBg.addAttrib('colors', 'color', corridorBg.vertices.map(function() { return Config.bgColor}));
   corridorBg.addAttrib('normals', 'normal', corridorBg.vertices.map(function() { return new Vec3(1, 0, 0)}));
   corridorBg.addAttrib('texCoords', 'texCoords', corridorBg.vertices.map(function() { return new Vec2(1, 0)}));
   var center = floorBBox.getCenter();
@@ -719,8 +719,13 @@ function updateCamera(state) {
   if (state.map.dirty) {
     state.cameraRotation = Math.PI/2;
   }
-  state.cameraRotation += Time.delta/config.cameraRotationDuration;
-  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation), 0));
+  state.cameraRotation += Time.delta/Config.cameraRotationDuration;
+  state.cameraTilt = Config.cameraMaxTilt/10 * Math.cos(2*Math.PI*Time.seconds/Config.cameraTiltDuration);
+  if (state.cameraTiltOverride) {
+    state.cameraTilt = state.cameraTiltOverride/10;
+  }
+  state.camera.setUp(new Vec3(Math.cos(state.cameraRotation), Math.sin(state.cameraRotation)));
+  state.arcball.setOrientation(new Vec3(0, state.cameraTilt, 1))
 }
 
 //-----------------------------------------------------------------------------

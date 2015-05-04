@@ -33,7 +33,7 @@ var MapStore          = require('./ucc/stores/MapStore');
 var AgentStore        = require('./ucc/stores/AgentStore')
 
 //Config
-var config            = require('./config');
+var Config            = require('./config');
 var AgentModes        = require('./ucc/agents/agentModes');
 
 //Data
@@ -63,11 +63,13 @@ var state = {
   liveData: false,
 
   //scene
-  initFloor: config.floorId.C_2,
-  guiCurrentFloor: config.floorId.C_2,
+  initFloor: Config.floorId.C_2,
+  guiCurrentFloor: Config.floorId.C_2,
   camera: null,
   cameraPosZ: 0.30,
   cameraRotation: 0,
+  cameraTilt: 0,
+  cameraTiltOverride: 0,
   arcball: null,
   zoom: 1,
 
@@ -143,7 +145,7 @@ sys.Window.create({
     this.gui.addHeader('Options');
     this.gui.addParam('Sway Enabled', state, 'sway');
     this.gui.addHeader('Map');
-    this.gui.addRadioList('Floor', state, 'guiCurrentFloor', config.floors.map(function(floor) {
+    this.gui.addRadioList('Floor', state, 'guiCurrentFloor', Config.floors.map(function(floor) {
       return { name: floor.name, value: floor.id };
     }), function(floor) {
       state.map.setFocusRoom(null);
@@ -178,81 +180,82 @@ sys.Window.create({
     this.gui.addButton('Night colors', this, 'setNightMode');
 
     this.gui.addHeader('UI').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
 
     this.gui.addHeader('Global Colors');
-    this.gui.addParam('Cell Edge Width',  config, 'cellEdgeWidth', { min: 0.5, max: 5 });
-    this.gui.addParam('BgColor',          config, 'bgColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Agent line',       config, 'agentLineColor');
-    this.gui.addParam('Agent fill',       config, 'agentFillColor');
-    this.gui.addParam('Corridor',         config, 'corridorColor');
-    this.gui.addParam('Cell',             config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Cell Center',      config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Cell Edge',        config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Edge Width',  Config, 'cellEdgeWidth', { min: 0.5, max: 5 });
+    this.gui.addParam('BgColor',          Config, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Agent line',       Config, 'agentLineColor');
+    this.gui.addParam('Agent fill',       Config, 'agentFillColor');
+    this.gui.addParam('Corridor',         Config, 'corridorColor');
+    this.gui.addParam('Cell',             Config.roomTypes.cell, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Cell Center',      Config.roomTypes.cell, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Cell Edge',        Config.roomTypes.cell, 'edgeColor', {}, this.onColorChange.bind(this));
 
     this.gui.addHeader('Room colors').setPosition(350 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    this.gui.addParam('Classroom',        config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Classroom Center', config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Classroom Edge',   config.roomTypes.classroom, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Food',             config.roomTypes.food, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Food Center',      config.roomTypes.food, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Food Edge',        config.roomTypes.food, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Research',         config.roomTypes.research, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Research Center',  config.roomTypes.research, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Research Edge',    config.roomTypes.research, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Knowledge',        config.roomTypes.knowledge, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Knowledge Center', config.roomTypes.knowledge, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Knowledge Edge',   config.roomTypes.knowledge, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Classroom',        Config.roomTypes.classroom, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Classroom Center', Config.roomTypes.classroom, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Classroom Edge',   Config.roomTypes.classroom, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Food',             Config.roomTypes.food, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Food Center',      Config.roomTypes.food, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Food Edge',        Config.roomTypes.food, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Research',         Config.roomTypes.research, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Research Center',  Config.roomTypes.research, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Research Edge',    Config.roomTypes.research, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Knowledge',        Config.roomTypes.knowledge, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Knowledge Center', Config.roomTypes.knowledge, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Knowledge Edge',   Config.roomTypes.knowledge, 'edgeColor', {}, this.onColorChange.bind(this));
 
     this.gui.addHeader('Other room colors').setPosition(520 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    this.gui.addParam('Admin',            config.roomTypes.admin, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Admin Center',     config.roomTypes.admin, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Admin Edge',       config.roomTypes.admin, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Toilet',           config.roomTypes.toilet, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Toilet Center',    config.roomTypes.toilet, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Toilet Edge',      config.roomTypes.toilet, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Closet',           config.roomTypes.closet, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Closet Center',    config.roomTypes.closet, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Closet Edge',      config.roomTypes.closet, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Exit',             config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
-    this.gui.addParam('Exit Center',      config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
-    this.gui.addParam('Exit Edge',        config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Admin',            Config.roomTypes.admin, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Admin Center',     Config.roomTypes.admin, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Admin Edge',       Config.roomTypes.admin, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Toilet',           Config.roomTypes.toilet, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Toilet Center',    Config.roomTypes.toilet, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Toilet Edge',      Config.roomTypes.toilet, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Closet',           Config.roomTypes.closet, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Closet Center',    Config.roomTypes.closet, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Closet Edge',      Config.roomTypes.closet, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Exit',             Config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Exit Center',      Config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Exit Edge',        Config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
     this.gui.addHeader('Agents Color 1').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    Object.keys(config.agentTypes).forEach(function(agentType) {
-      this.gui.addParam(agentType + ' 0', config.agentTypes[agentType].colors, '0');
+    Object.keys(Config.agentTypes).forEach(function(agentType) {
+      this.gui.addParam(agentType + ' 0', Config.agentTypes[agentType].colors, '0');
     }.bind(this));
     this.gui.addHeader('Agents Color 2').setPosition(860 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    Object.keys(config.agentTypes).forEach(function(agentType) {
-      this.gui.addParam(agentType + ' 1', config.agentTypes[agentType].colors, '1');
+    Object.keys(Config.agentTypes).forEach(function(agentType) {
+      this.gui.addParam(agentType + ' 1', Config.agentTypes[agentType].colors, '1');
     }.bind(this));
     this.gui.addHeader('Energies').setPosition(1030 * state.DPI, 10 * state.DPI + GUI_OFFSET);
-    this.gui.addParam('Social',    config.energyTypes.social, 'color');
-    this.gui.addParam('Knowledge', config.energyTypes.knowledge, 'color');
-    this.gui.addParam('Economic',  config.energyTypes.economic, 'color');
-    this.gui.addParam('Power',      config.energyTypes.power, 'color');
-    this.gui.addParam('Dirt',      config.energyTypes.dirt, 'color');
-    this.gui.addParam('Social Intensity',    config.energyTypes.social, 'intensity');
-    this.gui.addParam('Knowledge Intensity',    config.energyTypes.knowledge, 'intensity');
-    this.gui.addParam('Economic Intensity',    config.energyTypes.economic, 'intensity');
-    this.gui.addParam('Power Intensity',    config.energyTypes.power, 'intensity');
-    this.gui.addParam('Dirt Intensity',    config.energyTypes.dirt, 'intensity');
+    this.gui.addParam('Social',    Config.energyTypes.social, 'color');
+    this.gui.addParam('Knowledge', Config.energyTypes.knowledge, 'color');
+    this.gui.addParam('Economic',  Config.energyTypes.economic, 'color');
+    this.gui.addParam('Power',      Config.energyTypes.power, 'color');
+    this.gui.addParam('Dirt',      Config.energyTypes.dirt, 'color');
+    this.gui.addParam('Social Intensity',    Config.energyTypes.social, 'intensity');
+    this.gui.addParam('Knowledge Intensity',    Config.energyTypes.knowledge, 'intensity');
+    this.gui.addParam('Economic Intensity',    Config.energyTypes.economic, 'intensity');
+    this.gui.addParam('Power Intensity',    Config.energyTypes.power, 'intensity');
+    this.gui.addParam('Dirt Intensity',    Config.energyTypes.dirt, 'intensity');
     this.gui.addHeader('Programme colors')
 
     /*
-    Object.keys(config.programmeColors).forEach(function(programme, programmeIndex) {
+    Object.keys(Config.programmeColors).forEach(function(programme, programmeIndex) {
       if (programme != 'default') {
-        var label = this.gui.addParam(programme.substr(0, 20) + '', config.programmeColors[programme], 'primary', { readonly: true });
+        var label = this.gui.addParam(programme.substr(0, 20) + '', Config.programmeColors[programme], 'primary', { readonly: true });
       }
     }.bind(this));
 */
 
     //this.gui.addLabel('Rooms').setPosition(180, 10);
 
-    this.gui.load(config.settingsFile, this.initAll.bind(this));
+    this.gui.load(Config.settingsFile, this.initAll.bind(this));
 
     state.debugText = new DebugText(this.width, this.height, state.DPI);
   },
   initDataClient: function() {
-    //this.client = state.client = new Client(config.serverUrl);
+    //this.client = state.client = new Client(Config.serverUrl);
     this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed, state);
   },
   initLibs: function() {
@@ -293,9 +296,9 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
-        case 'q': config.bgColor = Color.fromHex('#FF0000'); config.cellColor = Color.fromHex('#FF0000'); this.onColorChange(); break;
-        case 'S': this.gui.save(config.settingsFile); break;
-        case 'L': this.gui.load(config.settingsFile); break;
+        case 'q': Config.bgColor = Color.fromHex('#FF0000'); Config.cellColor = Color.fromHex('#FF0000'); this.onColorChange(); break;
+        case 'S': this.gui.save(Config.settingsFile); break;
+        case 'L': this.gui.load(Config.settingsFile); break;
       }
     }.bind(this));
   },
@@ -385,7 +388,7 @@ sys.Window.create({
     }
   },
   setNightMode: function() {
-    config.nightColors();
+    Config.nightColors();
     this.onColorChange();
   },
   onColorChange: function() {
@@ -426,7 +429,7 @@ sys.Window.create({
 
     var agents = R.filter(R.where({ agent: true }), state.entities);
 
-    glu.clearColorAndDepth(config.bgColor);
+    glu.clearColorAndDepth(Config.bgColor);
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.map.selectedNodes) {
