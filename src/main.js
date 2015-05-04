@@ -174,6 +174,7 @@ sys.Window.create({
     this.gui.addHeader('Global Colors');
     this.gui.addParam('Cell Edge Width',  Config, 'cellEdgeWidth', { min: 0.5, max: 5 });
     this.gui.addParam('BgColor',          Config, 'bgColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Membrane color',   Config, 'membraneColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Agent line',       Config, 'agentLineColor');
     this.gui.addParam('Agent fill',       Config, 'agentFillColor');
     this.gui.addParam('Corridor',         Config, 'corridorColor');

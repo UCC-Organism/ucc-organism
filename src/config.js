@@ -199,7 +199,7 @@ var Config = {
   cellCloseness: 0.00155,
   cellEdgeWidth: 1,
   bgColor: '#312D2D',
-  membraneColor: '#EEEEEE',
+  membraneColor: '#DDDDDD',
 
   agentLineColor: '#000000',
   agentFillColor: '#FFFFFF',
