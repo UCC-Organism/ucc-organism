@@ -145,6 +145,7 @@ sys.Window.create({
     this.initScene();
     this.initStores();
     this.initKeys();
+    this.initMouse();
   },
   initGUI: function() {
     //Time.verbose = true;
@@ -305,6 +306,14 @@ sys.Window.create({
         case 't': state.showAgentTargets = !state.showAgentTargets; break;
       }
     }.bind(this));
+  },
+  initMouse: function() {
+    var lastClick = 0;
+    this.on('leftMouseDown', function(e) {
+      var now = Date.now();
+      if (now - lastClick < 300) this.gui.toggleEnabled();
+      lastClick = now;
+    }.bind(this))
   },
   killAllAgents: function() {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
