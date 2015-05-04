@@ -5,3 +5,4 @@ data/static
 lib/main.web.js
 build
 stuff
+src/ucc/agents/*.png
