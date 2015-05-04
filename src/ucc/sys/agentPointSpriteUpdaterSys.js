@@ -14,6 +14,8 @@ var Vec3                = geom.Vec3;
 var Vec2                = geom.Vec2;
 var Texture2D           = glu.Texture2D;
 var Mesh                = glu.Mesh;
+var Material            = glu.Material;
+var Program             = glu.Program;
 var Platform            = sys.Platform;
 var Time                = sys.Time;
 var log                 = require('debug')('ucc/agentPointSpriteUpdaterSys');
@@ -34,7 +36,13 @@ function agentPointSpriteUpdaterSys(state) {
     pointSpriteGeometry.addAttrib("accentColors", "accentColor", []);
     pointSpriteGeometry.addAttrib("fillColors", "fillColor", []);
     pointSpriteGeometry.addAttrib("scales", "scale", []);
+
     var pointSpriteMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false, mipmap: true }), texSize: new Vec2(1/20, 1/20), texOffset: new Vec2(1/20, 1/20) });
+
+    var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
+    var agentsMaterial = new Material(Program.load(materialsPath + '/Agents.glsl', null, { autoreload: true }), pointSpriteMaterial.uniforms);
+    pointSpriteMaterial = agentsMaterial;
+
     var agentMesh = new Mesh(pointSpriteGeometry, pointSpriteMaterial, { points: true } );
     agentMesh.position.z = 0.003;
     state.pointSpriteMeshEntity = {
