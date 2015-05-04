@@ -18,9 +18,7 @@ var RoomIdMap = {
   'NaturVid. Café C.123' : 'C.123',
   'Brikserum C.125' : 'C.125',
   //'Ude af huset',
-  'Brikserum C.129' : 'C.129',
-  'canteen': 'KantineS', //TODO: Fix 'KantineS'
-  'Kantine': 'KantineS'  //TODO: Fix 'KantineS'
+  'Brikserum C.129' : 'C.129'
 };
 
 var AgentTypes = {
@@ -86,115 +84,66 @@ var FloorId = {
 
 var EnergyPaths = [
   //Knowledge (in all views)
-  //each lab (*agents) -> random classroom
   { from: "research", to: "classroom", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "agents" },
-  //each lab (*agents) -> random exit
   { from: "research", to: "exit", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "agents" },
-  //The Library (*agents) -> each classroom
   { from: "library", to: "classroom", fromNum: 'all', toNum: 10, energy: "knowledge", multiplier: "agents" },
-  //The Library (*agents) -> each exit
   { from: "library", to: "exit", fromNum: 'all', toNum: 10, energy: "knowledge", multiplier: "agents" },
-  //each exit (*random*intensity) -> The Library
   { from: "exit", to: "library", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity" },
-  //each exit (*random*intensity) -> random lab
   { from: "exit", to: "research", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity" },
-  //each exit (*random*intensity) -> random teacher room
   { from: "exit", to: "teacher", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity" },
 
   //Knowledge (additionally in Macro view)
-  //each lab (*agents) -> random knowledge blob cell
   { from: "research", to: "knowledgeBlob", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "agents" },
-  //The Library (*agents) -> each knowledge blob cell
   { from: "library", to: "knowledgeBlob", fromNum: 'all', toNum: 10, energy: "knowledge", multiplier: "intensity" },
-  //Each knowledge blob cell (*random*intensity) -> The Library
   { from: "knowledgeBlob", to: "library", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity" },
-  //Each knowledge blob cell (*random*intensity) -> random lab
   { from: "knowledgeBlob", to: "research", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity" },
-  //Each knowledge blob cell (*random*intensity) -> random teacher room
   { from: "knowledgeBlob", to: "teacher", fromNum: 'all', toNum: 1, energy: "knowledge", multiplier: "intensity" },
 
   //Social (in all views)
-  //each classroom (*agents) -> random classroom
   { from: "classroom", to: "classroom", fromNum: 'all', toNum: 1, energy: "social", multiplier: "agents" },
-  //each classroom (*agents) -> random exit
   { from: "classroom", to: "exit", fromNum: 'all', toNum: 1, energy: "social", multiplier: "agents" },
-  //The Canteen (*agents) -> each exit
   { from: "canteen", to: "exit", fromNum: 'all', toNum: 10, energy: "social", multiplier: "agents" },
-  //The Cafe (*agents) -> each exit
   { from: "cafe", to: "exit", fromNum: 'all', toNum: 10, energy: "social", multiplier: "intensity" },
-  //each exit (*random*intensity) -> The Canteen
   { from: "exit", to: "canteen", fromNum: 10, toNum: 1, energy: "social", multiplier: "intensity" },
-  //each exit (*random*intensity) -> The Cafe
   { from: "exit", to: "cafe", fromNum: 10, toNum: 1, energy: "social", multiplier: "intensity" },
 
   //Social (additionally in Macro view)
-  //each classroom (*agents) -> random social blob cell
   { from: "classroom", to: "socialBlob", fromNum: 10, toNum: 1, energy: "social", multiplier: "agents" },
-  //The Canteen (*agents) -> each social blob cell
   { from: "canteen", to: "socialBlob", fromNum: 10, toNum: 1, energy: "social", multiplier: "agents" },
-  //The Cafe (*agents) -> each social blob cell
   { from: "cafe", to: "socialBlob", fromNum: 10, toNum: 1, energy: "social", multiplier: "agents" },
-  //Each social blob cell (*random*intensity) -> The Canteen
   { from: "socialBlob", to: "classrom", fromNum: 10, toNum: 1, energy: "social", multiplier: "intensity" },
-  //Each social blob cell (*random*intensity) -> The Cafe
   { from: "socialBlob", to: "canteen", fromNum: 10, toNum: 1, energy: "social", multiplier: "intensity" },
-  //Each social blob cell (*random*intensity) -> random classroom
   { from: "socialBlob", to: "cafe", fromNum: 10, toNum: 1, energy: "social", multiplier: "intensity" },
 
   //Power (in all views)
-  //each admin room (*agents) -> random admin room
   { from: "admin", to: "admin", fromNum: 'all', toNum: 1, energy: "power", multiplier: "agents" },
-  //each admin room (*agents) -> random classroom
   { from: "admin", to: "classroom", fromNum: 'all', toNum: 1, energy: "power", multiplier: "agents" },
-  //each admin room (*agents) -> random teacher room
   { from: "admin", to: "teacher", fromNum: 'all', toNum: 1, energy: "power", multiplier: "agents" },
-  //each admin room (*agents) -> random exit
   { from: "admin", to: "exit", fromNum: 'all', toNum: 1, energy: "power", multiplier: "agents" },
-  //The Library (*agents) -> each classroom
   { from: "library", to: "classroom", fromNum: 'all', toNum: 10, energy: "power", multiplier: "agents" },
-  //The Library (*agents) -> each exit
   { from: "library", to: "exit", fromNum: 'all', toNum: 10, energy: "power", multiplier: "agents" },
-  //each exit (*random*intensity) -> The Library
   { from: "exit", to: "library", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
-  //each exit (*random*intensity) -> random admin room
   { from: "exit", to: "admin", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
-  //each exit (*random*intensity) -> random classroom
   { from: "exit", to: "classroom", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
-  //each exit (*random*intensity) -> random teacher room
   { from: "exit", to: "teacher", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
 
   //Power (additionally in Macro view)
-  //each admin room (*agents) -> random power blob cell
   { from: "admin", to: "powerBlob", fromNum: 'all', toNum: 1, energy: "power", multiplier: "agents" },
-  //The Library (*agents) -> each knowledge blob cell
   { from: "library", to: "knowledgeBlob", fromNum: 'all', toNum: 1, energy: "power", multiplier: "agents" },
-  //Each power blob cell (*random*intensity) -> The Library
   { from: "powerBlob", to: "library", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
-  //Each power blob cell (*random*intensity) -> random admin room
   { from: "powerBlob", to: "admin", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
-  //Each power blob cell (*random*intensity) -> random classroom
   { from: "powerBlob", to: "classroom", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
-  //Each power blob cell (*random*intensity) -> random teacher room
   { from: "powerBlob", to: "teacher", fromNum: 'all', toNum: 1, energy: "power", multiplier: "intensity" },
 
   //Brown (in all views)
-  //each lab (*agents) -> random exit
   { from: "research", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //each classroom (*agents) -> random exit
   { from: "classroom", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //each teacher room (*agents) -> random exit
   { from: "teacher", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //each admin room (*agents) -> random exit
   { from: "admin", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //each toilet (*agents) -> random exit
   { from: "toilet", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //each closet (*agents) -> random exit
-  { from: "closed", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //The Canteen (*agents) -> each exit
+  { from: "closet", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
   { from: "canteen", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //The Cafe (*agents) -> each exit
   { from: "cafe", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
-  //The Library (*agents) -> each exit
   { from: "library", to: "exit", fromNum: 'all', toNum: 1, energy: "dirt", multiplier: "agents" },
 ];
 
