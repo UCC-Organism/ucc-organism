@@ -88,7 +88,7 @@ var state = {
   //state
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 1 : 0.75,
-  agentSpeed: Platform.isPlask ? 0.01 : 0.01/2,
+  agentSpeed: Platform.isPlask ? 0.02 : 0.02,
   showCells: true,
   showAgents: true,
   showEnergy: true,
@@ -96,6 +96,7 @@ var state = {
   showNodes: false,
   showCorridors: false,
   showLabels: false,
+  showAgentTargets: false,
   sway: 0,
 
   //debug
@@ -190,6 +191,7 @@ sys.Window.create({
     this.gui.addParam('showAgents', state, 'showAgents');
     this.gui.addParam('showEnergy', state, 'showEnergy');
     this.gui.addParam('showLabels', state, 'showLabels');
+    this.gui.addParam('showAgentTargets', state, 'showAgentTargets');
     this.gui.addHeader('Debug modes');
     this.gui.addButton('Night colors', this, 'setNightMode');
 
@@ -296,6 +298,7 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
+        case 't': state.showAgentTargets = !state.showAgentTargets; break;
         case 'S': this.gui.save(Config.settingsFile); break;
         case 'L': this.gui.load(Config.settingsFile); break;
       }
@@ -400,7 +403,6 @@ sys.Window.create({
     });
   },
   updateSystems: function() {
-    agentDebugInfoUpdaterSys(state);
     mapSys(state);
     energySys(state);
     energyUpdaterSys(state);
@@ -408,6 +410,7 @@ sys.Window.create({
     agentTargetNodeUpdaterSys(state);
     agentKillSys(state);
     roomInfoUpdaterSys(state);
+    agentDebugInfoUpdaterSys(state);
     agentTargetNodeFollowerSys(state);
     agentPositionUpdaterSys(state);
     agentFlockingSys(state);
@@ -451,7 +454,8 @@ sys.Window.create({
 
     var err = this.gl.getError()
     if (err) {
-      log('GL ERROR ' + err);
+      //log('GL ERROR ' + err);
+      //this.draw = function() {}
     }
   }
 });

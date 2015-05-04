@@ -18,6 +18,8 @@ function agentDebugInfoUpdaterSys(state) {
     lineBuilder.addLine(new Vec3(0, 0, 0), random.vec3());
     var mesh = new Mesh(lineBuilder, new ShowColors(), { lines: true });
     state.agentDebugInfoMeshEntity = {
+      disableDepthTest: true,
+      agentTarget: true,
       mesh: mesh
     };
     state.entities.push(state.agentDebugInfoMeshEntity);
@@ -33,23 +35,23 @@ function agentDebugInfoUpdaterSys(state) {
     });
   }
 
-  if (state.debug) {
+  if (state.showAgentTargets) {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
     agents.forEach(function(agent) {
-      if (agent.targetNode) {
-        lineBuilder.addLine(agent.position, agent.targetNode.position, Color.Green);
-      }
+      //if (agent.targetNode) {
+      //  lineBuilder.addLine(agent.position, agent.targetNode.position, Color.Green);
+      //}
       if (agent.targetNodeList && agent.targetNodeList.length > 0) {
         lineBuilder.addLine(agent.position, agent.targetNodeList[agent.targetNodeList.length-1].position, Color.Pink);
-        for(var i=0; i<agent.targetNodeList.length-1; i++) {
-          var p = agent.targetNodeList[i].position;
-          var np = agent.targetNodeList[i+1].position;
-          //lineBuilder.addCross(p, 0.01, Color.Orange);
-          //lineBuilder.addCross(p.dup().lerp(np, 0.25), 0.01, Color.Orange);
-          //lineBuilder.addCross(p.dup().lerp(np, 0.50), 0.01, Color.Orange);
-          //lineBuilder.addCross(p.dup().lerp(np, 0.75), 0.01, Color.Orange);
-        }
       }
+      //  for(var i=0; i<agent.targetNodeList.length-1; i++) {
+      //    var p = agent.targetNodeList[i].position;
+      //    var np = agent.targetNodeList[i+1].position;
+      //    lineBuilder.addCross(p, 0.01, Color.Orange);
+      //    lineBuilder.addCross(p.dup().lerp(np, 0.25), 0.01, Color.Orange);
+      //    lineBuilder.addCross(p.dup().lerp(np, 0.50), 0.01, Color.Orange);
+      //    lineBuilder.addCross(p.dup().lerp(np, 0.75), 0.01, Color.Orange);
+      //  }
     })
   }
 }

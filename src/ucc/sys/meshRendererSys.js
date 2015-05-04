@@ -24,6 +24,7 @@ function meshRendererSys(state) {
     .filter(makeFilter('agentMesh', state.showAgents))
     .filter(makeFilter('energyMesh', state.showEnergy))
     .filter(makeFilter('corridor', state.showCorridors))
+    .filter(makeFilter('agentTarget', state.showAgentTargets))
     .filter(makeFilter('node', state.showNodes))
     .filter(makeFilter('enabled', true));
   var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), visibleEntities);

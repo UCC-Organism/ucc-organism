@@ -124,7 +124,7 @@ function rebuildEnergyPaths(state) {
       g.addPath(debugSpline, Color.Red, pathPoints.length * 5);
       var mesh = new Mesh(g, new SolidColor({ color: energyType.color }), { lines: true });
 
-      state.entities.push({ name: 'energyPathMesh', energy: true, debug: true, mesh: mesh, lineWidth: 5 });
+      state.entities.push({ name: 'energyPathMesh', energy: true, debug: true, mesh: mesh, lineWidth: 2 });
   }
 }
 
