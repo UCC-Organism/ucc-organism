@@ -262,7 +262,6 @@ sys.Window.create({
     state.debugText = new DebugText(this.width, this.height, state.DPI);
   },
   initDataClient: function() {
-    this.client = state.client = new Client(Config.serverUrl);
     this.fakeClient = state.fakeClient = new FakeClient(state.timeSpeed, state);
   },
   initLibs: function() {
@@ -346,6 +345,11 @@ sys.Window.create({
     if (this.client) {
       this.client.enabled = state.liveData;
       this.fakeClient.enabled = !state.liveData;
+    }
+    else {
+      if (state.liveData) {
+        this.client = state.client = new Client(Config.serverUrl);
+      }
     }
 
     if (state.camera) {
