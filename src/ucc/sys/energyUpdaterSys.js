@@ -6,7 +6,8 @@ function energyUpdaterSys(state) {
   var energyPathEntities = R.filter(R.where({ energyPath: R.identity }), state.entities);
 
   energyPathEntities.forEach(function(entity) {
-    var numTarget = entity.energyPath.getLength() * Config.energyPointsPerPathLength;
+    //var numTarget = entity.energyPath.getLength() * Config.energyPointsPerPathLength;
+    var numTarget = 10;
 
     if (parseFloat(entity.multiplier)) {
       numTarget *= entity.multiplier;
