@@ -56,8 +56,6 @@ var VK_RIGHT = Platform.isPlask ? 124 : 39;
 var state = {
   client_id: 'Unknown',
   new_client_id: 'Unknown',
-  api_server: '',
-  api_server_ip: '',
   DPI: 1,//Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
 
   //data
@@ -109,13 +107,12 @@ try {
   var sys_conf = uccextension.read_system_configSync();
   var json = JSON.parse(sys_conf);
   log("client_id: " + json.client_id);
-  log("api_server: " + json.api_server);
-  log("api_server_port: " + json.api_server_port);
+  log("api_server_url: " + json.api_server_url);
   state.new_client_id = json.client_id;
-  state.api_server = json.api_server;
-  state.api_server_port = json.api_server_port;
 
-  if (api_server != '') {
+  Config.serverUrl = json.api_server_url || '';
+
+  if (Config.serverUrl) {
     state.liveData = 1;
   }
 }
@@ -155,6 +152,8 @@ sys.Window.create({
     this.gui.setEnabled(false);
     this.gui.addHeader('Client ID');
     this.clientIdLabel = this.gui.addLabel(state.client_id);
+    this.gui.addHeader('API Server');
+    this.apiServerLabel = this.gui.addLabel(Config.serverUrl);
     this.gui.addHeader('Options');
     this.gui.addHeader('Map');
 
@@ -337,7 +336,8 @@ sys.Window.create({
           }
           state.cameraDistance = screenInfo.cameraDistance;
           state.cameraDistanceOverride = screenInfo.cameraDistance;
-          this.clientIdLabel.setTitle(state.client_id)
+          this.clientIdLabel.setTitle(state.client_id);
+          this.apiServerLabel.setTitle(Config.serverUrl);
           this.killAllAgents();
         }
       }.bind(this))
