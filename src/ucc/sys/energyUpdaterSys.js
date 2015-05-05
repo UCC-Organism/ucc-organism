@@ -2,6 +2,7 @@ var R = require('ramda');
 var log = require('debug')('ucc/energyUpdaterSys');
 var Config = require('../../config');
 var clamp = require('clamp');
+var Time = require('pex-sys').Time;
 
 function energyUpdaterSys(state) {
   var energyPathEntities = R.filter(R.where({ energyPath: R.identity }), state.entities);
@@ -21,7 +22,8 @@ function energyUpdaterSys(state) {
     }
     else if (entity.multiplier == 'intensity') {
       var intensity = Config.energyTypes[entity.energy].intensity;
-      numTarget *= emmitance * intensity * Config.energyIntensityStrength;
+      var pulse = 0.5 + 0.5 * Math.sin(Math.PI * 2 * (entity.random + Time.seconds / Config.energyPulseDuration));
+      numTarget *= pulse * emmitance * intensity * Config.energyIntensityStrength;
     }
 
     numTarget = clamp(numTarget, 0, Config.energyPointsMaxPerPath);

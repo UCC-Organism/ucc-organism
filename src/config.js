@@ -235,9 +235,9 @@ var Config = {
   agentSpriteSize: 10,
 
   energyPointsMaxPerPath: 50,
-  //energyPointsPerPathLength: 30,
-  energyAgentCountStrength: 0.1,
-  energyIntensityStrength: 5,
+  energyAgentCountStrength: 1, //num particles per agent
+  energyIntensityStrength: 10, //num particles per blob path
+  energyPulseDuration: 10, //num of seconds it takes to fade out and in for the path
 
   cameraRotationDuration: 60*10, //60s*10 = 10min,
   cameraTiltDuration: 60*10,//60s*10 = 10min

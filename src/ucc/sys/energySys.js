@@ -13,6 +13,7 @@ var util        = require('util');
 var Time        = require('pex-sys').Time;
 var log         = require('debug')('ucc/energySys');
 var shuffle     = require('shuffle-array');
+var random      = require('pex-random');
 
 function removeEnergyPathsEntities(state) {
   //remove existing map meshes
@@ -113,7 +114,7 @@ function rebuildEnergyPaths(state) {
         v.z += 0.001;
       })
       var spline = new Spline3D(pathPoints);
-      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: energy, spec: spec, color: energyType.color, multiplier: multiplier, num: 0, seed: Date.now()});
+      state.entities.push({ energyPath: spline, startRoomId: start.roomId, energy: energy, spec: spec, color: energyType.color, multiplier: multiplier, num: 0, seed: Date.now(), random: random.float()});
 
       var debugPathPoints = R.pluck('position')(path).map(function(v) { return v.dup(); });
       debugPathPoints.forEach(function(v) {
