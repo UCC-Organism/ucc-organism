@@ -417,16 +417,7 @@ function rebuildCells(state) {
 
   membranes.push(voronoiCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
 
-  var societyBlobs = [
-    { center: new Vec3(1.2, -0.7, 0.2), radius: 0.4, numCells: 25, roomType: 'powerBlob' },
-    { center: new Vec3(0.7, 0.7, 0.2), radius: 0.24, numCells: 5, roomType: 'powerBlob' },
-    { center: new Vec3(1.2, 0.17, 0.2), radius: 0.3, numCells: 9, roomType: 'powerBlob' },
-    { center: new Vec3(-1.2, 0.25, 0), radius: 0.3, numCells: 15, roomType: 'knowledgeBlob' },
-    { center: new Vec3(-1.3, -0.5, 0), radius: 0.23, numCells: 10, roomType: 'knowledgeBlob' },
-    { center: new Vec3(-0.5, -1.4, 0), radius: 0.35, numCells: 10, roomType: 'socialBlob' },
-    { center: new Vec3(0.25, -1.3, 0), radius: 0.25, numCells: 5, roomType: 'socialBlob' }
-  ];
-  societyBlobs.forEach(function(societyBlob) {
+  Config.societyBlobs.forEach(function(societyBlob) {
     var numbers = R.range(0, societyBlob.numCells);
     var centerPoints = numbers.map(function() {
       return random.vec3(societyBlob.radius).add(societyBlob.center);

@@ -39,8 +39,8 @@ var AgentTypes = {
 }
 
 var EnergyTypes = {
-  'social':    { id: 0, color: '#FF0000', intensity: 0.5 },
-  'knowledge': { id: 1, color: '#00FF00', intensity: 0.5 },
+  'social':    { id: 0, color: '#FF0069', intensity: 0.5 },
+  'knowledge': { id: 1, color: '#20A020', intensity: 0.5 },
   'power':     { id: 3, color: '#FF9900', intensity: 0.5 },
   'dirt':      { id: 4, color: '#904930', intensity: 0.5 }
 };
@@ -62,6 +62,16 @@ var RoomTypes = {
   'knowledgeBlob' : { label: 'SocialBlob', color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#86C74A' },
   'powerBlob'     : { label: 'SocialBlob', color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#FF9900' }
 };
+
+var SocietyBlobs = [
+  { center: { x: 1.20, y:-0.70, z:0.2 }, radius: 0.40, numCells: 25, roomType: 'knowledgeBlob' },
+  { center: { x: 0.70, y: 0.70, z:0.2 }, radius: 0.24, numCells:  5, roomType: 'knowledgeBlob' },
+  { center: { x: 1.20, y: 0.17, z:0.2 }, radius: 0.30, numCells:  9, roomType: 'knowledgeBlob' },
+  { center: { x:-1.20, y: 0.25, z:0.0 }, radius: 0.30, numCells: 15, roomType: 'powerBlob'     },
+  { center: { x:-1.30, y:-0.50, z:0.0 }, radius: 0.23, numCells: 10, roomType: 'powerBlob'     },
+  { center: { x:-0.50, y:-1.40, z:0.0 }, radius: 0.35, numCells: 10, roomType: 'socialBlob'    },
+  { center: { x: 0.25, y:-1.30, z:0.0 }, radius: 0.25, numCells:  5, roomType: 'socialBlob'    }
+];
 
 var Floors = [
   { name: 'All', id: -1 },
@@ -212,6 +222,7 @@ var Config = {
   interactionDistance: 0.03,
 
   roomTypes: RoomTypes,
+  societyBlobs: SocietyBlobs,
   floors: Floors,
   energyPaths: EnergyPaths,
 
@@ -220,7 +231,7 @@ var Config = {
 
   maxDistortPoints: 10,
 
-  energySpriteSize: 1,
+  energySpriteSize: 2,
   agentSpriteSize: 10,
 
   energyPointsMaxPerPath: 50,

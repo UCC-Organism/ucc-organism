@@ -380,9 +380,9 @@ sys.Window.create({
     agentPositionUpdaterSys(state);
     agentFlockingSys(state);
     agentPointSpriteUpdaterSys(state);
-    //energySys(state);
-    //energyUpdaterSys(state);
-    //energyPointSpriteUpdaterSys(state);
+    energySys(state);
+    energyUpdaterSys(state);
+    energyPointSpriteUpdaterSys(state);
 
     flufSys(state);
 
