@@ -49,7 +49,13 @@ function energyPointSpriteUpdaterSys(state) {
   var colors = state.energyPointSpriteMeshEntity.mesh.geometry.colors;
   var texCoords = state.energyPointSpriteMeshEntity.mesh.geometry.texCoords;
 
-  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI * 3.0;
+  var spriteMultiply = 1;
+  if (state.cameraDistance < 1.0) spriteMultiply = 2;
+  if (state.cameraDistance < 0.4) spriteMultiply = 4;
+
+
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI;
+
   state.energyPointSpriteMeshEntity.mesh.material.uniforms.spread = (state.map.currentFloor == -1) ? 4 : 1;
 
   vertices.length = 0;
