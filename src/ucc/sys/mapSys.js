@@ -293,8 +293,10 @@ function buildVoronoiCells(state, points, roomCenterPoints, cellsRoomIds, defaul
   var size = boundingRect.getSize();
   var r = Math.max(size.x, size.y) / 2 * 1.5;
 
+  var numBorderPoints = 30;
+
   // add extra points around
-  for(var i=0; i<30; i++) {
+  for(var i=0; i<numBorderPoints; i++) {
     points2D.push(new Vec2(
       center.x + r * Math.cos(2 * Math.PI * i/30),
       center.y + r * Math.sin(2 * Math.PI * i/30)
@@ -308,12 +310,18 @@ function buildVoronoiCells(state, points, roomCenterPoints, cellsRoomIds, defaul
   //reject edge cells - cells that are touching the bounding box edge
   var boundingRect = Rect.fromPoints(voronoiCells.points);
   var borderPoints = voronoiCells.points.filter(inRect(boundingRect, EPSILON));
-  var borderPointsIndices = borderPoints.map(indexFinder(voronoiCells.points));
 
   for(var cellIndex=0; cellIndex<voronoiCells.cells.length; cellIndex++) {
     var isRoom = cellIndex < cellsRoomIds.length;
     var cell = voronoiCells.cells[cellIndex];
-    var keep = isRoom || (R.intersection(cell, borderPointsIndices).length == 0);
+    var keep = true;
+    for(var i=0; i<cell.length; i++) {
+      //outside point
+      if (cell[i] > voronoiCells.points.length - numBorderPoints) {
+        keep = false;
+      }
+    }
+    if (isRoom) keep = true;
     if (!keep) {
       voronoiCells.cells.splice(cellIndex, 1);
       cellIndex--;
@@ -322,6 +330,8 @@ function buildVoronoiCells(state, points, roomCenterPoints, cellsRoomIds, defaul
 
   //if you reject cells you need to rebuild points too
   voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+
+  voronoiCells.points.splice(voronoiCells.points.length - numBorderPoints, numBorderPoints);
 
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
@@ -367,6 +377,21 @@ function buildVoronoiCells(state, points, roomCenterPoints, cellsRoomIds, defaul
 
 //-----------------------------------------------------------------------------
 
+function closestPoint(p, points) {
+  var minDist = Infinity;
+  var result = null;
+  for(var i=0; i<points.length; i++) {
+    var distSq = p.squareDistance(points[i]);
+    if (distSq <= minDist) {
+      minDist = distSq;
+      result = points[i];
+    }
+  }
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+
 function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   MapSys.cells.length = 0;
@@ -387,6 +412,9 @@ function rebuildCells(state) {
   })
   var voronoiCells = buildVoronoiCells(state, roomPoints, roomCenterPoints, cellsRoomIds);
 
+  var floorBBox = BoundingBox.fromPoints(voronoiCells.points);
+  var floorBBoxCenter = floorBBox.getCenter();
+
   membranes.push(voronoiCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
 
   var societyBlobs = [
@@ -406,6 +434,17 @@ function rebuildCells(state) {
     var numExistingPoints = voronoiCells.points.length;
     var socialCells = buildVoronoiCells(state, [], centerPoints, numbers, societyBlob.roomType);
     membranes.push(socialCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
+
+    var p1 = socialCells.points[0];
+    var p2 = socialCells.points[3];
+    var p3 = socialCells.points[5];
+    var cp1 = closestPoint(socialCells.points[0], voronoiCells.points);
+    var cp2 = closestPoint(socialCells.points[3], voronoiCells.points);
+    var cp3 = closestPoint(socialCells.points[5], voronoiCells.points);
+    var cp1i = voronoiCells.points.indexOf(cp1)
+    var cp2i = voronoiCells.points.indexOf(cp2)
+    var cp3i = voronoiCells.points.indexOf(cp3)
+
     socialCells.points.forEach(function(p) {
       voronoiCells.points.push(p);
     })
@@ -420,6 +459,18 @@ function rebuildCells(state) {
       }
       voronoiCells.cells.push(cell);
     })
+
+    socialCells.points.forEach(function(p) {
+      p.centerDistance = p.distance(floorBBoxCenter);
+    })
+    socialCells.points.sort(function(a, b) {
+      return a.centerDistance - b.centerDistance;
+    })
+
+    var e1 = [cp1i, voronoiCells.points.indexOf(p1)];
+    var e2 = [cp2i, voronoiCells.points.indexOf(p2)];
+    var e3 = [cp2i, voronoiCells.points.indexOf(p3)];
+    voronoiCells.edges.push(e1, e2, e3)
   })
 
   //add displacement point for that room
@@ -514,6 +565,7 @@ function rebuildCells(state) {
     var center = GeomUtils.centroid(splinePoints);
 
     var cellCloseness = roomType != 'none' ? Config.cellCloseness / 2 : Config.cellCloseness;
+    if (isWholeOrganism) cellCloseness *= 2;
 
     var cell = {
       vertices: [],
@@ -616,16 +668,14 @@ function rebuildCells(state) {
   //var membranePoints = R.pluck('position', state.map.selectedNodes.filter(function(node) {
   //  return node.neighbors.length >= 2 && node.neighbors.length <= 3;
   //}));
- 
 
-  
   //TODO: Temporary dynamic shader
   //var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
   //var cellMaterial = new Material(Program.load(materialsPath + '/Map.glsl', null, { autoreload: true }), { pointSize: 5});
 
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, cellMaterial, { lines: true });
   var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });
-  var debugNodesMesh = new Mesh(debugNodesGeometry, cellMaterial, { points: true });
+  var debugNodesMesh = new Mesh(debugNodesGeometry, new SolidColorOrig({ color: Color.Red, pointSize: 5 }), { points: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
@@ -633,8 +683,6 @@ function rebuildCells(state) {
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: Color.Pink }), { lines: true });
   state.entities.unshift({ map: true, corridor: true, debug: true, mesh: edgeMesh, lineWidth: 2 });
-
-  var floorBBox = BoundingBox.fromPoints(cellMesh.geometry.vertices);
 
   centerCamera(state, floorBBox);
 
