@@ -39,10 +39,10 @@ var AgentTypes = {
 }
 
 var EnergyTypes = {
-  'social':    { id: 0, color: '#FF0069', intensity: 0.5 },
-  'knowledge': { id: 1, color: '#20A020', intensity: 0.5 },
-  'power':     { id: 3, color: '#FF9900', intensity: 0.5 },
-  'dirt':      { id: 4, color: '#904930', intensity: 0.5 }
+  'social':    { id: 0, color: '#FF0069', intensity: 0.5, emmitance: 0.25 },
+  'knowledge': { id: 1, color: '#20A020', intensity: 0.5, emmitance: 0.25 },
+  'power':     { id: 3, color: '#FF9900', intensity: 0.5, emmitance: 0.25 },
+  'dirt':      { id: 4, color: '#904930', intensity: 0.5, emmitance: 0.25 }
 };
 
 var RoomTypes = {

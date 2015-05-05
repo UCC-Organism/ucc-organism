@@ -18,7 +18,9 @@ function energyUpdaterSys(state) {
       numTarget *= state.map.getRoomById(entity.startRoomId).agentCount * Config.energyAgentCountStrength;
     }
     else if (entity.multiplier == 'intensity') {
-      numTarget *= Config.energyTypes[entity.energy].intensity * Config.energyIntensityStrength;
+      var emmitance = Config.energyTypes[entity.energy].emmitance;
+      var intensity = Config.energyTypes[entity.energy].intensity;
+      numTarget *= emmitance * intensity * Config.energyIntensityStrength;
     }
 
     numTarget = clamp(numTarget, 0, Config.energyPointsMaxPerPath);

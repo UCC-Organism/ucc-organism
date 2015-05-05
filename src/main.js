@@ -238,13 +238,17 @@ sys.Window.create({
     }.bind(this));
     this.gui.addHeader('Energies').setPosition(1030 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Social',    Config.energyTypes.social, 'color');
-    this.gui.addParam('Knowledge', Config.energyTypes.knowledge, 'color');
-    this.gui.addParam('Power',      Config.energyTypes.power, 'color');
-    this.gui.addParam('Dirt',      Config.energyTypes.dirt, 'color');
     this.gui.addParam('Social Intensity',    Config.energyTypes.social, 'intensity');
+    this.gui.addParam('Social Emmitance',    Config.energyTypes.social, 'emmitance');
+    this.gui.addParam('Knowledge', Config.energyTypes.knowledge, 'color');
     this.gui.addParam('Knowledge Intensity',    Config.energyTypes.knowledge, 'intensity');
+    this.gui.addParam('Knowledge Emmitance',    Config.energyTypes.knowledge, 'emmitance');
+    this.gui.addParam('Power',      Config.energyTypes.power, 'color');
     this.gui.addParam('Power Intensity',    Config.energyTypes.power, 'intensity');
+    this.gui.addParam('Power Emmitance',    Config.energyTypes.power, 'emmitance');
+    this.gui.addParam('Dirt',      Config.energyTypes.dirt, 'color');
     this.gui.addParam('Dirt Intensity',    Config.energyTypes.dirt, 'intensity');
+    this.gui.addParam('Dirt Emmitance',    Config.energyTypes.dirt, 'emmitance');
 
     /*
     Object.keys(Config.programmeColors).forEach(function(programme, programmeIndex) {
