@@ -278,6 +278,53 @@ function rebuildMap(state) {
 
 //-----------------------------------------------------------------------------
 
+function buildVoronoiCells(cellPoints, cellsRoomIds) {
+  //2d points
+
+  var points2D = cellPoints.map(vec3to2);
+
+  //boundary points
+
+  var boundingRect = Rect.fromPoints(points2D);
+  var center = boundingRect.getCenter();
+  var size = boundingRect.getSize();
+  var r = Math.max(size.x, size.y) / 2 * 1.5;
+
+  // add extra points around
+  for(var i=0; i<30; i++) {
+    points2D.push(new Vec2(
+      center.x + r * Math.cos(2 * Math.PI * i/30),
+      center.y + r * Math.sin(2 * Math.PI * i/30)
+    ))
+  }
+
+  var voronoiCells = voronoi(points2D);
+
+  voronoiCells.points = voronoiCells.points.map(vec2to3);
+
+  //reject edge cells - cells that are touching the bounding box edge
+  var boundingRect = Rect.fromPoints(voronoiCells.points);
+  var borderPoints = voronoiCells.points.filter(inRect(boundingRect, EPSILON));
+  var borderPointsIndices = borderPoints.map(indexFinder(voronoiCells.points));
+
+  for(var cellIndex=0; cellIndex<voronoiCells.cells.length; cellIndex++) {
+    var isRoom = cellIndex < cellsRoomIds.length;
+    var cell = voronoiCells.cells[cellIndex];
+    var keep = isRoom || (R.intersection(cell, borderPointsIndices).length == 0);
+    if (!keep) {
+      voronoiCells.cells.splice(cellIndex, 1);
+      cellIndex--;
+    }
+  }
+
+  //if you reject cells you need to rebuild points too
+  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+
+  return voronoiCells;
+}
+
+//-----------------------------------------------------------------------------
+
 function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   MapSys.cells.length = 0;
@@ -299,79 +346,8 @@ function rebuildCells(state) {
 
   log('cellGroups', cellsRoomIds.length);
 
-  var cellsRoomExternalType = [];
 
-  //2d points
-
-  var points2D = points.map(vec3to2);
-
-  //boundary points
-
-  var boundingRect = Rect.fromPoints(points2D);
-  var center = boundingRect.getCenter();
-  var size = boundingRect.getSize();
-  var r = Math.max(size.x, size.y) / 2 * 1.5;
-
-  var bodyCenters = [];
-
-  // add extra blobs outside map
-  if (state.map.currentFloor == -1) {
-    random.seed(0);
-    for(var i=0; i<60; i++) {
-      var a = random.float(0, 360);
-      var pos = new Vec2(random.float(-2, 2), random.float(-2, 2));
-      pos.external = true;
-      bodyCenters.push(pos);
-      points2D.push(pos);
-      cellsRoomExternalType[points2D.length-1] = 'empty';
-      if (pos.x > 0 && pos.y > 0) cellsRoomExternalType[points2D.length-1] = 'classroom';
-      if (pos.x > 0 && pos.y < 0) cellsRoomExternalType[points2D.length-1] = 'food';
-      if (pos.x < 0 && pos.y > 0) cellsRoomExternalType[points2D.length-1] = 'classroom';
-      if (pos.x < 0 && pos.y < 0) cellsRoomExternalType[points2D.length-1] = 'admin';
-      pos.externalType = cellsRoomExternalType[points2D.length-1];
-      pos.index = points2D.length-1;
-    }
-  }
-  else {
-    for(var i=0; i<30; i++) {
-      points2D.push(new Vec2(
-        center.x + r * Math.cos(2 * Math.PI * i/30),
-        center.y + r * Math.sin(2 * Math.PI * i/30)
-      ))
-    }
-  }
-
-  //cells
-
-  var voronoiCells = voronoi(points2D);
-
-  voronoiCells.points = voronoiCells.points.map(vec2to3);
-
-  //reject edge cells - cells that are touching the bounding box edge
-  var boundingRect = Rect.fromPoints(voronoiCells.points);
-  var borderPoints = voronoiCells.points.filter(inRect(boundingRect, EPSILON));
-  var borderPointsIndices = borderPoints.map(indexFinder(voronoiCells.points));
-
-  for(var cellIndex=0; cellIndex<voronoiCells.cells.length; cellIndex++) {
-    var isRoom = cellIndex < cellsRoomIds.length;
-    var cell = voronoiCells.cells[cellIndex];
-    var keep = isRoom || (R.intersection(cell, borderPointsIndices).length == 0);
-    if (!keep) {
-      cellsRoomExternalType.splice(cellIndex, 1);
-      voronoiCells.cells.splice(cellIndex, 1);
-      for(var i=0; i<bodyCenters.length; i++) {
-        if (bodyCenters[i].index == cellIndex) {
-          bodyCenters.splice(i, 1);
-          i--;
-        }
-        if (bodyCenters[i].index > cellIndex) bodyCenters[i].index--;
-      }
-      cellIndex--;
-    }
-  }
-
-  //if you reject cells you need to rebuild points too
-  voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
+  var voronoiCells = buildVoronoiCells(points, cellsRoomIds);
 
   var voronoiPointsMeta = [];
 
@@ -412,32 +388,6 @@ function rebuildCells(state) {
     //  strength: displaceRadius,
     //  maxStrength: displaceRadius
     //})
-  })
-
-  //add center points
-  bodyCenters.forEach(function(p, cellIndex) {
-    var roomId = cellsRoomIds[p.index] || -1;
-    var room = state.map.roomsById[roomId];
-    var roomType = room ? room.type : 'none';
-    var roomFloor = room ? room.floor : -1;
-
-    //skip empty cells
-    if (roomType == 'empty') {
-      return;
-    }
-
-    var newPointIndex = voronoiCells.points.length;
-
-    //map central node to room id and type so we can reach it later
-    var p3 = vec2to3(p);
-    p3.roomId = roomId;
-    p3.roomType = roomType;
-    p3.external = true;
-    p3.externalType = p.externalType;
-    voronoiCells.points.push(p3);
-    voronoiCells.cells[p.index].forEach(function(cellPointIndex) {
-      voronoiCells.edges.push([cellPointIndex, newPointIndex]);
-    })
   })
 
   //override map
@@ -491,15 +441,14 @@ function rebuildCells(state) {
     }
   }
 
+  var isWholeOrganism = state.map.currentFloor == -1;
+  var adaptive = isWholeOrganism ? false : true;
+  var numSteps = isWholeOrganism ? 4 : 0;
+
   voronoiCells.cells.forEach(function(cell, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
     var isRoom = roomId != -1;
     var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
-
-    if (cellsRoomExternalType[cellIndex]) {
-      roomType = cellsRoomExternalType[cellIndex];
-      isRoom = true;
-    }
 
     //skip empty cells
     if (roomType == 'empty') {
@@ -508,9 +457,7 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    // TODO: Make subdivision length dependentant on map overall complexity
-    // On the biggest most complex maps too much subdivision will make total number of vertices exceed limit
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, 20, true, 0.001);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, numSteps, adaptive, 0.001);
 
     var center = GeomUtils.centroid(splinePoints);
 
