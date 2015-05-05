@@ -50,7 +50,7 @@ var RoomTypes = {
   'classroom': { label: 'Classroom', color: '#949494', centerColor: '#9C9C9C', edgeColor: '#999999' },
   'toilet'   : { label: 'Toilet'   , color: '#252F35', centerColor: '#110F17', edgeColor: '#85A6AF' },
   'research' : { label: 'Research' , color: '#0C6150', centerColor: '#02120D', edgeColor: '#191919' },
-  'knowledge': { label: 'Knowledge', color: '#00FF00', centerColor: '#021916', edgeColor: '#191919' },
+  'knowledge': { label: 'Knowledge', color: '#021916', centerColor: '#021916', edgeColor: '#191919' },
   'teacher'  : { label: 'Teacher'  , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
   'admin'    : { label: 'Admin'    , color: '#1A2646', centerColor: '#0A0B12', edgeColor: '#191919' },
   'closet'   : { label: 'Closet'   , color: '#313131', centerColor: '#2E1100', edgeColor: '#923B00' },
