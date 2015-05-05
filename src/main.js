@@ -178,6 +178,7 @@ sys.Window.create({
     this.gui.addParam('showAgents', state, 'showAgents');
     this.gui.addParam('showEnergy', state, 'showEnergy');
     this.gui.addParam('showLabels', state, 'showLabels');
+    this.gui.addParam('printFPS', Time, 'verbose');
     this.gui.addParam('showAgentTargets', state, 'showAgentTargets');
     this.gui.addHeader('Debug modes');
     this.gui.addButton('Night colors', this, 'setNightMode');
@@ -307,6 +308,7 @@ sys.Window.create({
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
         case 'n': state.showNodes = !state.showNodes; break;
+        case 'f': Time.verbose = !Time.verbose; break;
         case 't': state.showAgentTargets = !state.showAgentTargets; break;
       }
     }.bind(this));
