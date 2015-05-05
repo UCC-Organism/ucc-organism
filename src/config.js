@@ -221,7 +221,7 @@ var Config = {
   agentSpriteSize: 10,
 
   energyPointsPerPathLength: 30,
-  energyAgentCountStrength: 2,
+  energyAgentCountStrength: 0.1,
   energyIntensityStrength: 5,
 
   cameraRotationDuration: 60*10, //60s*10 = 10min,
