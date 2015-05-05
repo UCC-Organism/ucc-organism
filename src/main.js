@@ -118,7 +118,7 @@ try {
 }
 catch(e) {
   log('uccextension not available');
-  state.new_client_id = 0;
+  state.new_client_id = Platform.isPlask ? '1' : '0';
 }
 
 var GUI_OFFSET = 0;
