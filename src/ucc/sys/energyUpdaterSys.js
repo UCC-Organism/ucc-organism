@@ -10,15 +10,16 @@ function energyUpdaterSys(state) {
     //var numTarget = entity.energyPath.getLength() * Config.energyPointsPerPathLength;
     var numTarget = 10;
 
+    var emmitance = Config.energyTypes[entity.energy].emmitance;
+
     if (parseFloat(entity.multiplier)) {
       numTarget *= entity.multiplier;
     }
     else if (entity.multiplier == 'agents') {
       // base on num agents in room
-      numTarget *= state.map.getRoomById(entity.startRoomId).agentCount * Config.energyAgentCountStrength;
+      numTarget *= emmitance * state.map.getRoomById(entity.startRoomId).agentCount * Config.energyAgentCountStrength;
     }
     else if (entity.multiplier == 'intensity') {
-      var emmitance = Config.energyTypes[entity.energy].emmitance;
       var intensity = Config.energyTypes[entity.energy].intensity;
       numTarget *= emmitance * intensity * Config.energyIntensityStrength;
     }
