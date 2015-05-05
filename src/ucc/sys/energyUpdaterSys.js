@@ -1,6 +1,7 @@
 var R = require('ramda');
 var log = require('debug')('ucc/energyUpdaterSys');
 var Config = require('../../config');
+var clamp = require('clamp');
 
 function energyUpdaterSys(state) {
   var energyPathEntities = R.filter(R.where({ energyPath: R.identity }), state.entities);
@@ -19,6 +20,8 @@ function energyUpdaterSys(state) {
     else if (entity.multiplier == 'intensity') {
       numTarget *= Config.energyTypes[entity.energy].intensity * Config.energyIntensityStrength;
     }
+
+    numTarget = clamp(numTarget, 0, Config.energyPointsMaxPerPath);
 
     var num = entity.num || 0;
 
