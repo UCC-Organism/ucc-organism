@@ -302,6 +302,7 @@ sys.Window.create({
         case 'a': state.showAgents = !state.showAgents; break;
         case 'e': state.showEnergy = !state.showEnergy; break;
         case 'l': state.showLabels = !state.showLabels; break;
+        case 'n': state.showNodes = !state.showNodes; break;
         case 't': state.showAgentTargets = !state.showAgentTargets; break;
       }
     }.bind(this));
