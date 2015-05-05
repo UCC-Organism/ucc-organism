@@ -46,18 +46,21 @@ var EnergyTypes = {
 };
 
 var RoomTypes = {
-  ''         : { label: 'Other'    , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
-  'classroom': { label: 'Classroom', color: '#949494', centerColor: '#9C9C9C', edgeColor: '#999999' },
-  'toilet'   : { label: 'Toilet'   , color: '#252F35', centerColor: '#110F17', edgeColor: '#85A6AF' },
-  'research' : { label: 'Research' , color: '#0C6150', centerColor: '#02120D', edgeColor: '#191919' },
-  'knowledge': { label: 'Knowledge', color: '#021916', centerColor: '#021916', edgeColor: '#191919' },
-  'teacher'  : { label: 'Teacher'  , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
-  'admin'    : { label: 'Admin'    , color: '#1A2646', centerColor: '#0A0B12', edgeColor: '#191919' },
-  'closet'   : { label: 'Closet'   , color: '#313131', centerColor: '#2E1100', edgeColor: '#923B00' },
-  'food'     : { label: 'Food'     , color: '#2B2A1B', centerColor: '#050301', edgeColor: '#FFBC2D' },
-  'exit'     : { label: 'Exit'     , color: '#252525', centerColor: '#000000', edgeColor: '#191919' },
-  'empty'    : { label: 'Empty'    , color: '#000000', centerColor: '#000000', edgeColor: '#000000' },
-  'cell'     : { label: 'Cell'     , color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#FFFFFF' }
+  ''              : { label: 'Other'     , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
+  'classroom'     : { label: 'Classroom' , color: '#949494', centerColor: '#9C9C9C', edgeColor: '#999999' },
+  'toilet'        : { label: 'Toilet'    , color: '#252F35', centerColor: '#110F17', edgeColor: '#85A6AF' },
+  'research'      : { label: 'Research'  , color: '#0C6150', centerColor: '#02120D', edgeColor: '#191919' },
+  'knowledge'     : { label: 'Knowledge' , color: '#021916', centerColor: '#021916', edgeColor: '#86C74A' },
+  'teacher'       : { label: 'Teacher'   , color: '#FF00FF', centerColor: '#FF00FF', edgeColor: '#FF00FF' },
+  'admin'         : { label: 'Admin'     , color: '#1A2646', centerColor: '#0A0B12', edgeColor: '#FF9900' },
+  'closet'        : { label: 'Closet'    , color: '#313131', centerColor: '#2E1100', edgeColor: '#923B00' },
+  'food'          : { label: 'Food'      , color: '#2B2A1B', centerColor: '#050301', edgeColor: '#FF0000' },
+  'exit'          : { label: 'Exit'      , color: '#252525', centerColor: '#000000', edgeColor: '#191919' },
+  'empty'         : { label: 'Empty'     , color: '#000000', centerColor: '#000000', edgeColor: '#000000' },
+  'cell'          : { label: 'Cell'      , color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#FFFFFF' },
+  'socialBlob'    : { label: 'SocialBlob', color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#FF0000' },
+  'knowledgeBlob' : { label: 'SocialBlob', color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#86C74A' },
+  'powerBlob'     : { label: 'SocialBlob', color: '#D9D9D9', centerColor: '#D8D8D8', edgeColor: '#FF9900' }
 };
 
 var Floors = [

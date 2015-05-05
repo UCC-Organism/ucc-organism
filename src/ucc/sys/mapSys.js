@@ -278,10 +278,13 @@ function rebuildMap(state) {
 
 //-----------------------------------------------------------------------------
 
-function buildVoronoiCells(cellPoints, cellsRoomIds) {
+function buildVoronoiCells(state, points, roomCenterPoints, cellsRoomIds, defaultRoomType) {
+  points = roomCenterPoints.concat(points);
   //2d points
 
-  var points2D = cellPoints.map(vec3to2);
+  var points2D = points.map(vec3to2);
+
+  log('buildVoronoiCells ' + defaultRoomType)
 
   //boundary points
 
@@ -320,42 +323,11 @@ function buildVoronoiCells(cellPoints, cellsRoomIds) {
   //if you reject cells you need to rebuild points too
   voronoiCells.edges = voronoiCellsToEdges(voronoiCells.cells);
 
-  return voronoiCells;
-}
-
-//-----------------------------------------------------------------------------
-
-function rebuildCells(state) {
-  var selectedNodes = state.map.selectedNodes;
-  MapSys.cells.length = 0;
-
-  //all points
-  //var points = selectedNodes.map(R.prop('position'));
-
-  //only room points
-  var roomNodes = selectedNodes.filter(R.where({ room: R.identity }));
-  var points = R.pluck('position', roomNodes);
-
-  //room centers
-  var cellGroups = fn.groupBy(selectedNodes, 'room');
-  var cellsRoomIds = Object.keys(cellGroups).filter(R.identity);
-  var roomCenterPoints = cellsRoomIds.map(function(roomId) {
-    return GeomUtils.centroid(R.pluck('position', cellGroups[roomId]));
-  })
-  points = roomCenterPoints.concat(points);
-
-  log('cellGroups', cellsRoomIds.length);
-
-
-  var voronoiCells = buildVoronoiCells(points, cellsRoomIds);
-
-  var voronoiPointsMeta = [];
-
   //add center points
   roomCenterPoints.forEach(function(p, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
     var room = state.map.roomsById[roomId];
-    var roomType = room ? room.type : 'none';
+    var roomType = room ? room.type : (defaultRoomType || 'none');
     var roomFloor = room ? room.floor : -1;
 
     //skip empty cells
@@ -373,12 +345,88 @@ function rebuildCells(state) {
     voronoiCells.cells[cellIndex].forEach(function(cellPointIndex) {
       voronoiCells.edges.push([cellPointIndex, newPointIndex]);
     })
+  })
 
-    //add displacement point for that room
+  if (defaultRoomType) {
+    voronoiCells.cells.forEach(function(cell) {
+      cell.roomType = defaultRoomType;
+    })
+  }
 
-    var displaceRadius = voronoiCells.cells[cellIndex].reduce(function(r, cellPointIndex) {
-      return Math.max(r, p.distance(voronoiCells.points[cellPointIndex]));
-    }, 0)
+  voronoiCells.points.forEach(function(p) {
+    p.neighbors = 0;
+  })
+
+  voronoiCells.edges.forEach(function(edge) {
+    voronoiCells.points[edge[0]].neighbors++;
+    voronoiCells.points[edge[1]].neighbors++;
+  })
+
+  return voronoiCells;
+}
+
+//-----------------------------------------------------------------------------
+
+function rebuildCells(state) {
+  var selectedNodes = state.map.selectedNodes;
+  MapSys.cells.length = 0;
+
+  //all points
+  //var points = selectedNodes.map(R.prop('position'));
+
+  var membranes = [];
+
+  //only room points
+  var roomNodes = selectedNodes.filter(R.where({ room: R.identity }));
+  var roomPoints = R.pluck('position', roomNodes);
+
+  var cellGroups = fn.groupBy(selectedNodes, 'room');
+  var cellsRoomIds = Object.keys(cellGroups).filter(R.identity);
+  var roomCenterPoints = cellsRoomIds.map(function(roomId) {
+    return GeomUtils.centroid(R.pluck('position', cellGroups[roomId]));
+  })
+  var voronoiCells = buildVoronoiCells(state, roomPoints, roomCenterPoints, cellsRoomIds);
+
+  membranes.push(voronoiCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
+
+  var societyBlobs = [
+    { center: new Vec3(1.2, -0.7, 0.2), radius: 0.4, numCells: 25, roomType: 'powerBlob' },
+    { center: new Vec3(0.7, 0.7, 0.2), radius: 0.24, numCells: 5, roomType: 'powerBlob' },
+    { center: new Vec3(1.2, 0.17, 0.2), radius: 0.3, numCells: 9, roomType: 'powerBlob' },
+    { center: new Vec3(-1.2, 0.25, 0), radius: 0.3, numCells: 15, roomType: 'knowledgeBlob' },
+    { center: new Vec3(-1.3, -0.5, 0), radius: 0.23, numCells: 10, roomType: 'knowledgeBlob' },
+    { center: new Vec3(-0.5, -1.4, 0), radius: 0.35, numCells: 10, roomType: 'socialBlob' },
+    { center: new Vec3(0.25, -1.3, 0), radius: 0.25, numCells: 5, roomType: 'socialBlob' }
+  ];
+  societyBlobs.forEach(function(societyBlob) {
+    var numbers = R.range(0, societyBlob.numCells);
+    var centerPoints = numbers.map(function() {
+      return random.vec3(societyBlob.radius).add(societyBlob.center);
+    })
+    var numExistingPoints = voronoiCells.points.length;
+    var socialCells = buildVoronoiCells(state, [], centerPoints, numbers, societyBlob.roomType);
+    membranes.push(socialCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
+    socialCells.points.forEach(function(p) {
+      voronoiCells.points.push(p);
+    })
+    socialCells.edges.forEach(function(e) {
+      e[0] += numExistingPoints;
+      e[1] += numExistingPoints;
+      voronoiCells.edges.push(e);
+    })
+    socialCells.cells.forEach(function(cell) {
+      for(var i=0; i<cell.length; i++) {
+        cell[i] += numExistingPoints;
+      }
+      voronoiCells.cells.push(cell);
+    })
+  })
+
+  //add displacement point for that room
+
+    //var displaceRadius = voronoiCells.cells[cellIndex].reduce(function(r, cellPointIndex) {
+    //  return Math.max(r, p.distance(voronoiCells.points[cellPointIndex]));
+    //}, 0)
 
     //state.map.strongDisplacePoints.push({
     //  roomId: roomId,
@@ -388,7 +436,6 @@ function rebuildCells(state) {
     //  strength: displaceRadius,
     //  maxStrength: displaceRadius
     //})
-  })
 
   //override map
 
@@ -443,12 +490,17 @@ function rebuildCells(state) {
 
   var isWholeOrganism = state.map.currentFloor == -1;
   var adaptive = isWholeOrganism ? false : true;
-  var numSteps = isWholeOrganism ? 4 : 0;
+  var numSteps = isWholeOrganism ? 2 : 0;
 
   voronoiCells.cells.forEach(function(cell, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
     var isRoom = roomId != -1;
     var roomType = state.map.roomsById[roomId] ? state.map.roomsById[roomId].type : 'none';
+
+    if (cell.roomType) {
+      isRoom = true;
+      roomType = cell.roomType;
+    }
 
     //skip empty cells
     if (roomType == 'empty') {
@@ -544,20 +596,29 @@ function rebuildCells(state) {
   var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
   state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });
 
-  var membranePoints = R.pluck('position', state.map.selectedNodes.filter(function(node) {
-    return node.neighbors.length >= 2 && node.neighbors.length <= 3;
-  }));
-  var membraneCenter = GeomUtils.centroid(membranePoints);
-  membranePoints = hull(membranePoints, 10, ['.x', '.y']).map(vec2to3);
-  membranePoints.forEach(function(p) {
-    p.sub(membraneCenter).scale(1.1).add(membraneCenter);
+  var cellMaterial = new MapMaterial({ pointSize: 5});
+
+  membranes.forEach(function(membranePoints) {
+    var membraneCenter = GeomUtils.centroid(membranePoints);
+    membranePoints = hull(membranePoints, 10, ['.x', '.y']).map(vec2to3);
+    membranePoints.forEach(function(p) {
+      p.sub(membraneCenter).scale(1.1).add(membraneCenter);
+    })
+
+    var membraneGeometry = new LineBuilder();
+    membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, membranePoints.length*2)
+    membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
+
+    var membraneMesh = new Mesh(membraneGeometry, cellMaterial, { lines: true });
+    state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
   })
 
-  var membraneGeometry = new LineBuilder();
-  membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, membranePoints.length*2)
-  membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
+  //var membranePoints = R.pluck('position', state.map.selectedNodes.filter(function(node) {
+  //  return node.neighbors.length >= 2 && node.neighbors.length <= 3;
+  //}));
+ 
 
-  var cellMaterial = new MapMaterial({ pointSize: 5});
+  
   //TODO: Temporary dynamic shader
   //var materialsPath = Platform.isPlask ? __dirname + '/../../materials' : 'http://192.168.0.5/var-uccorganism/ucc-organism/src/materials';
   //var cellMaterial = new Material(Program.load(materialsPath + '/Map.glsl', null, { autoreload: true }), { pointSize: 5});
@@ -565,11 +626,9 @@ function rebuildCells(state) {
   var cellEdgeMesh = new Mesh(cellEdgeGeometry, cellMaterial, { lines: true });
   var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, cellMaterial, { points: true });
-  var membraneMesh = new Mesh(membraneGeometry, cellMaterial, { lines: true });
 
   state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth });
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
-  state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: Color.Pink }), { lines: true });

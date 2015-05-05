@@ -370,8 +370,6 @@ sys.Window.create({
   },
   updateSystems: function() {
     mapSys(state);
-    energySys(state);
-    energyUpdaterSys(state);
     agentSpawnSys(state);
     agentTargetNodeUpdaterSys(state);
     agentKillSys(state);
@@ -381,7 +379,9 @@ sys.Window.create({
     agentPositionUpdaterSys(state);
     agentFlockingSys(state);
     agentPointSpriteUpdaterSys(state);
-    energyPointSpriteUpdaterSys(state);
+    //energySys(state);
+    //energyUpdaterSys(state);
+    //energyPointSpriteUpdaterSys(state);
 
     flufSys(state);
 
