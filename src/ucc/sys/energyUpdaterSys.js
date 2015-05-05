@@ -11,19 +11,19 @@ function energyUpdaterSys(state) {
     //var numTarget = entity.energyPath.getLength() * Config.energyPointsPerPathLength;
     var numTarget = 10;
 
-    var emmitance = Config.energyTypes[entity.energy].emmitance;
+    var emittance = Config.energyTypes[entity.energy].emittance;
 
     if (parseFloat(entity.multiplier)) {
       numTarget *= entity.multiplier;
     }
     else if (entity.multiplier == 'agents') {
       // base on num agents in room
-      numTarget *= emmitance * state.map.getRoomById(entity.startRoomId).agentCount * Config.energyAgentCountStrength;
+      numTarget *= emittance * state.map.getRoomById(entity.startRoomId).agentCount * Config.energyAgentCountStrength;
     }
     else if (entity.multiplier == 'intensity') {
       var intensity = Config.energyTypes[entity.energy].intensity;
       var pulse = 0.5 + 0.5 * Math.sin(Math.PI * 2 * (entity.random + Time.seconds / Config.energyPulseDuration));
-      numTarget *= pulse * emmitance * intensity * Config.energyIntensityStrength;
+      numTarget *= pulse * emittance * intensity * Config.energyIntensityStrength;
     }
 
     numTarget = clamp(numTarget, 0, Config.energyPointsMaxPerPath);
