@@ -4,7 +4,7 @@ var Faye = require('faye');
 var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
-var log = require('debug')('data/client');
+var log = require('debug')('ucc-data/client');
 
 function Client(serverUrl) {
   log(serverUrl);

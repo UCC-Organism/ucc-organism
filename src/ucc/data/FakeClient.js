@@ -6,7 +6,7 @@ var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var Config = require('../../config');
 var random = require('pex-random');
-var log = require('debug')('ucc/fakeClient');
+var log = require('debug')('ucc-data/fakeClient');
 
 var students = [
   "student663",
