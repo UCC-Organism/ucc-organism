@@ -199,6 +199,7 @@ var Screens = [
 ];
 
 var Config = {
+  configCheckTimeout: 30000,
   serverUrl: Platform.isPlask ? 'http://localhost:8080' : 'http://localhost:8080',
   dataPath: Platform.isPlask ? __dirname + '/../data' : 'data',
   roomIdMap: RoomIdMap,

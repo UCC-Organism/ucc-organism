@@ -335,22 +335,7 @@ sys.Window.create({
   update: function() {
     if (state.new_client_id != state.client_id && state.map) {
       state.client_id = state.new_client_id;
-      Config.screens.forEach(function(screenInfo) {
-        if (screenInfo.client_id == state.client_id) {
-          if (screenInfo.showFloor) {
-            state.map.setFocusRoom(null);
-            state.map.setFloor(screenInfo.showFloor);
-          }
-          if (screenInfo.showRoom) {
-            state.map.setFocusRoom(screenInfo.showRoom);
-          }
-          state.cameraDistance = screenInfo.cameraDistance;
-          state.cameraDistanceOverride = screenInfo.cameraDistance;
-          this.clientIdLabel.setTitle(state.client_id);
-          this.apiServerLabel.setTitle(Config.serverUrl);
-          this.killAllAgents();
-        }
-      }.bind(this))
+      this.applyScreenSettings();
     }
     if (this.client) {
       this.client.enabled = state.liveData;
@@ -374,14 +359,41 @@ sys.Window.create({
       state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
     }
   },
+  applyScreenSettings: function() {
+    Config.screens.forEach(function(screenInfo) {
+      if (screenInfo.client_id == state.client_id) {
+        var changed = false;
+        if (screenInfo.showFloor) {
+          var floorId = state.map.getFloorId(screenInfo.showFloor);
+          if (state.map.currentFloor != floorId) {
+            changed = true;
+            state.map.setFocusRoom(null);
+            state.map.setFloor(floorId);
+          }
+        }
+        if (screenInfo.showRoom) {
+          if (state.map.focusRoomId != screenInfo.showRoom) {
+            changed = true;
+            state.map.setFocusRoom(screenInfo.showRoom);
+          }
+        }
+        if (changed) {
+          state.cameraDistance = screenInfo.cameraDistance;
+          state.cameraDistanceOverride = screenInfo.cameraDistance;
+          this.clientIdLabel.setTitle(state.client_id);
+          this.apiServerLabel.setTitle(Config.serverUrl);
+          this.killAllAgents();
+        }
+      }
+    }.bind(this))
+  },
   checkForNewConfig: function() {
     log('checkForNewConfig');
-    var configCheckTimeout = 2000;
     this.client.updateConfig().then(function(newConfig) {
       state.newConfig = newConfig;
-      setTimeout(this.checkForNewConfig.bind(this), configCheckTimeout);
+      setTimeout(this.checkForNewConfig.bind(this), Config.configCheckTimeout);
     }.bind(this)).catch(function() {
-      setTimeout(this.checkForNewConfig.bind(this), configCheckTimeout);
+      setTimeout(this.checkForNewConfig.bind(this), Config.configCheckTimeout);
     }.bind(this));
   },
   applyConfig: function(newConfig) {
@@ -423,6 +435,8 @@ sys.Window.create({
     });
 
     extend(true, Config, newConfig);
+
+    this.applyScreenSettings();
   },
   setNightMode: function() {
     Config.nightColors();

@@ -85,17 +85,22 @@ var MapStore = {
       return this;
     }.bind(this));
   },
+  getFloorId: function(floor) {
+    var floorId = null;
+    Config.floors.forEach(function(floorInfo) {
+      if (floorInfo.name == floor) {
+        floorId = floorInfo.id;
+      }
+    })
+    return floorId;
+  },
   setFloor: function(floor) {
     var floorId;
     if (!isNaN(floor)) {
       floorId = floor;
     }
     else {
-      Config.floors.forEach(function(floorInfo) {
-        if (floorInfo.name == floor) {
-          floorId = floorInfo.id;
-        }
-      })
+      floorId = this.getFloorId(floor);
     }
     this.currentFloor = floorId;
     if (this.currentFloor != -1) {
