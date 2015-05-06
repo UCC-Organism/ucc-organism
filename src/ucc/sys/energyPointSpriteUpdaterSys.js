@@ -17,6 +17,13 @@ var Mesh                = glu.Mesh;
 var Platform            = sys.Platform;
 var Time                = sys.Time;
 
+var randomSpeeds = [];
+var randomOffsets = [];
+for(var i=0; i<100; i++) {
+  randomSpeeds[i] = random.float(0.005, 0.01);
+  randomOffsets[i] = random.float();
+}
+
 function removeEntities(state) {
   //remove existing map meshes
   state.entities.filter(R.where({ energyPointSpriteMeshEntity: true })).forEach(function(entity) {
@@ -65,13 +72,10 @@ function energyPointSpriteUpdaterSys(state) {
   var energyPathEntities = R.filter(R.where({ energyPath: R.identity }), state.entities);
 
   energyPathEntities.forEach(function(entity) {
-
-    random.seed(entity.seed)
-
     for(var i=0; i<entity.num; i++) {
-      var t = random.float();
+      var t = randomOffsets[i % randomOffsets.length];
       var len = entity.energyPath.getLength();
-      var speed = random.float(0.005/len, 0.01/len);
+      var speed = randomSpeeds[i % randomSpeeds.length] / len;
       var p = entity.energyPath.getPointAt((t + Time.seconds * speed) % 1);
       if (p) {
         vertices.push(p);
