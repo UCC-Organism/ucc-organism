@@ -49,6 +49,7 @@ var GUI               = gui.GUI;
 var DebugText         = require('./typo/DebugText');
 
 var Vec3              = require('pex-geom').Vec3;
+var extend            = require('extend');
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
@@ -358,44 +359,13 @@ sys.Window.create({
     else {
       if (state.liveData) {
         this.client = state.client = new Client(Config.serverUrl);
-        setInterval(function() {
-          this.client.updateConfig().then(function(newConfig) {
-            state.newConfig = newConfig;
-          }.bind(this))
-        }.bind(this), 30000) //every 30s
+        this.checkForNewConfig();
       }
     }
 
     if (state.newConfig) {
       var newConfig = state.newConfig;
-      Object.keys(Config).forEach(function(key) {
-        var value = newConfig[key];
-        if (value && value.length && value[0] == '#') {
-          Config[key].copy(Color.fromHex(newConfig[key]));
-        }
-      })
-
-      Object.keys(Config.energyTypes).forEach(function(type) {
-        if (newConfig.energyTypes[type].color[0] == '#') {
-          Config.energyTypes[type].color.copy(Color.fromHex(newConfig.energyTypes[type].color));
-        }
-      })
-
-      Object.keys(Config.agentTypes).forEach(function(agentType) {
-        if (newConfig.agentTypes[agentType].colors[0][0] == '#') {
-          Config.agentTypes[agentType].colors[0].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[0]));
-          Config.agentTypes[agentType].colors[1].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[1]));
-        }
-      })
-
-      Object.keys(Config.roomTypes).forEach(function(type) {
-        var newRoomType = newConfig.roomTypes[type];
-        var oldRoomType = Config.roomTypes[type];
-        if (!newRoomType) return;
-        if (newRoomType.color[0] =='#') oldRoomType.color.copy(Color.fromHex(newRoomType.color));
-        if (newRoomType.centerColor[0] =='#') oldRoomType.centerColor.copy(Color.fromHex(newRoomType.centerColor));
-        if (newRoomType.edgeColor[0] =='#') oldRoomType.edgeColor.copy(Color.fromHex(newRoomType.edgeColor));
-      });
+      this.applyConfig(newConfig);
       this.onColorChange();
       state.newConfig = null;
     }
@@ -403,6 +373,56 @@ sys.Window.create({
     if (state.camera) {
       state.zoom = 1/state.camera.getTarget().distance(state.camera.getPosition())
     }
+  },
+  checkForNewConfig: function() {
+    log('checkForNewConfig');
+    var configCheckTimeout = 2000;
+    this.client.updateConfig().then(function(newConfig) {
+      state.newConfig = newConfig;
+      setTimeout(this.checkForNewConfig.bind(this), configCheckTimeout);
+    }.bind(this)).catch(function() {
+      setTimeout(this.checkForNewConfig.bind(this), configCheckTimeout);
+    }.bind(this));
+  },
+  applyConfig: function(newConfig) {
+    log('applyConfig');
+    Object.keys(Config).forEach(function(key) {
+      var value = newConfig[key];
+      if (value && value.length && value[0] == '#') {
+        Config[key].copy(Color.fromHex(newConfig[key]));
+        delete newConfig[key];
+      }
+    })
+
+    Object.keys(Config.energyTypes).forEach(function(type) {
+      if (newConfig.energyTypes[type].color[0] == '#') {
+        Config.energyTypes[type].color.copy(Color.fromHex(newConfig.energyTypes[type].color));
+        delete newConfig.energyTypes[type].color;
+      }
+    })
+
+    Object.keys(Config.agentTypes).forEach(function(agentType) {
+      if (newConfig.agentTypes[agentType].colors[0][0] == '#') {
+        Config.agentTypes[agentType].colors[0].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[0]));
+        Config.agentTypes[agentType].colors[1].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[1]));
+        delete newConfig.agentTypes[agentType].colors[0];
+        delete newConfig.agentTypes[agentType].colors[1];
+      }
+    })
+
+    Object.keys(Config.roomTypes).forEach(function(type) {
+      var newRoomType = newConfig.roomTypes[type];
+      var oldRoomType = Config.roomTypes[type];
+      if (!newRoomType) return;
+      if (newRoomType.color[0] =='#') oldRoomType.color.copy(Color.fromHex(newRoomType.color));
+      if (newRoomType.centerColor[0] =='#') oldRoomType.centerColor.copy(Color.fromHex(newRoomType.centerColor));
+      if (newRoomType.edgeColor[0] =='#') oldRoomType.edgeColor.copy(Color.fromHex(newRoomType.edgeColor));
+      delete newRoomType.color;
+      delete newRoomType.centerColor;
+      delete newRoomType.edgeColor;
+    });
+
+    extend(true, Config, newConfig);
   },
   setNightMode: function() {
     Config.nightColors();
