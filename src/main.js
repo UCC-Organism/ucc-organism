@@ -128,12 +128,13 @@ var GUI_OFFSET = 0;
 
 sys.Window.create({
   settings: {
-    width: 1400 * state.DPI,
-    height: 900 * state.DPI,
+    position: { x: 0, y: 0 },
+    width: Platform.isBrowser ? 1400 : plask.Window.screensInfo()[0].width * state.DPI,
+    height: Platform.isBrowser ? 900 : plask.Window.screensInfo()[0].height * state.DPI,
     type: '3d',
-    fullscreen: Platform.isBrowser ? true : false,
+    fullscreen: Platform.isBrowser ? true : true,
     highdpi: state.DPI,
-    borderless: true,
+    borderless: Platform.isBrowser ? false : true,
   },
   init: function() {
     this.initGUI();
