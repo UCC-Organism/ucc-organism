@@ -91,7 +91,6 @@ var state = {
   //state
   currentTime: 0,
   timeSpeed: Platform.isPlask ? 1 : 0.75,
-  agentSpeed: Platform.isPlask ? 0.02 : 0.02,
   showCells: true,
   showAgents: true,
   showEnergy: true,
@@ -191,7 +190,8 @@ sys.Window.create({
     this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 2 });
     this.gui.addParam('Camera Rotation', state, 'cameraRotationOverride', { min: 0, max: 360 });
     this.gui.addParam('Camera Tilt', state, 'cameraTiltOverride', { min: -Config.cameraMaxTilt, max: Config.cameraMaxTilt });
-    this.gui.addHeader('Agents')
+    this.gui.addHeader('Agents');
+    this.gui.addParam('Agent Speed', Config, 'agentSpeed', { min: 0, max: 0.1 });
     this.gui.addParam('Repulsion Distance', Config, 'repulsionDistance', { min: 0, max: 0.1 });
     this.gui.addParam('Interaction Distance', Config, 'interactionDistance', { min: 0, max: 0.1 });
 

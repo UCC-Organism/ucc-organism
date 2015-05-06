@@ -228,6 +228,8 @@ var Config = {
   floors: Floors,
   energyPaths: EnergyPaths,
 
+  agentSpeed: 0.02,
+
   minStudentAge: 18,
   maxStudentAge: 40,
 
