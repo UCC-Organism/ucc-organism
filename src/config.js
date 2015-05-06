@@ -175,12 +175,12 @@ var AgentInteractions = [
   { from: 'janitor', to: 'janitor', energy: 'social' },
 
   //Power Energy
-  { from: 'admin', to: 'student', energy: 'social' },
-  { from: 'admin', to: 'teacher', energy: 'social' },
-  { from: 'admin', to: 'researcher', energy: 'social' },
-  { from: 'admin', to: 'cook', energy: 'social' },
-  { from: 'admin', to: 'janitor', energy: 'social' },
-  { from: 'admin', to: 'admin', energy: 'social' }
+  { from: 'admin', to: 'student', energy: 'power' },
+  { from: 'admin', to: 'teacher', energy: 'power' },
+  { from: 'admin', to: 'researcher', energy: 'power' },
+  { from: 'admin', to: 'cook', energy: 'power' },
+  { from: 'admin', to: 'janitor', energy: 'power' },
+  { from: 'admin', to: 'admin', energy: 'power' }
 ];
 
 var Screens = [
