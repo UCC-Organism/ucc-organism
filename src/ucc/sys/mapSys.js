@@ -428,20 +428,6 @@ function rebuildCells(state) {
 
   if (isWholeOrganism) {
     Config.societyBlobs.forEach(function(societyBlob) {
-      var blobCenter = new Vec3().setVec3(societyBlob.center);
-      blobCenter.sub(floorBBoxCenter).scale(1).add(floorBBoxCenter)
-      state.map.strongDisplacePoints.push({
-        roomId: '',
-        timeOffset: random.float(0, 1),
-        position: blobCenter,
-        radius: societyBlob.radius * 4,
-        strength: 0.15,
-        maxStrength: 0.15,
-        energy: societyBlob.energy
-      })
-    });
-
-    Config.societyBlobs.forEach(function(societyBlob) {
       var numbers = R.range(0, societyBlob.numCells);
       var centerPoints = numbers.map(function() {
         return random.vec3(societyBlob.radius).add(societyBlob.center);
@@ -485,7 +471,26 @@ function rebuildCells(state) {
       var e1 = [cp1i, voronoiCells.points.indexOf(p1)];
       var e2 = [cp2i, voronoiCells.points.indexOf(p2)];
       var e3 = [cp2i, voronoiCells.points.indexOf(p3)];
-      voronoiCells.edges.push(e1, e2, e3)
+      voronoiCells.edges.push(e1, e2, e3);
+
+      var cellsCenters = socialCells.cells.map(function(cell) {
+        var points = cell.map(function(i) {
+          return voronoiCells.points[i];
+        })
+        return GeomUtils.centroid(points);
+      })
+
+      var blobCenter = new Vec3().setVec3(societyBlob.center);
+      var displacePointCenter = closestPoint(blobCenter, cellsCenters);
+      state.map.strongDisplacePoints.push({
+        roomId: '',
+        timeOffset: random.float(0, 1),
+        position: displacePointCenter,
+        radius: societyBlob.radius * 6,
+        strength: 0.1,
+        maxStrength: 0.1,
+        energy: societyBlob.energy
+      })
     })
   }
 
