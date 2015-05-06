@@ -91,8 +91,6 @@ Client.prototype.updateCurrentState = function() {
     })
 
     //log('Client.updateCurrentState', AgentStore.all.length);
-
-    this.subscribeToEvents();
   }.bind(this));
 }
 
