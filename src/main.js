@@ -6,7 +6,7 @@ var color             = require('pex-color');
 var gui               = require('pex-gui');
 var R                 = require('ramda');
 var plask             = require('plask');
-var debug             = require('debug').enable('ucc/*')
+var debug             = require('debug').enable('ucc/* ucc-data/*')
 var log               = require('debug')('ucc/main');
 
 //CES
@@ -342,8 +342,10 @@ sys.Window.create({
       this.fakeClient.enabled = !state.liveData;
     }
     else {
-      if (state.liveData && !this.client) {
+      if (state.liveData && !this.client && Config.serverUrl) {
         this.client = state.client = new Client(Config.serverUrl);
+        log('new client created');
+        this.client.checkServerConnection();
         this.checkForNewConfig();
       }
     }
@@ -434,7 +436,7 @@ sys.Window.create({
       delete newRoomType.edgeColor;
     });
 
-    extend(true, Config, newConfig);
+    //extend(true, Config, newConfig);
 
     this.applyScreenSettings();
   },

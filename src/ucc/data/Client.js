@@ -5,17 +5,16 @@ var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var log = require('debug')('ucc-data/client');
-var http = require('http');
+var request = require('superagent');
 
 function Client(serverUrl) {
   log(serverUrl);
   this.enabled = true;
   this.serverUrl = serverUrl;
-  this.checkServerConnection();
 }
 
 Client.prototype.getJSON = function(url) {
-  log('Client.getJSON', url);
+  //log('Client.getJSON', url);
   return new Promise(function(resolve, reject) {
     request(url, function(err, res) {
       if (err) reject(err);
@@ -26,12 +25,17 @@ Client.prototype.getJSON = function(url) {
 
 Client.prototype.checkServerConnection = function() {
   log('checkServerConnection');
-  http.get(this.serverUrl, function(res) {
-    log("Server is available. Connecting...");
-    this.subscribeToEvents();
-  }.bind(this)).on('error', function(e) {
-    log("ERR Server is NOT available. Reconnecting in 10s...");
-    setTimeout(this.checkServerConnection.bind(this), 10000)
+  request
+  .get(this.serverUrl + '/current-state/')
+  .end(function(err, res){
+     if (err) {
+      log("ERR Server is NOT available. Reconnecting in 10s...");
+      setTimeout(this.checkServerConnection.bind(this), 10000)
+     }
+     else {
+      log("Server is available. Connecting...");
+      this.subscribeToEvents();
+     }
   }.bind(this));
 }
 
@@ -39,6 +43,7 @@ Client.prototype.subscribeToEvents = function() {
   log('Client.subscribeToEvents');
   this.fayeClient = new Faye.Client(this.serverUrl + '/faye');
   this.fayeClient.subscribe('/events', this.onEvent.bind(this));
+  this.updateCurrentState();
 }
 
 Client.prototype.getAgentInfo = function(agentId) {
@@ -115,7 +120,7 @@ Client.prototype.onEvent = function(e) {
     else if (e.description == 'random lunch') {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = e.location;
-      log(e);
+      //log(e);
     }
     else if (e.location) {
       //log('Client.onEvent', agentId, 'is going from', agent.targetLocation, 'to', e.location);
