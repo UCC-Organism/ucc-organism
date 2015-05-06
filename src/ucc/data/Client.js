@@ -4,9 +4,10 @@ var Faye = require('faye');
 var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
-var log = require('debug')('ucc/client');
+var log = require('debug')('data/client');
 
 function Client(serverUrl) {
+  log(serverUrl);
   this.enabled = true;
   this.serverUrl = serverUrl;
   this.updateCurrentState();
@@ -30,6 +31,10 @@ Client.prototype.subscribeToEvents = function() {
 
 Client.prototype.getAgentInfo = function(agentId) {
   return this.getJSON(this.serverUrl + '/agent/' + agentId);
+}
+
+Client.prototype.updateConfig = function() {
+  return this.getJSON(this.serverUrl + '/client-config');
 }
 
 Client.prototype.updateCurrentState = function() {

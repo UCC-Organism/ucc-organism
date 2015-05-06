@@ -53,10 +53,12 @@ var Vec3              = require('pex-geom').Vec3;
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
+console.log('Config.serverUrl', Config.serverUrl)
+
 var state = {
   client_id: 'Unknown',
   new_client_id: 'Unknown',
-  DPI: 1,//Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
+  DPI: Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
 
   //data
   liveData: false,
@@ -356,7 +358,47 @@ sys.Window.create({
     else {
       if (state.liveData) {
         this.client = state.client = new Client(Config.serverUrl);
+        setInterval(function() {
+          this.client.updateConfig().then(function(newConfig) {
+            state.newConfig = newConfig;
+          }.bind(this))
+        }.bind(this), 30000) //every 30s
       }
+    }
+
+    if (state.newConfig) {
+      var newConfig = state.newConfig;
+      Object.keys(Config).forEach(function(key) {
+        var value = newConfig[key];
+        if (value && value.length && value[0] == '#') {
+          Config[key].copy(Color.fromHex(newConfig[key]));
+          Config[key].copy(Color.Red);
+        }
+      })
+
+      Object.keys(Config.energyTypes).forEach(function(type) {
+        if (newConfig.energyTypes[type].color[0] == '#') {
+          Config.energyTypes[type].color.copy(Color.fromHex(newConfig.energyTypes[type].color));
+        }
+      })
+
+      Object.keys(Config.agentTypes).forEach(function(agentType) {
+        if (newConfig.agentTypes[agentType].colors[0][0] == '#') {
+          Config.agentTypes[agentType].colors[0].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[0]));
+          Config.agentTypes[agentType].colors[1].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[1]));
+        }
+      })
+
+      Object.keys(Config.roomTypes).forEach(function(type) {
+        var newRoomType = newConfig.roomTypes[type];
+        var oldRoomType = Config.roomTypes[type];
+        if (!newRoomType) return;
+        if (newRoomType.color[0] =='#') oldRoomType.color.copy(Color.fromHex(newRoomType.color));
+        if (newRoomType.centerColor[0] =='#') oldRoomType.centerColor.copy(Color.fromHex(newRoomType.centerColor));
+        if (newRoomType.edgeColor[0] =='#') oldRoomType.edgeColor.copy(Color.fromHex(newRoomType.edgeColor));
+      });
+      this.onColorChange();
+      state.newConfig = null;
     }
 
     if (state.camera) {
