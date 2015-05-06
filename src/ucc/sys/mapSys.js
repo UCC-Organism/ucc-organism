@@ -486,9 +486,9 @@ function rebuildCells(state) {
         roomId: '',
         timeOffset: random.float(0, 1),
         position: displacePointCenter,
-        radius: societyBlob.radius * 6,
-        strength: 0.1,
-        maxStrength: 0.1,
+        radius: societyBlob.radius * 7,
+        strength: societyBlob.strength,
+        maxStrength: societyBlob.strength,
         energy: societyBlob.energy
       })
     })
