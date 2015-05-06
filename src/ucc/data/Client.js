@@ -62,8 +62,8 @@ Client.prototype.updateCurrentState = function() {
       setTimeout(this.updateCurrentState.bind(this), 500);
       return;
     }
-    log('Client.updateCurrentState agents:', agentIds.length);
-    log('Client.updateCurrentState', agentsState[agentIds[0]]);
+    //log('Client.updateCurrentState agents:', agentIds.length);
+    //log('Client.updateCurrentState', agentsState[agentIds[0]]);
 
     AgentStore.all = [];
     agentIds.forEach(function(agentId) {
@@ -90,7 +90,7 @@ Client.prototype.updateCurrentState = function() {
       AgentStore.all.push(agent);
     })
 
-    log('Client.updateCurrentState', AgentStore.all.length);
+    //log('Client.updateCurrentState', AgentStore.all.length);
 
     this.subscribeToEvents();
   }.bind(this));
