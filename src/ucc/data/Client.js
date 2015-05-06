@@ -5,12 +5,13 @@ var R = require('ramda');
 var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var log = require('debug')('ucc-data/client');
+var http = require('http');
 
 function Client(serverUrl) {
   log(serverUrl);
   this.enabled = true;
   this.serverUrl = serverUrl;
-  this.updateCurrentState();
+  this.checkServerConnection();
 }
 
 Client.prototype.getJSON = function(url) {
@@ -21,6 +22,17 @@ Client.prototype.getJSON = function(url) {
       else resolve(JSON.parse(res.text));
     })
   });
+}
+
+Client.prototype.checkServerConnection = function() {
+  log('checkServerConnection');
+  http.get(this.serverUrl, function(res) {
+    log("Server is available. Connecting...");
+    this.subscribeToEvents();
+  }.bind(this)).on('error', function(e) {
+    log("ERR Server is NOT available. Reconnecting in 10s...");
+    setTimeout(this.checkServerConnection.bind(this), 10000)
+  }.bind(this));
 }
 
 Client.prototype.subscribeToEvents = function() {

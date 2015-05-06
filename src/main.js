@@ -357,7 +357,7 @@ sys.Window.create({
       this.fakeClient.enabled = !state.liveData;
     }
     else {
-      if (state.liveData) {
+      if (state.liveData && !this.client) {
         this.client = state.client = new Client(Config.serverUrl);
         this.checkForNewConfig();
       }
