@@ -201,6 +201,8 @@ function voronoiCellsToEdges(cells) {
 function rebuildMap(state) {
   log('rebuildMap');
 
+  var isWholeOrganism = state.map.currentFloor == -1;
+
   removeMapEntities(state);
 
   var selectedNodes = state.map.selectedNodes;
@@ -213,7 +215,12 @@ function rebuildMap(state) {
   });
 
   state.map.strongDisplacePoints.length = 0;
-  var displaceNodes = selectedNodes.filter(R.where({ displacePoint: true }));
+  var displaceNodes = [];
+
+  if (!isWholeOrganism) {
+    displaceNodes = selectedNodes.filter(R.where({ displacePoint: true }));
+  }
+
   displaceNodes.forEach(function(node) {
     state.map.strongDisplacePoints.push({
       roomId: '',
@@ -421,6 +428,20 @@ function rebuildCells(state) {
 
   if (isWholeOrganism) {
     Config.societyBlobs.forEach(function(societyBlob) {
+      var blobCenter = new Vec3().setVec3(societyBlob.center);
+      blobCenter.sub(floorBBoxCenter).scale(1).add(floorBBoxCenter)
+      state.map.strongDisplacePoints.push({
+        roomId: '',
+        timeOffset: random.float(0, 1),
+        position: blobCenter,
+        radius: societyBlob.radius * 4,
+        strength: 0.15,
+        maxStrength: 0.15,
+        energy: societyBlob.energy
+      })
+    });
+
+    Config.societyBlobs.forEach(function(societyBlob) {
       var numbers = R.range(0, societyBlob.numCells);
       var centerPoints = numbers.map(function() {
         return random.vec3(societyBlob.radius).add(societyBlob.center);
@@ -535,7 +556,7 @@ function rebuildCells(state) {
   }
 
   var adaptive = isWholeOrganism ? false : true;
-  var numSteps = isWholeOrganism ? 2 : 0;
+  var numSteps = isWholeOrganism ? 3 : 0;
 
   voronoiCells.cells.forEach(function(cell, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;

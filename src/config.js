@@ -46,7 +46,7 @@ var EnergyTypes = {
 };
 
 var RoomTypes = {
-  ''              : { label: 'Other'     , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
+  'other'         : { label: 'Other'     , color: '#999999', centerColor: '#999999', edgeColor: '#999999' },
   'classroom'     : { label: 'Classroom' , color: '#949494', centerColor: '#9C9C9C', edgeColor: '#999999' },
   'toilet'        : { label: 'Toilet'    , color: '#252F35', centerColor: '#110F17', edgeColor: '#85A6AF' },
   'research'      : { label: 'Research'  , color: '#0C6150', centerColor: '#02120D', edgeColor: '#191919' },
@@ -64,13 +64,13 @@ var RoomTypes = {
 };
 
 var SocietyBlobs = [
-  { center: { x: 1.20, y:-0.70, z:0.2 }, radius: 0.40, numCells: 25, roomType: 'knowledgeBlob' },
-  { center: { x: 0.70, y: 0.70, z:0.2 }, radius: 0.24, numCells:  5, roomType: 'knowledgeBlob' },
-  { center: { x: 1.20, y: 0.17, z:0.2 }, radius: 0.30, numCells:  9, roomType: 'knowledgeBlob' },
-  { center: { x:-1.20, y: 0.25, z:0.0 }, radius: 0.30, numCells: 15, roomType: 'powerBlob'     },
-  { center: { x:-1.30, y:-0.50, z:0.0 }, radius: 0.23, numCells: 10, roomType: 'powerBlob'     },
-  { center: { x:-0.50, y:-1.40, z:0.0 }, radius: 0.35, numCells: 10, roomType: 'socialBlob'    },
-  { center: { x: 0.25, y:-1.30, z:0.0 }, radius: 0.25, numCells:  5, roomType: 'socialBlob'    }
+  { center: { x: 1.10, y:-0.60, z: 0 }, radius: 0.40, numCells: 25, energy: 'knowledge', roomType: 'knowledgeBlob' },
+  { center: { x: 0.70, y: 0.60, z: 0 }, radius: 0.24, numCells:  5, energy: 'knowledge', roomType: 'knowledgeBlob' },
+  { center: { x: 1.10, y: 0.17, z: 0 }, radius: 0.30, numCells:  9, energy: 'knowledge', roomType: 'knowledgeBlob' },
+  { center: { x:-1.10, y: 0.25, z: 0 }, radius: 0.30, numCells: 15, energy: 'power',     roomType: 'powerBlob'     },
+  { center: { x:-1.20, y:-0.50, z: 0 }, radius: 0.23, numCells: 10, energy: 'power',     roomType: 'powerBlob'     },
+  { center: { x:-0.50, y:-1.40, z: 0 }, radius: 0.35, numCells: 10, energy: 'social',    roomType: 'socialBlob'    },
+  { center: { x: 0.25, y:-1.30, z: 0 }, radius: 0.25, numCells:  5, energy: 'social',    roomType: 'socialBlob'    }
 ];
 
 var Floors = [
@@ -246,7 +246,8 @@ var Config = {
   floorId: FloorId,
 
   parseColors: parseColors,
-  nightColors: nightColors
+  nightColors: nightColors,
+  updateColors: updateColors
 };
 
 function parseColors() {
@@ -256,7 +257,6 @@ function parseColors() {
       Config[key] = Color.fromHex(Config[key]);
     }
   })
-
 
   Object.keys(Config.energyTypes).forEach(function(type) {
     if (Config.energyTypes[type].color[0] == '#') {
@@ -276,6 +276,35 @@ function parseColors() {
     if (roomType.color[0] =='#') roomType.color = Color.fromHex(roomType.color);
     if (roomType.centerColor[0] =='#') roomType.centerColor = Color.fromHex(roomType.centerColor);
     if (roomType.edgeColor[0] =='#') roomType.edgeColor = Color.fromHex(roomType.edgeColor);
+  });
+}
+
+function updateColors(newConfig) {
+  Object.keys(Config).forEach(function(key) {
+    var value = newConfig[key];
+    if (value && value.length && value[0] == '#') {
+      Config[key].copy(Color.fromHex(newConfig[key]));
+    }
+  })
+
+  Object.keys(Config.energyTypes).forEach(function(type) {
+    if (newConfig.energyTypes[type].color[0] == '#') {
+      Config.energyTypes[type].color.copy(Color.fromHex(newConfig.energyTypes[type].color));
+    }
+  })
+
+  Object.keys(Config.agentTypes).forEach(function(agentType) {
+    if (newConfig.agentTypes[agentType].colors[0][0] == '#') {
+      Config.agentTypes[agentType].colors[0].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[0]));
+      Config.agentTypes[agentType].colors[1].copy(Color.fromHex(newConfig.agentTypes[agentType].colors[1]));
+    }
+  })
+
+  Object.keys(Config.roomTypes).forEach(function(type) {
+    var roomType = newConfig.roomTypes[type];
+    if (roomType.color[0] =='#') roomType.color.copy(Color.fromHex(roomType.color));
+    if (roomType.centerColor[0] =='#') roomType.centerColor.copy(Color.fromHex(roomType.centerColor));
+    if (roomType.edgeColor[0] =='#') roomType.edgeColor.copy(Color.fromHex(roomType.edgeColor));
   });
 }
 
