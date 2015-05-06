@@ -218,7 +218,7 @@ function rebuildMap(state) {
   var displaceNodes = [];
 
   if (!isWholeOrganism) {
-    displaceNodes = selectedNodes.filter(R.where({ displacePoint: true }));
+    displaceNodes = selectedNodes.filter(R.where({ displacePoint: true, displaceRadius: R.identity, displaceStrength: R.identity }));
   }
 
   displaceNodes.forEach(function(node) {
