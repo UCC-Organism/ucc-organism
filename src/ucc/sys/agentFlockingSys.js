@@ -43,6 +43,10 @@ function agentFlockingSys(state) {
   var interactionDist = Config.interactionDistance;
   var interactionDistSqr = interactionDist * interactionDist;
 
+  for(var k=0; k<Config.agentInteractions.length; k++) {
+    Config.agentInteractions[i].count = 0;
+  }
+
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
 
@@ -74,6 +78,7 @@ function agentFlockingSys(state) {
       if (distSqr < interactionDistSqr) {
         for(var k=0; k<Config.agentInteractions.length; k++) {
           var interaction = Config.agentInteractions[k];
+          if (interaction.count > Config.maxInteractionsCount) continue;
           var from1, from2, to1, to2;
           from1 = (interaction.from == agent.type);
           from2 = (interaction.from == 'student') && Config.agentTypes[agent.type].student;

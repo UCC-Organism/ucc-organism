@@ -221,6 +221,7 @@ var Config = {
 
   repulsionDistance: 0.01,
   interactionDistance: 0.03,
+  maxInteractionsCount: 30,
 
   roomTypes: RoomTypes,
   societyBlobs: SocietyBlobs,
