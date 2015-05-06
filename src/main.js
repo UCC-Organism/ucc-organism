@@ -372,7 +372,6 @@ sys.Window.create({
         var value = newConfig[key];
         if (value && value.length && value[0] == '#') {
           Config[key].copy(Color.fromHex(newConfig[key]));
-          Config[key].copy(Color.Red);
         }
       })
 
