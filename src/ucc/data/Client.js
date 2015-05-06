@@ -98,11 +98,11 @@ Client.prototype.updateCurrentState = function() {
 
 Client.prototype.onEvent = function(e) {
   if (!this.enabled) return;
-  log('Client.onEvent', e.description);
+  //log('Client.onEvent', e.description);
   e.agents.forEach(function(agentId) {
     var agent = AgentStore.getAgentById(agentId);
     if (!agent) {
-      log('WARN', 'Client.onEvent agent not found!', agentId);
+      //log('WARN', 'Client.onEvent agent not found!', agentId);
       return;
     }
     if (e.description == 'away') {
