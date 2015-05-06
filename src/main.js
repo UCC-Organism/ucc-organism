@@ -436,7 +436,7 @@ sys.Window.create({
       delete newRoomType.edgeColor;
     });
 
-    //extend(true, Config, newConfig);
+    extend(true, Config, newConfig);
 
     this.applyScreenSettings();
   },
