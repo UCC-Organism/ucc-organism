@@ -396,6 +396,8 @@ function rebuildCells(state) {
   var selectedNodes = state.map.selectedNodes;
   MapSys.cells.length = 0;
 
+  var isWholeOrganism = state.map.currentFloor == -1;
+
   //all points
   //var points = selectedNodes.map(R.prop('position'));
 
@@ -417,52 +419,54 @@ function rebuildCells(state) {
 
   membranes.push(voronoiCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
 
-  Config.societyBlobs.forEach(function(societyBlob) {
-    var numbers = R.range(0, societyBlob.numCells);
-    var centerPoints = numbers.map(function() {
-      return random.vec3(societyBlob.radius).add(societyBlob.center);
-    })
-    var numExistingPoints = voronoiCells.points.length;
-    var socialCells = buildVoronoiCells(state, [], centerPoints, numbers, societyBlob.roomType);
-    membranes.push(socialCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
+  if (isWholeOrganism) {
+    Config.societyBlobs.forEach(function(societyBlob) {
+      var numbers = R.range(0, societyBlob.numCells);
+      var centerPoints = numbers.map(function() {
+        return random.vec3(societyBlob.radius).add(societyBlob.center);
+      })
+      var numExistingPoints = voronoiCells.points.length;
+      var socialCells = buildVoronoiCells(state, [], centerPoints, numbers, societyBlob.roomType);
+      membranes.push(socialCells.points.filter(function(p) { return p.neighbors == 2 || p.neighbors == 3; }).map(function(p) { return p.dup() }))
 
-    var p1 = socialCells.points[0];
-    var p2 = socialCells.points[3];
-    var p3 = socialCells.points[5];
-    var cp1 = closestPoint(socialCells.points[0], voronoiCells.points);
-    var cp2 = closestPoint(socialCells.points[3], voronoiCells.points);
-    var cp3 = closestPoint(socialCells.points[5], voronoiCells.points);
-    var cp1i = voronoiCells.points.indexOf(cp1)
-    var cp2i = voronoiCells.points.indexOf(cp2)
-    var cp3i = voronoiCells.points.indexOf(cp3)
+      var p1 = socialCells.points[0];
+      var p2 = socialCells.points[3];
+      var p3 = socialCells.points[5];
+      var cp1 = closestPoint(socialCells.points[0], voronoiCells.points);
+      var cp2 = closestPoint(socialCells.points[3], voronoiCells.points);
+      var cp3 = closestPoint(socialCells.points[5], voronoiCells.points);
+      var cp1i = voronoiCells.points.indexOf(cp1)
+      var cp2i = voronoiCells.points.indexOf(cp2)
+      var cp3i = voronoiCells.points.indexOf(cp3)
 
-    socialCells.points.forEach(function(p) {
-      voronoiCells.points.push(p);
-    })
-    socialCells.edges.forEach(function(e) {
-      e[0] += numExistingPoints;
-      e[1] += numExistingPoints;
-      voronoiCells.edges.push(e);
-    })
-    socialCells.cells.forEach(function(cell) {
-      for(var i=0; i<cell.length; i++) {
-        cell[i] += numExistingPoints;
-      }
-      voronoiCells.cells.push(cell);
-    })
+      socialCells.points.forEach(function(p) {
+        voronoiCells.points.push(p);
+      })
+      socialCells.edges.forEach(function(e) {
+        e[0] += numExistingPoints;
+        e[1] += numExistingPoints;
+        voronoiCells.edges.push(e);
+      })
+      socialCells.cells.forEach(function(cell) {
+        for(var i=0; i<cell.length; i++) {
+          cell[i] += numExistingPoints;
+        }
+        voronoiCells.cells.push(cell);
+      })
 
-    socialCells.points.forEach(function(p) {
-      p.centerDistance = p.distance(floorBBoxCenter);
-    })
-    socialCells.points.sort(function(a, b) {
-      return a.centerDistance - b.centerDistance;
-    })
+      socialCells.points.forEach(function(p) {
+        p.centerDistance = p.distance(floorBBoxCenter);
+      })
+      socialCells.points.sort(function(a, b) {
+        return a.centerDistance - b.centerDistance;
+      })
 
-    var e1 = [cp1i, voronoiCells.points.indexOf(p1)];
-    var e2 = [cp2i, voronoiCells.points.indexOf(p2)];
-    var e3 = [cp2i, voronoiCells.points.indexOf(p3)];
-    voronoiCells.edges.push(e1, e2, e3)
-  })
+      var e1 = [cp1i, voronoiCells.points.indexOf(p1)];
+      var e2 = [cp2i, voronoiCells.points.indexOf(p2)];
+      var e3 = [cp2i, voronoiCells.points.indexOf(p3)];
+      voronoiCells.edges.push(e1, e2, e3)
+    })
+  }
 
   //add displacement point for that room
 
@@ -530,7 +534,6 @@ function rebuildCells(state) {
     }
   }
 
-  var isWholeOrganism = state.map.currentFloor == -1;
   var adaptive = isWholeOrganism ? false : true;
   var numSteps = isWholeOrganism ? 2 : 0;
 
