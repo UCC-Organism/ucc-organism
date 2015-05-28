@@ -381,12 +381,12 @@ sys.Window.create({
           }
         }
         if (changed) {
-          state.cameraDistance = screenInfo.cameraDistance;
-          state.cameraDistanceOverride = screenInfo.cameraDistance;
           this.clientIdLabel.setTitle(state.client_id);
           this.apiServerLabel.setTitle(Config.serverUrl);
           this.killAllAgents();
         }
+        state.cameraDistance = screenInfo.cameraDistance;
+        state.cameraDistanceOverride = screenInfo.cameraDistance;
       }
     }.bind(this))
   },
