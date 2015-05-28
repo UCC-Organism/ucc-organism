@@ -113,7 +113,8 @@ void main() {
   //texCoord.y = 1.0 - texCoord.y;
   texCoord -= vec2(0.5, 0.5);
 
-  if (length(texCoord) > 0.5) discard; //drop corners to avoid showing other sprites
+  //drop corners to avoid showing other sprites
+  if (length(texCoord) > 0.5) discard;
 
   texCoord = rotate2(rot) * texCoord;
   texCoord += vec2(0.5, 0.5);
