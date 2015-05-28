@@ -17,7 +17,6 @@ var PerspectiveCamera = glu.PerspectiveCamera;
 var Arcball           = glu.Arcball;
 var Color             = color.Color;
 var GUI               = gui.GUI;
-var settings          = require('../../settings');
 
 var cells             = require('./cells');
 var log               = require('debug')('ucc/agents/main')
