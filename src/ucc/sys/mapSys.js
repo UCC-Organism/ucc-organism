@@ -697,7 +697,8 @@ function rebuildCells(state) {
   var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new SolidColorOrig({ color: Color.Red, pointSize: 5 }), { points: true });
 
-  state.entities.unshift({ name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth });
+  state.cellEdgeMeshEntity = { name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth };
+  state.entities.unshift(state.cellEdgeMeshEntity);
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
@@ -723,12 +724,20 @@ function rebuildCells(state) {
 
 //-----------------------------------------------------------------------------
 
+function updateProperties(state) {
+  if (state.cellEdgeMeshEntity) state.cellEdgeMeshEntity.lineWidth = Config.cellEdgeWidth;
+}
+
+//-----------------------------------------------------------------------------
+
 function update(state) {
   if (!state.map.nodes.length) {
     return;
   }
 
   updateCamera(state);
+
+  updateProperties(state);
 
   if (!MapSys.ready || state.map.dirty) {
     MapSys.ready = true;
