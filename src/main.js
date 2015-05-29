@@ -54,8 +54,6 @@ var extend            = require('extend');
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
-console.log('Config.serverUrl', Config.serverUrl)
-
 var state = {
   client_id: 'Unknown',
   new_client_id: 'Unknown',
@@ -120,7 +118,28 @@ try {
 }
 catch(e) {
   log('uccextension not available');
-  state.new_client_id = Platform.isPlask ? '1' : '0';
+  state.new_client_id = Platform.isPlask ? '0' : '0';
+  state.liveData = 0;
+
+  if (Platform.isPlask) {
+    var fs = require('fs');
+    var path = require('path');
+    var iterationCount = 0;
+    var dir = __dirname;
+    while(dir != '/' && ++iterationCount < 50) {
+      var configFile = path.join(dir,'/','system.conf.json');
+      if (fs.existsSync(configFile)) {
+        log('reading config from ' + configFile)
+        var json = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+        state.new_client_id = json.client_id;
+        Config.serverUrl = json.api_server_url || '';
+        break;
+      }
+      else {
+        dir = path.resolve(path.join(dir, '/', '..'));
+      }
+    }
+  }
 }
 
 var GUI_OFFSET = 0;
