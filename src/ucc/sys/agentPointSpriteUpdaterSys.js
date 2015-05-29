@@ -56,7 +56,10 @@ function agentPointSpriteUpdaterSys(state) {
 
   var entitiesWithPointSprite = R.filter(R.where({ pointSize: R.identity }), state.entities);
 
-  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.agentSpriteSize * state.DPI * state.zoom;
+  var isWholeOrganism = state.map.currentFloor == -1;
+  var pointSize = isWholeOrganism ? Config.allFloorsAgentSpriteSize : Config.agentSpriteSize;
+
+  state.pointSpriteMeshEntity.mesh.material.uniforms.pointSize = pointSize  * state.DPI * state.zoom;
 
   var vertices = state.pointSpriteMeshEntity.mesh.geometry.vertices;
   var colors = state.pointSpriteMeshEntity.mesh.geometry.colors;

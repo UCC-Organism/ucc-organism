@@ -60,10 +60,12 @@ function energyPointSpriteUpdaterSys(state) {
   if (state.cameraDistance < 1.0) spriteMultiply = 2;
   if (state.cameraDistance < 0.4) spriteMultiply = 4;
 
+  var isWholeOrganism = state.map.currentFloor == -1;
+  var pointSize = isWholeOrganism ? Config.allFloorsEnergySpriteSize : Config.energySpriteSize;
 
-  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = Config.energySpriteSize * state.DPI;
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.pointSize = pointSize * state.DPI;
 
-  state.energyPointSpriteMeshEntity.mesh.material.uniforms.spread = (state.map.currentFloor == -1) ? 4 : 1;
+  state.energyPointSpriteMeshEntity.mesh.material.uniforms.spread = isWholeOrganism ? 4 : 1;
 
   vertices.length = 0;
   colors.length = 0;

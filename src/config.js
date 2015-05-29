@@ -240,6 +240,9 @@ var Config = {
   energySpriteSize: 2,
   agentSpriteSize: 10,
 
+  allFloorsEnergySpriteSize: 2,
+  allFloorsAgentSpriteSize: 10,
+
   energyPointsMaxPerPath: 50,
   energyAgentCountStrength: 1, //num particles per agent
   energyIntensityStrength: 10, //num particles per blob path
