@@ -233,15 +233,27 @@ sys.Window.create({
     this.gui.addParam('Exit',             Config.roomTypes.exit, 'color', {}, this.onColorChange.bind(this))
     this.gui.addParam('Exit Center',      Config.roomTypes.exit, 'centerColor', {}, this.onColorChange.bind(this));
     this.gui.addParam('Exit Edge',        Config.roomTypes.exit, 'edgeColor', {}, this.onColorChange.bind(this));
-    this.gui.addHeader('Agents Color 1').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+
+    this.gui.addHeader('Social blob colors').setPosition(690 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addParam('Social blob',            Config.roomTypes.socialBlob, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Social blob Center',     Config.roomTypes.socialBlob, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Social blob Edge',       Config.roomTypes.socialBlob, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Knowledge blob',           Config.roomTypes.knowledgeBlob, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Knowledge blob Center',    Config.roomTypes.knowledgeBlob, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Knowledge blob Edge',      Config.roomTypes.knowledgeBlob, 'edgeColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Power blob',           Config.roomTypes.powerBlob, 'color', {}, this.onColorChange.bind(this))
+    this.gui.addParam('Power blob Center',    Config.roomTypes.powerBlob, 'centerColor', {}, this.onColorChange.bind(this));
+    this.gui.addParam('Power blob Edge',      Config.roomTypes.powerBlob, 'edgeColor', {}, this.onColorChange.bind(this));
+
+    this.gui.addHeader('Agents Color 1').setPosition(860 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     Object.keys(Config.agentTypes).forEach(function(agentType) {
       this.gui.addParam(agentType + ' 0', Config.agentTypes[agentType].colors, '0');
     }.bind(this));
-    this.gui.addHeader('Agents Color 2').setPosition(860 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addHeader('Agents Color 2').setPosition(1030 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     Object.keys(Config.agentTypes).forEach(function(agentType) {
       this.gui.addParam(agentType + ' 1', Config.agentTypes[agentType].colors, '1');
     }.bind(this));
-    this.gui.addHeader('Energies').setPosition(1030 * state.DPI, 10 * state.DPI + GUI_OFFSET);
+    this.gui.addHeader('Energies').setPosition(1200 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Social',    Config.energyTypes.social, 'color');
     this.gui.addParam('Social Intensity',    Config.energyTypes.social, 'intensity');
     this.gui.addParam('Social Emmitance',    Config.energyTypes.social, 'emittance');
