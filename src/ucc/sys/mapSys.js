@@ -35,11 +35,16 @@ var Color             = color.Color;
 var LineBuilder       = gen.LineBuilder;
 var Time              = sys.Time;
 var AddCircleExt      = require('../../geom/LineBuilderAddCircle');
+var DisplacedThickLine         = require('../../materials/DisplacedThickLine');
+var ThickLineBuilder  = require('../../gen/ThickLineBuilder');
 var Plane             = gen.Plane;
+var Texture2D         = require('pex-glu').Texture2D;
 
 var log               = require('debug')('ucc/mapSys');
 
 var EPSILON = 0.0001;
+
+var membraneTexture = null;
 
 //-----------------------------------------------------------------------------
 
@@ -409,6 +414,10 @@ function rebuildCells(state) {
   //var points = selectedNodes.map(R.prop('position'));
 
   var membranes = [];
+  if (!membraneTexture) {
+    var membraneImage = Platform.isPlask ? __dirname + '/../../../assets/membrane.png' : 'assets/membrane.png';
+    membraneTexture = Texture2D.load(membraneImage);
+  }
 
   //only room points
   var roomNodes = selectedNodes.filter(R.where({ room: R.identity }));
@@ -674,15 +683,18 @@ function rebuildCells(state) {
     var membraneCenter = GeomUtils.centroid(membranePoints);
     membranePoints = hull(membranePoints, 10, ['.x', '.y']).map(vec2to3);
     membranePoints.forEach(function(p) {
-      p.sub(membraneCenter).scale(1.1).add(membraneCenter);
+      p.sub(membraneCenter);
+      var len = p.length();
+      len += Config.membraneDistance;
+      p.normalize().scale(len).add(membraneCenter);
     })
 
-    var membraneGeometry = new LineBuilder();
-    membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, membranePoints.length*2)
-    membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
+    var membraneGeometry = new ThickLineBuilder();
+    membraneGeometry.addPath(new Spline3D(membranePoints, true), Config.membraneColor, Config.membraneColor, membranePoints.length*2)
+    //membraneGeometry.addAttrib('normals', 'normal', membraneGeometry.vertices.map(function(v) { return new Vec3(1, 0, 0)}))
 
-    var membraneMesh = new Mesh(membraneGeometry, cellMaterial, { lines: true });
-    state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh, lineWidth: 10 });
+    var membraneMesh = new Mesh(membraneGeometry, new DisplacedThickLine({ thickness: 0.015, texture: membraneTexture, premultiplied: true }), { faces: true }); //cellMaterial
+    state.entities.push({ name: 'membraneMesh', map: true, cell: true, mesh: membraneMesh });
   })
 
   //var membranePoints = R.pluck('position', state.map.selectedNodes.filter(function(node) {

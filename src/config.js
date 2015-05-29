@@ -213,6 +213,8 @@ var Config = {
   cellEdgeWidth: 1.75,
   bgColor: '#FFFFFF',
   membraneColor: '#DDDDDD',
+  membraneThickness: 0.015,
+  membraneDistance: 0.04,
 
   agentLineColor: '#000000',
   agentFillColor: '#FFFFFF',
