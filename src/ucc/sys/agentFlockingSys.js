@@ -71,7 +71,7 @@ function agentFlockingSys(state) {
           }
           else {
             //normal repulsion
-            agent.force.add(tmpDir.scale(0.001));
+            agent.force.add(tmpDir.scale(0.001 * Config.repulsionStrengthInCorridor));
           }
         }
       }
