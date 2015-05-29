@@ -24,6 +24,7 @@
     "pex-materials": "^0.1.1",
     "pex-random": "^0.2.1",
     "pex-sys": "^0.3.0",
+    "polyline-normals": "^2.0.2",
     "ramda": "^0.6.0",
     "re-map": "^0.1.1",
     "shuffle-array": "^0.1.0",
