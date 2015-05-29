@@ -449,6 +449,12 @@ sys.Window.create({
       delete newRoomType.edgeColor;
     });
 
+    //remove show properties to avoid both being present
+    Config.screens.forEach(function(screenInfo) {
+      delete screenInfo.showRoom;
+      delete screenInfo.showFloor;
+    })
+
     extend(true, Config, newConfig);
 
     this.applyScreenSettings();
