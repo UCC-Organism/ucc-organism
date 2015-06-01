@@ -115,18 +115,8 @@ attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
 
-#define N_DISTORT_POINTS 10
-
-uniform vec3 weakDisplacePoints[N_DISTORT_POINTS];
-uniform vec2 weakDisplaceProps[N_DISTORT_POINTS];
-uniform int numWeakDisplacePoints;
-uniform float maxWeakDisplacement;
-
-uniform vec3 strongDisplacePoints[N_DISTORT_POINTS];
-uniform vec2 strongDisplaceProps[N_DISTORT_POINTS];
-uniform int numStrongDisplacePoints;
-
-uniform vec4 glowColors[N_DISTORT_POINTS];
+#pragma glslify: import('./DisplacementWeak.glsl')
+#pragma glslify: import('./DisplacementStrong.glsl')
 
 uniform float time;
 uniform float sway;
@@ -138,61 +128,11 @@ void main()
   vColor = color;
 
   vec3 pos = position;
-  vec3 c;
-  vec3 displacement = vec3(0.0, 0.0, 0.0);
 
   float isRoom = normal.x;
 
-  // ----------------------------
-  // Calculate weak displacement
-  // ----------------------------
-
-  for (int i = 0; i < N_DISTORT_POINTS; i++)
-  {
-    if (i >= numWeakDisplacePoints) break;
-
-    c = weakDisplacePoints[i];
-    float dist = distance(pos, c);
-    float distortionStrength = weakDisplaceProps[i].y;
-    float maxDist = weakDisplaceProps[i].x;
-
-    if (dist < maxDist)
-    {
-      vec3 dir = normalize(pos - c);
-      float rat = pow(1.0 - dist / maxDist, 4.0);
-      vColor.rgb = mix(vColor.rgb, glowColors[i].rgb, rat * distortionStrength * 30.0 * isRoom);
-
-      displacement += dir * rat * maxDist * distortionStrength;
-    }
-  }
-
-  if ((maxWeakDisplacement > 0.0) && (length(displacement) > maxWeakDisplacement))
-  {
-    displacement = normalize(displacement) * maxWeakDisplacement;
-  }
-
-  // ----------------------------
-  // Calculate strong displacement
-  // ----------------------------
-
-  for (int i = 0; i < N_DISTORT_POINTS; i++)
-  {
-    if (i >= numStrongDisplacePoints) break;
-
-    c = strongDisplacePoints[i];
-
-    float dist = distance(pos, c);
-    float distortionStrength = strongDisplaceProps[i].y;
-    float maxDist = strongDisplaceProps[i].x;
-
-    if (dist < maxDist)
-    {
-      vec3 dir = normalize(pos - c);
-      float rat = pow(1.0 - dist / maxDist, 4.0);
-
-      displacement += dir * rat * maxDist * distortionStrength;
-    }
-  }
+  pos += calcWeakDisplacement(pos, isRoom, vColor);
+  pos += calcStrongDisplacement(pos);
 
   pos += displacement;
   pos.xy += sway * 0.05 * snoise(vec3(pos.x + time/5.0, pos.y, pos.x)*5.0);

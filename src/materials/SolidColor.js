@@ -2,12 +2,12 @@ var glu = require('pex-glu');
 var color = require('pex-color');
 var Context = glu.Context;
 var Material = glu.Material;
-var Program = glu.Program;
 var Color = color.Color;
 var merge = require('merge');
-var fs = require('fs');
+var Program   = require('../glu/Program');
+var glslify   = require('glslify-promise');
 
-var SolidColorGLSL = fs.readFileSync(__dirname + '/SolidColor.glsl', 'utf8');
+var SolidColorGLSL   = glslify(__dirname + '/SolidColor.glsl', { transform: ['glslify-import'] });
 
 function SolidColor(uniforms) {
   this.gl = Context.currentContext;

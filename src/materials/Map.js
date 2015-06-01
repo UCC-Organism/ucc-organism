@@ -1,15 +1,14 @@
-var glu = require('pex-glu');
-var color = require('pex-color');
-var Context = glu.Context;
-var Material = glu.Material;
-var Program = glu.Program;
-var Color = color.Color;
-var merge = require('merge');
-var fs = require('fs');
+var Color     = require('pex-color').Color;
+var Context   = require('pex-glu').Context;
+var Material  = require('pex-glu').Material;
+var merge     = require('merge');
 
-var MapGLSL = fs.readFileSync(__dirname + '/Map.glsl', 'utf8');
+var Program   = require('../glu/Program');
+var glslify   = require('glslify-promise');
 
-function ShowColors(uniforms) {
+var MapGLSL   = glslify(__dirname + '/Map.glsl', { transform: ['glslify-import'] });
+
+function Map(uniforms) {
   this.gl = Context.currentContext;
   var program = new Program(MapGLSL);
   var defaults = { pointSize: 1 };
@@ -17,6 +16,6 @@ function ShowColors(uniforms) {
   Material.call(this, program, uniforms);
 }
 
-ShowColors.prototype = Object.create(Material.prototype);
+Map.prototype = Object.create(Material.prototype);
 
-module.exports = ShowColors;
+module.exports = Map;

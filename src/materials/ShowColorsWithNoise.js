@@ -2,12 +2,14 @@ var glu = require('pex-glu');
 var color = require('pex-color');
 var Context = glu.Context;
 var Material = glu.Material;
-var Program = glu.Program;
 var Color = color.Color;
 var merge = require('merge');
-var fs = require('fs');
 
-var ShowColorsWithNoiseGLSL = fs.readFileSync(__dirname + '/ShowColorsWithNoise.glsl', 'utf8');
+var Program   = require('../glu/Program');
+var glslify   = require('glslify-promise');
+
+var ShowColorsWithNoiseGLSL   = glslify(__dirname + '/ShowColorsWithNoise.glsl', { transform: ['glslify-import'] });
+
 
 function ShowColorsWithNoise(uniforms) {
   this.gl = Context.currentContext;
