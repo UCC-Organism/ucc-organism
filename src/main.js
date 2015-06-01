@@ -539,12 +539,6 @@ sys.Window.create({
       state.debugText.texts = []; //clear!
     }
     this.gui.draw();
-
-    var err = this.gl.getError()
-    if (err) {
-      //log('GL ERROR ' + err);
-      //this.draw = function() {}
-    }
   }
 });
 
