@@ -1,7 +1,8 @@
 var R       = require('ramda');
 var glu     = require('pex-glu');
-var Vec3    = require('pex-geom').Vec3;
 var Vec2    = require('pex-geom').Vec2;
+var Vec3    = require('pex-geom').Vec3;
+var Vec4    = require('pex-geom').Vec4;
 var Time    = require('pex-sys').Time;
 var Config  = require('../../config');
 
@@ -40,41 +41,55 @@ function meshRendererSys(state) {
       return;
     }
 
-    if (entity.mesh.material.program.uniforms.time) {
-      entity.mesh.material.uniforms.time = Time.seconds;
+    var program = entity.mesh.material.program;
+    var uniforms = entity.mesh.material.uniforms;
+
+    if (program.uniforms.time) {
+      uniforms.time = Time.seconds;
     }
 
-    if (entity.mesh.material.program.uniforms.sway) {
-      entity.mesh.material.uniforms.sway = state.sway;
+    if (program.uniforms.sway) {
+      uniforms.sway = state.sway;
     }
 
-    if (entity.mesh.material.program.uniforms["weakDisplacePoints[0]"]) {
+    if (program.uniforms["weakDisplacePoints[0]"]) {
       var n = agents.length;
-      if (n > Config.maxDistortPoints) n = Config.maxDistortPoints;
+      if (n > Config.maxWeakDistortPoints) n = Config.maxWeakDistortPoints;
 
       for (var i = 0; i < n; i++) {
-        entity.mesh.material.uniforms["weakDisplacePoints[" + i + "]"] = agents[i].position;
-        var s = agents[i].life;
-        entity.mesh.material.uniforms["weakDisplaceProps[" + i + "]"] = new Vec3(0.1 * s, 0.02 * s); // radius, strength
-        entity.mesh.material.uniforms["glowColors[" + i + "]"] = agents[i].color;
+        var weakPoint = uniforms["weakDisplacePoints[" + i + "]"];
+        if (!weakPoint) {
+          weakPoint = uniforms["weakDisplacePoints[" + i + "]"] = new Vec4();
+        }
+        var agent = agents[i];
+        weakPoint.x = agent.position.x;
+        weakPoint.y = agent.position.y;
+        weakPoint.z = 0.10 * agent.life;
+        weakPoint.w = 0.02 * agent.life;
+        uniforms["glowColors[" + i + "]"] = agent.color;
       }
 
-      entity.mesh.material.uniforms.maxWeakDisplacement = 0.006;
-      entity.mesh.material.uniforms.numWeakDisplacePoints = n;
+      uniforms.maxWeakDisplacement = 0.006;
+      uniforms.numWeakDisplacePoints = n;
     }
 
-    if (entity.mesh.material.program.uniforms["strongDisplacePoints[0]"]) {
-      //console.log(entity.mesh.material.program.uniforms)
-      var numStrongDisplacePoints = state.map.strongDisplacePoints.length;
-      for(var i = 0; i < numStrongDisplacePoints; i++) {
-        entity.mesh.material.uniforms["strongDisplacePoints[" + i + "]"] = state.map.strongDisplacePoints[i].position;
-        if (!entity.mesh.material.uniforms["strongDisplaceProps[" + i + "]"]) {
-          entity.mesh.material.uniforms["strongDisplaceProps[" + i + "]"] = new Vec2();
+    if (program.uniforms["strongDisplacePoints[0]"]) {
+      var n = state.map.strongDisplacePoints.length;
+      if (n > Config.maxStrongDistortPoints) n = Config.maxStrongDistortPoints;
+
+      var strongDisplacePoints = state.map.strongDisplacePoints;
+      for(var i = 0; i < n; i++) {
+        var strongPoint = uniforms["strongDisplacePoints[" + i + "]"];
+        if (!strongPoint) {
+          strongPoint = uniforms["strongDisplacePoints[" + i + "]"] = new Vec4();
         }
-        entity.mesh.material.uniforms["strongDisplaceProps[" + i + "]"].x = state.map.strongDisplacePoints[i].radius;
-        entity.mesh.material.uniforms["strongDisplaceProps[" + i + "]"].y = state.map.strongDisplacePoints[i].strength;
+        var strongDisplacePoint = strongDisplacePoints[i];
+        strongPoint.x = strongDisplacePoint.position.x;
+        strongPoint.y = strongDisplacePoint.position.y;
+        strongPoint.z = strongDisplacePoint.radius;
+        strongPoint.w = strongDisplacePoint.strength;
       }
-      entity.mesh.material.uniforms.numStrongDisplacePoints = numStrongDisplacePoints;
+      entity.mesh.material.uniforms.numStrongDisplacePoints = n;
     }
 
     glu.enableDepthReadAndWrite(true, true);
