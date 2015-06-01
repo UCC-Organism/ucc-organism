@@ -28,7 +28,6 @@ var Vec2              = geom.Vec2;
 var Vec3              = geom.Vec3;
 var Spline3D          = geom.Spline3D;
 var Mesh              = glu.Mesh;
-var SolidColor        = require('../../materials/SolidColor');
 var SolidColorOrig    = materials.SolidColor;
 var MapMaterial       = require('../../materials/Map');
 var Color             = color.Color;
