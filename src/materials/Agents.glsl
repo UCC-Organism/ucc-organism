@@ -37,14 +37,7 @@ void main() {
   vFillColor = fillColor;
   vAccentColor = accentColor;
 }
-/*
-void main() {
-  vec3 pos = position;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-  //gl_PointSize = pointSize * scale;
-  gl_PointSize = pointSize;
-}
-*/
+
 #endif
 
 #ifdef FRAG
