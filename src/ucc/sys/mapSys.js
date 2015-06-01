@@ -588,7 +588,7 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, numSteps, adaptive, 0.001);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, numSteps, adaptive, 0.002);
 
     var center = GeomUtils.centroid(splinePoints);
 
