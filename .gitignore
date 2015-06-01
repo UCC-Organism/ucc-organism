@@ -6,3 +6,4 @@ lib/main.web.js
 build
 stuff
 src/ucc/agents/*.png
+.atom-build.json
