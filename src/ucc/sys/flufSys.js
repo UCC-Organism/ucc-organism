@@ -36,7 +36,7 @@ function flufSys(state) {
     }
     state.entities.push(state.flufMeshEntity);
 
-    state.dirts = R.range(0, 200).map(function() {
+    state.dirts = R.range(0, Config.numFluidParticles).map(function() {
       var entity = {
         rotation: random.float(0, 1),
         color: Color.White,

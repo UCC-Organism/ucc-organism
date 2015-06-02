@@ -240,6 +240,7 @@ var Config = {
   maxWeakDistortPointsPlask: 60,
   maxStrongDistortPoints: 10,
 
+  numFluidParticles: 150,
   energySpriteSize: 2,
   agentSpriteSize: 10,
 
