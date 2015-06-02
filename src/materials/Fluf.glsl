@@ -3,6 +3,7 @@
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 uniform float pointSize;
+uniform float time;
 attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
@@ -21,12 +22,15 @@ varying vec4 vFillColor;
 varying vec4 vAccentColor;
 
 #pragma glslify: import('./DisplacementStrong.glsl')
+#pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 
 void main() {
-
   vec3 pos = position;
 
   pos += calcStrongDisplacement(pos);
+
+  //sway
+  pos.xy += 0.05 * snoise3(vec3(pos.x + time/100.0, pos.y, pos.x)*5.0);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = pointSize * scale;
@@ -92,6 +96,8 @@ void main() {
   gl_FragColor *= alpha * total;
 
   //if (gl_FragColor.a == 0.0) discard;
+
+  //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
 
 #endif

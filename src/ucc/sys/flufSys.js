@@ -12,10 +12,12 @@ var Geometry            = geom.Geometry;
 var Vec4                = geom.Vec4;
 var Vec3                = geom.Vec3;
 var Vec2                = geom.Vec2;
+var BoundingBox         = geom.BoundingBox;
 var Texture2D           = glu.Texture2D;
 var Mesh                = glu.Mesh;
 var Platform            = sys.Platform;
 var Time                = sys.Time;
+var log                 = require('debug')('ucc/flufSys');
 
 function flufSys(state) {
   if (!state.flufMeshEntity) {
@@ -38,10 +40,19 @@ function flufSys(state) {
       var entity = {
         rotation: random.float(0, 1),
         color: Color.White,
-        position: new Vec3(random.float(-1.0, 1.0), random.float(-1.0, 1.0), random.float(-0.1, 0.5))
+        position: new Vec3(random.float(-1.0, 1.0), random.float(-1.0, 1.0), random.float(-0.1, 0.25))
       };
       entity.prevPosition = entity.position.dup();
       return entity;
+    })
+  }
+
+  if (state.map.dirty) {
+    var bbox = BoundingBox.fromPoints(R.pluck('position', state.map.selectedNodes));
+    state.dirts.forEach(function(dirt) {
+      dirt.position.x = random.float(bbox.min.x - 0.1, bbox.max.x + 0.1);
+      dirt.position.y = random.float(bbox.min.y - 0.1, bbox.max.y + 0.1);
+      dirt.prevPosition.copy(dirt.position);
     })
   }
 
