@@ -136,6 +136,9 @@ catch(e) {
         var json = JSON.parse(fs.readFileSync(configFile, 'utf8'));
         state.new_client_id = json.client_id;
         Config.serverUrl = json.api_server_url || '';
+        if (Config.serverUrl) {
+          state.liveData = 1;
+        }
         break;
       }
       else {
