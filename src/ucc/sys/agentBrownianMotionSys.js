@@ -15,7 +15,7 @@ function agentBrownianMotionSys(state) {
   var b = new Vec3();
   agents.forEach(function(agent, idx) {
     var target = null;
-    if (agent.state.mode == AgentModes.Studying) {
+    if (agent.state.mode == AgentModes.Studying || agent.state.mode == AgentModes.Eating) {
       if ((agent.type != 'teacher') && agent.prevTargetNode) {
         var center = agent.prevTargetNode.position;
         if (!agent.brownianMotionTarget) {
