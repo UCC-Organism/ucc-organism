@@ -112,7 +112,9 @@ function meshRendererSys(state, debug) {
     if (entity.lineWidth) {
       gl.lineWidth(entity.lineWidth);
     }
-    entity.mesh.draw(camera);
+    if (entity.mesh.material.program.ready) {
+      entity.mesh.draw(camera);
+    }
     if (entity.lineWidth) {
       gl.lineWidth(1);
     }
