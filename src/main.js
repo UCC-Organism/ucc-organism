@@ -341,7 +341,6 @@ sys.Window.create({
   initKeys: function() {
     this.on('keyDown', function(e) {
       switch(e.str) {
-        //case ' ': this.killAllAgents(); break;
         case 'd': state.debug = !state.debug; break;
         case 'g': this.gui.toggleEnabled(); break;
         case 'c': state.showCells = !state.showCells; break;
