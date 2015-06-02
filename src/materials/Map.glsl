@@ -29,7 +29,7 @@ void main()
   pos += calcWeakDisplacement(pos, isRoom, vColor);
   pos += calcStrongDisplacement(pos);
 
-  pos.xy += sway * 0.05 * snoise3(vec3(pos.x + time/5.0, pos.y, pos.x)*5.0);
+  //pos.xy += sway * 0.05 * snoise3(vec3(pos.x + time/5.0, pos.y, pos.x)*5.0);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = pointSize;
