@@ -11,6 +11,8 @@ var Textured    = require('../../materials/Textured');
 var Texture2D = require('pex-glu').Texture2D;
 var Platform = require('pex-sys').Platform;
 
+var log                 = require('debug')('ucc/agentFlockingSys');
+
 var Time  = sys.Time;
 var Vec3  = geom.Vec3;
 
@@ -42,10 +44,15 @@ function agentFlockingSys(state) {
   var repulsionDistSqr = repulsionDist * repulsionDist;
   var interactionDist = Config.interactionDistance;
   var interactionDistSqr = interactionDist * interactionDist;
+  var minInteractionDist = Config.interactionDistance * 0.1;
+  var minInteractionDistSqr = minInteractionDist * minInteractionDist;
 
   for(var k=0; k<Config.agentInteractions.length; k++) {
     Config.agentInteractions[k].count = 0;
   }
+
+  var lines = this.lines = this.lines || [];
+  var numLines = 0;
 
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
@@ -75,7 +82,8 @@ function agentFlockingSys(state) {
           }
         }
       }
-      if (distSqr < interactionDistSqr) {
+
+      if (distSqr < interactionDistSqr && distSqr > minInteractionDistSqr) {
         for(var k=0; k<Config.agentInteractions.length; k++) {
           var interaction = Config.agentInteractions[k];
           if (interaction.count > Config.maxInteractionsCount) continue;
@@ -85,7 +93,12 @@ function agentFlockingSys(state) {
           to1 = (interaction.to == anotherAgent.type)
           to2 = (interaction.to == 'student') && Config.agentTypes[anotherAgent.type].student;
           if ((from1 || from2) && (to1 || to2)) {
-            lineBuilder.addLine(agent.position, anotherAgent.position, Config.energyTypes[interaction.energy].color);
+            if (!lines[numLines]) lines[numLines] = [];
+            lines[numLines][0] = agent.position;
+            lines[numLines][1] = anotherAgent.position;
+            lines[numLines][2] = Config.energyTypes[interaction.energy].color;
+            lines[numLines][3] = distSqr
+            numLines++;
             break;
           }
           from1 = (interaction.from == anotherAgent.type);
@@ -93,7 +106,12 @@ function agentFlockingSys(state) {
           to1 = (interaction.to == agent.type)
           to2 = (interaction.to == 'student') && Config.agentTypes[agent.type].student;
           if ((from1 || from2) && (to1 || to2)) {
-            lineBuilder.addLine(anotherAgent.position, agent.position, Config.energyTypes[interaction.energy].color);
+            if (!lines[numLines]) lines[numLines] = [];
+            lines[numLines][0] = agent.position;
+            lines[numLines][1] = anotherAgent.position;
+            lines[numLines][2] = Config.energyTypes[interaction.energy].color;
+            lines[numLines][3] = distSqr
+            numLines++;
             break;
           }
         }
@@ -102,6 +120,10 @@ function agentFlockingSys(state) {
     //followerEntity.prevPosition.copy(followerEntity.position);
     //followerEntity.position.add(tmpDir);
     }
+  }
+
+  for(var i=0; i<numLines; i++) {
+    lineBuilder.addLine(lines[i][0], lines[i][1], lines[i][2]);
   }
 }
 
