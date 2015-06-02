@@ -18,6 +18,7 @@ var energyPointSpriteUpdaterSys   = require('./ucc/sys/energyPointSpriteUpdaterS
 var agentTargetNodeUpdaterSys     = require('./ucc/sys/agentTargetNodeUpdaterSys');
 var agentTargetNodeFollowerSys    = require('./ucc/sys/agentTargetNodeFollowerSys');
 var agentFlockingSys              = require('./ucc/sys/agentFlockingSys');
+var agentBrownianMotionSys        = require('./ucc/sys/agentBrownianMotionSys');
 var agentPositionUpdaterSys       = require('./ucc/sys/agentPositionUpdaterSys');
 var agentSpawnSys                 = require('./ucc/sys/agentSpawnSys');
 var agentKillSys                  = require('./ucc/sys/agentKillSys');
@@ -510,6 +511,7 @@ sys.Window.create({
     /*console.time('roomInfoUpdaterSys');           */roomInfoUpdaterSys(state);          /*console.timeEnd('roomInfoUpdaterSys');*/
     /*console.time('agentDebugInfoUpdaterSys');     */agentDebugInfoUpdaterSys(state);    /*console.timeEnd('agentDebugInfoUpdaterSys');*/
     /*console.time('agentTargetNodeFollowerSys');   */agentTargetNodeFollowerSys(state);  /*console.timeEnd('agentTargetNodeFollowerSys');*/
+    /*console.time('agentBrownianMotionSys');       */agentBrownianMotionSys(state);      /*console.timeEnd('agentBrownianMotionSys');*/
     /*console.time('agentPositionUpdaterSys');      */agentPositionUpdaterSys(state);     /*console.timeEnd('agentPositionUpdaterSys');*/
     /*console.time('agentFlockingSys');             */agentFlockingSys(state);            /*console.timeEnd('agentFlockingSys');*/
     /*console.time('agentPointSpriteUpdaterSys');   */agentPointSpriteUpdaterSys(state);  /*console.timeEnd('agentPointSpriteUpdaterSys');*/
