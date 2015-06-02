@@ -244,6 +244,10 @@ var Config = {
   energySpriteSize: 2,
   agentSpriteSize: 10,
 
+  maxLasersPerAgent: 2,
+  maxLasersPerTeacher: 20,
+  allFloorsEnableLasers: false,
+
   allFloorsEnergySpriteSize: 2,
   allFloorsAgentSpriteSize: 10,
 

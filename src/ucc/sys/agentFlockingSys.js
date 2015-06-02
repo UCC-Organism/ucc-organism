@@ -56,6 +56,14 @@ function agentFlockingSys(state) {
 
   for(var i=0; i<agents.length; i++) {
     var agent = agents[i];
+    agent.laserBudget = (agent.type == 'teacher') ? Config.maxLasersPerTeacher : Config.maxLasersPerAgent;
+    if (state.map.currentFloor == -1 && !Config.allFloorsEnableLasers) {
+      agent.laserBudget = 0;
+    }
+  }
+
+  for(var i=0; i<agents.length; i++) {
+    var agent = agents[i];
 
     for(var j=i+1; j<agents.length; j++) {
       anotherAgent = agents[j];
@@ -92,25 +100,29 @@ function agentFlockingSys(state) {
           from2 = (interaction.from == 'student') && Config.agentTypes[agent.type].student;
           to1 = (interaction.to == anotherAgent.type)
           to2 = (interaction.to == 'student') && Config.agentTypes[anotherAgent.type].student;
-          if ((from1 || from2) && (to1 || to2)) {
+          if ((from1 || from2) && (to1 || to2) && agent.laserBudget && anotherAgent.laserBudget) {
             if (!lines[numLines]) lines[numLines] = [];
             lines[numLines][0] = agent.position;
             lines[numLines][1] = anotherAgent.position;
             lines[numLines][2] = Config.energyTypes[interaction.energy].color;
-            lines[numLines][3] = distSqr
+            lines[numLines][3] = distSqr;
             numLines++;
+            agent.laserBudget--;
+            anotherAgent.laserBudget--;
             break;
           }
           from1 = (interaction.from == anotherAgent.type);
           from2 = (interaction.from == 'student') && Config.agentTypes[anotherAgent.type].student;
           to1 = (interaction.to == agent.type)
           to2 = (interaction.to == 'student') && Config.agentTypes[agent.type].student;
-          if ((from1 || from2) && (to1 || to2)) {
+          if ((from1 || from2) && (to1 || to2) && agent.laserBudget && anotherAgent.laserBudget) {
             if (!lines[numLines]) lines[numLines] = [];
             lines[numLines][0] = agent.position;
             lines[numLines][1] = anotherAgent.position;
             lines[numLines][2] = Config.energyTypes[interaction.energy].color;
-            lines[numLines][3] = distSqr
+            lines[numLines][3] = distSqr;
+            agent.laserBudget--;
+            anotherAgent.laserBudget--;
             numLines++;
             break;
           }
