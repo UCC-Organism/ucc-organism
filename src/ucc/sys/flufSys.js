@@ -5,7 +5,7 @@ var random              = require('pex-random');
 var sys                 = require('pex-sys');
 var Color               = require('pex-color').Color;
 
-var AgentsMaterial      = require('../../materials/Fluf');
+var FlufMaterial        = require('../../materials/Fluf');
 var Config              = require('../../config');
 
 var Geometry            = geom.Geometry;
@@ -25,7 +25,7 @@ function flufSys(state) {
     flufGeometry.addAttrib("accentColors", "accentColor", []);
     flufGeometry.addAttrib("fillColors", "fillColor", []);
     flufGeometry.addAttrib("scales", "scale", []);
-    var flufMaterial = new AgentsMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/2, 1/2), texOffset: new Vec2(1/2, 1/2) });
+    var flufMaterial = new FlufMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/2, 1/2), texOffset: new Vec2(1/2, 1/2) });
     state.flufMeshEntity = {
       agentMesh: true,
       disableDepthTest: true,
