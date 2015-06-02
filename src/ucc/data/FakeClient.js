@@ -132,7 +132,7 @@ FakeClient.prototype.genMorning = function(state) {
   //add 100 students
   for (var i = 0; i < 100; i++)
   {
-    self.timers.push(setTimeout(function() 
+    self.timers.push(setTimeout(function()
     {
       random.seed(Date.now());
       AgentStore.all.push({
@@ -183,7 +183,7 @@ FakeClient.prototype.genMorning = function(state) {
   }, 100000 / this.timeSpeed));
 }
 
-FakeClient.prototype.clearTimers = function() 
+FakeClient.prototype.clearTimers = function()
 {
   log("clear timers: " + this.timers.length);
 
@@ -311,7 +311,7 @@ FakeClient.prototype.genC2 = function() {
       agent.targetMode = AgentModes.Classroom;
       agent.targetLocation = 'C.216';
     })
-  }, 10000 / this.timeSpeed))
+  }, 40000 / this.timeSpeed))
 
   self.timers.push(setTimeout(function() {
     if (!self.enabled) return;
@@ -319,7 +319,7 @@ FakeClient.prototype.genC2 = function() {
       agent.targetMode = AgentModes.Lunch;
       agent.targetLocation = 'Kantine';
     })
-  }, 20000 / this.timeSpeed))
+  }, 60000 / this.timeSpeed))
 }
 
 FakeClient.prototype.genStudents = function() {

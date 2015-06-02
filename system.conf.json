@@ -1,4 +1,4 @@
 {
   "client_id": 0,
-  "api_server_url": "http://localhost:8080"
+  "api_server_url_disabled": "http://localhost:8080"
 }
