@@ -676,7 +676,7 @@ function rebuildCells(state) {
   var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
   state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });
 
-  var cellMaterial = new MapMaterial({ pointSize: 5});
+  var cellMaterial = new MapMaterial({ pointSize: 5}, Platform.isPlask);
 
   membranes.forEach(function(membranePoints) {
     var membraneCenter = GeomUtils.centroid(membranePoints);

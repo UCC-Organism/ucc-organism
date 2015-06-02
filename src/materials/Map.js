@@ -7,10 +7,11 @@ var Program   = require('../glu/Program');
 var glslify   = require('glslify-promise');
 
 var MapGLSL   = glslify(__dirname + '/Map.glsl', { transform: ['glslify-import'] });
+var MapHiResGLSL   = glslify(__dirname + '/MapHiRes.glsl', { transform: ['glslify-import'] });
 
-function Map(uniforms) {
+function Map(uniforms, hires) {
   this.gl = Context.currentContext;
-  var program = new Program(MapGLSL);
+  var program = new Program(hires ? MapGLSL : MapHiResGLSL);
   var defaults = { pointSize: 1 };
   uniforms = merge(defaults, uniforms);
   Material.call(this, program, uniforms);

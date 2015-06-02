@@ -1,10 +1,11 @@
-var R       = require('ramda');
-var glu     = require('pex-glu');
-var Vec2    = require('pex-geom').Vec2;
-var Vec3    = require('pex-geom').Vec3;
-var Vec4    = require('pex-geom').Vec4;
-var Time    = require('pex-sys').Time;
-var Config  = require('../../config');
+var R         = require('ramda');
+var glu       = require('pex-glu');
+var Vec2      = require('pex-geom').Vec2;
+var Vec3      = require('pex-geom').Vec3;
+var Vec4      = require('pex-geom').Vec4;
+var Time      = require('pex-sys').Time;
+var Platform  = require('pex-sys').Platform;
+var Config    = require('../../config');
 
 var Context = glu.Context;
 
@@ -53,8 +54,8 @@ function meshRendererSys(state) {
     }
 
     if (program.uniforms["weakDisplacePoints[0]"]) {
-      var n = agents.length;
-      if (n > Config.maxWeakDistortPoints) n = Config.maxWeakDistortPoints;
+      var maxN = Platform.isPlask ? Config.maxWeakDistortPointsPlask : Config.maxWeakDistortPoints;
+      var n = Math.min(maxN, agents.length);
 
       for (var i = 0; i < n; i++) {
         var weakPoint = uniforms["weakDisplacePoints[" + i + "]"];

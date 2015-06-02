@@ -1,5 +1,3 @@
-#define N_WEAK_DISTORT_POINTS 10
-
 uniform vec4 weakDisplacePoints[N_WEAK_DISTORT_POINTS];
 uniform int numWeakDisplacePoints;
 uniform float maxWeakDisplacement;
