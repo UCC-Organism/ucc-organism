@@ -16,9 +16,11 @@ function makeFilter(property, value) {
   }
 }
 
-function meshRendererSys(state) {
+function meshRendererSys(state, debug) {
   var camera = state.camera;
   var gl = Context.currentContext;
+
+  if (debug) console.time('meshRendererSys filter');
 
   var visibleEntities = state.entities
     .filter(makeFilter('debug', state.debug))
@@ -33,11 +35,14 @@ function meshRendererSys(state) {
 
   var agents = R.filter(R.where({ agent: true }), visibleEntities);
 
+  if (debug) console.timeEnd('meshRendererSys filter');
+
   glu.enableDepthReadAndWrite(false);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
-  entitiesWithMesh.forEach(function(entity) {
+  entitiesWithMesh.forEach(function(entity, index) {
+    if (debug) console.time('meshRendererSys entity ' + index);
     if (entity.mesh.geometry.vertices.length == 0) {
       return;
     }
@@ -51,6 +56,12 @@ function meshRendererSys(state) {
 
     if (program.uniforms.sway) {
       uniforms.sway = state.sway;
+    }
+
+    if (program.uniforms.trainWavePosition) {
+      uniforms.trainWavePosition = state.trainDebugMeshEntity.mesh.position.x;
+      uniforms.trainWaveWidth = Config.trainWaveWidth;
+      uniforms.trainWaveStrength = Config.trainWaveStrength;
     }
 
     if (program.uniforms["weakDisplacePoints[0]"]) {
@@ -105,6 +116,8 @@ function meshRendererSys(state) {
     if (entity.lineWidth) {
       gl.lineWidth(1);
     }
+    if (debug) gl.finish();
+    if (debug) console.timeEnd('meshRendererSys entity ' + index);
   })
 }
 

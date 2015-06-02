@@ -262,6 +262,10 @@ var Config = {
 
   floorId: FloorId,
 
+  trainWaveSpeed: 0.2,
+  trainWaveWidth: 0.1,
+  trainWaveStrength: 0.01,
+
   parseColors: parseColors,
   nightColors: nightColors,
   updateColors: updateColors

@@ -1,3 +1,5 @@
+#pragma glslify: import('./DisplacementTrain.glsl')
+
 #define N_STRONG_DISTORT_POINTS 10
 
 uniform vec4 strongDisplacePoints[N_STRONG_DISTORT_POINTS];
@@ -22,6 +24,8 @@ vec3 calcStrongDisplacement(vec3 pos) {
 
       displacement += dir * rat * maxDist * distortionStrength;
     }
+
+    displacement += calcTrainDisplacement(pos + displacement);
   }
 
   return displacement;

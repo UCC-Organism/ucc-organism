@@ -26,6 +26,7 @@ var agentDebugInfoUpdaterSys      = require('./ucc/sys/agentDebugInfoUpdaterSys'
 var displacePointUpdaterSys       = require('./ucc/sys/displacePointUpdaterSys');
 var roomInfoUpdaterSys            = require('./ucc/sys/roomInfoUpdaterSys');
 var flufSys                       = require('./ucc/sys/flufSys');
+var trainSys                      = require('./ucc/sys/trainSys');
 var GUIControlExt                 = require('./gui/GUIControlExt');
 
 //Stores
@@ -53,6 +54,8 @@ var extend            = require('extend');
 
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
+
+var debug = false;
 
 var state = {
   client_id: 'Unknown',
@@ -204,6 +207,7 @@ sys.Window.create({
     this.gui.addParam('showAgentTargets', state, 'showAgentTargets');
     this.gui.addHeader('Debug modes');
     this.gui.addButton('Night colors', this, 'setNightMode');
+    this.gui.addButton('Train', this, 'fireTrain');
 
     this.gui.addHeader('Camera').setPosition(180 * state.DPI, 10 * state.DPI + GUI_OFFSET);
     this.gui.addParam('Camera Distance', state, 'cameraDistanceOverride', { min: 0, max: 2 });
@@ -482,6 +486,9 @@ sys.Window.create({
     Config.nightColors();
     this.onColorChange();
   },
+  fireTrain: function() {
+    state.trainArrived = true;
+  },
   onColorChange: function() {
     var entitiesWithMesh = R.filter(R.where({ mesh: R.identity }), state.entities);
     entitiesWithMesh.forEach(function(entity) {
@@ -491,31 +498,38 @@ sys.Window.create({
     });
   },
   updateSystems: function() {
-    mapSys(state);
-    agentSpawnSys(state);
-    agentTargetNodeUpdaterSys(state);
-    agentKillSys(state);
-    roomInfoUpdaterSys(state);
-    agentDebugInfoUpdaterSys(state);
-    agentTargetNodeFollowerSys(state);
-    agentPositionUpdaterSys(state);
-    agentFlockingSys(state);
-    agentPointSpriteUpdaterSys(state);
-    energySys(state);
-    energyUpdaterSys(state);
-    energyPointSpriteUpdaterSys(state);
+    if (debug) console.log('---');
+    if (debug) console.time('updateSystems');
+    /*console.time('mapSys');                       */mapSys(state);                      /*console.timeEnd('mapSys');*/
+    /*console.time('trainSys');                     */trainSys(state);                    /*console.timeEnd('trainSys');*/
+    /*console.time('agentSpawnSys');                */agentSpawnSys(state);               /*console.timeEnd('agentSpawnSys');*/
+    /*console.time('agentTargetNodeUpdaterSys');    */agentTargetNodeUpdaterSys(state);   /*console.timeEnd('agentTargetNodeUpdaterSys');*/
+    /*console.time('agentKillSys');                 */agentKillSys(state);                /*console.timeEnd('agentKillSys');*/
+    /*console.time('roomInfoUpdaterSys');           */roomInfoUpdaterSys(state);          /*console.timeEnd('roomInfoUpdaterSys');*/
+    /*console.time('agentDebugInfoUpdaterSys');     */agentDebugInfoUpdaterSys(state);    /*console.timeEnd('agentDebugInfoUpdaterSys');*/
+    /*console.time('agentTargetNodeFollowerSys');   */agentTargetNodeFollowerSys(state);  /*console.timeEnd('agentTargetNodeFollowerSys');*/
+    /*console.time('agentPositionUpdaterSys');      */agentPositionUpdaterSys(state);     /*console.timeEnd('agentPositionUpdaterSys');*/
+    /*console.time('agentFlockingSys');             */agentFlockingSys(state);            /*console.timeEnd('agentFlockingSys');*/
+    /*console.time('agentPointSpriteUpdaterSys');   */agentPointSpriteUpdaterSys(state);  /*console.timeEnd('agentPointSpriteUpdaterSys');*/
+    /*console.time('energySys');                    */energySys(state);                   /*console.timeEnd('energySys');*/
+    /*console.time('energyUpdaterSys');             */energyUpdaterSys(state);            /*console.timeEnd('energyUpdaterSys');*/
+    /*console.time('energyPointSpriteUpdaterSys');  */energyPointSpriteUpdaterSys(state); /*console.timeEnd('energyPointSpriteUpdaterSys');*/
+    /*console.time('flufSys');                      */flufSys(state);                     /*console.timeEnd('flufSys');*/
+    /*console.time('displacePointUpdaterSys');      */displacePointUpdaterSys(state);     /*console.timeEnd('displacePointUpdaterSys');*/
 
-    flufSys(state);
-
-    displacePointUpdaterSys(state);
-
-    meshRendererSys(state);
+    if (debug) console.timeEnd('updateSystems');
+    if (debug) console.time('meshRendersys');
+    if (debug) this.gl.finish();
+    meshRendererSys(state, debug);
+    if (debug) this.gl.finish();
+    if (debug) console.timeEnd('meshRendersys');
 
     this.fakeClient.update(state);
 
     state.map.dirty = false;
   },
   draw: function() {
+    if (debug) console.time('frame');
     this.update();
 
     var agents = R.filter(R.where({ agent: true }), state.entities);
@@ -539,6 +553,8 @@ sys.Window.create({
       state.debugText.texts = []; //clear!
     }
     this.gui.draw();
+    if (debug) this.gl.finish();
+    if (debug) console.timeEnd('frame');
   }
 });
 
