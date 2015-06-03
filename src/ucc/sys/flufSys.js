@@ -27,7 +27,7 @@ function flufSys(state) {
     flufGeometry.addAttrib("accentColors", "accentColor", []);
     flufGeometry.addAttrib("fillColors", "fillColor", []);
     flufGeometry.addAttrib("scales", "scale", []);
-    var flufMaterial = new FlufMaterial({ pointSize: 30 * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/2, 1/2), texOffset: new Vec2(1/2, 1/2) });
+    var flufMaterial = new FlufMaterial({ pointSize: Config.fluidSpriteSize * state.DPI, texture: Texture2D.load(image, { flip: false }), texSize: new Vec2(1/2, 1/2), texOffset: new Vec2(1/2, 1/2) });
     state.flufMeshEntity = {
       agentMesh: true,
       disableDepthTest: true,
@@ -58,7 +58,7 @@ function flufSys(state) {
 
   var dirts = state.dirts;
 
-  state.flufMeshEntity.mesh.material.uniforms.pointSize = Config.agentSpriteSize * state.DPI * state.zoom;
+  state.flufMeshEntity.mesh.material.uniforms.pointSize = Config.fluidSpriteSize * state.DPI * state.zoom;
   state.flufMeshEntity.mesh.material.uniforms.alpha = 0.5;
 
   var vertices = state.flufMeshEntity.mesh.geometry.vertices;

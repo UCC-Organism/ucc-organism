@@ -242,7 +242,8 @@ var Config = {
 
   numFluidParticles: 150,
   energySpriteSize: 2,
-  agentSpriteSize: 10,
+  agentSpriteSize: 15,
+  fluidSpriteSize: 10,
 
   maxLasersPerAgent: 2,
   maxLasersPerTeacher: 20,

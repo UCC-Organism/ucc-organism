@@ -62,7 +62,8 @@ var debug = false;
 var state = {
   client_id: 'Unknown',
   new_client_id: 'Unknown',
-  DPI: Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
+  //DPI: Platform.isBrowser ? 1 : plask.Window.screensInfo()[0].highdpi,
+  DPI: 1,
 
   //data
   liveData: false,
@@ -163,6 +164,8 @@ sys.Window.create({
     borderless: Platform.isBrowser ? false : true,
   },
   init: function() {
+    state.DPI = 2;
+    this.settings.highdpi = 2;
     this.initGUI();
     log('MAX_VERTEX_UNIFORM_VECTORS ' + this.gl.getParameter(this.gl.MAX_VERTEX_UNIFORM_VECTORS));
     log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));

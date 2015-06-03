@@ -26,7 +26,7 @@ function agentFlockingSys(state) {
     mesh.position.z = 0.001;
     state.agentInteractionsMeshEntity = {
       disableDepthTest: true,
-      lineWidth: 2 * state.DPI,
+      lineWidth: 2,
       mesh: mesh
     };
     state.entities.push(state.agentInteractionsMeshEntity);
