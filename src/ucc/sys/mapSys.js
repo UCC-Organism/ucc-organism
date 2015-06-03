@@ -277,12 +277,12 @@ function rebuildMap(state) {
     }));
     var g = new Geometry({ vertices: roomEdges });
     var m = new Mesh(g, new SolidColorOrig({ pointSize: 2, color: Color.fromHSL(0.6, 0.5, 0.5, 0.5) }), { lines: true });
-    state.entities.push({ map: true, debug: true, room: roomId, mesh: m, lineWidth: 3, disableDepthTest: true });
+    state.entities.push({ map: true, debug: true, room: roomId, mesh: m, lineWidth: 1.5 * state.DPI, disableDepthTest: true });
   })
 
   //add new entities
   state.entities.push({ map: true, debug: true, mesh: stairsPointsMesh });
-  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh, lineWidth: 3, disableDepthTest: true });
+  state.entities.push({ map: true, debug: true, mesh: corridorEdgesMesh, lineWidth: 1.5 * state.DPI, disableDepthTest: true });
 
   rebuildCells(state);
 }
@@ -674,7 +674,7 @@ function rebuildCells(state) {
     displacePointsCircles.addCircle(displacePoint.position, displacePoint.radius, 16, 'x', 'y');
   });
   var displacePointsCirclesMesh = new Mesh(displacePointsCircles, new SolidColorOrig({ pointSize: 10, color: Color.Red }), { lines: true });
-  state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1, disableDepthTest: true });
+  state.entities.push({ map: true, debug: true, mesh: displacePointsCirclesMesh, lineWidth: 1 * state.DPI, disableDepthTest: true });
 
   var cellMaterial = new MapMaterial({ pointSize: 5}, Platform.isPlask);
 
@@ -708,13 +708,13 @@ function rebuildCells(state) {
   var cellMesh = new Mesh(cellGeometry, cellMaterial, { faces: true });
   var debugNodesMesh = new Mesh(debugNodesGeometry, new SolidColorOrig({ color: Color.Red, pointSize: 5 }), { points: true });
 
-  state.cellEdgeMeshEntity = { name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth };
+  state.cellEdgeMeshEntity = { name: 'cellEdgeMesh', map: true, cell: true, mesh: cellEdgeMesh, lineWidth: Config.cellEdgeWidth/2 * state.DPI };
   state.entities.unshift(state.cellEdgeMeshEntity);
   state.entities.unshift({ name: 'cellMesh', map: true, cell: true, mesh: cellMesh });
   state.entities.unshift({ name: 'nodesDebug', map: true, node: true, debug: true, mesh: debugNodesMesh });
 
   var edgeMesh = new Mesh(new Geometry({ vertices: voronoiCells.points, edges: voronoiCells.edges}), new SolidColorOrig({ color: Color.Pink }), { lines: true });
-  state.entities.unshift({ map: true, corridor: true, debug: true, mesh: edgeMesh, lineWidth: 2 });
+  state.entities.unshift({ map: true, corridor: true, debug: true, mesh: edgeMesh, lineWidth: 1  * state.DPI });
 
   centerCamera(state, floorBBox);
 
@@ -736,7 +736,7 @@ function rebuildCells(state) {
 //-----------------------------------------------------------------------------
 
 function updateProperties(state) {
-  if (state.cellEdgeMeshEntity) state.cellEdgeMeshEntity.lineWidth = Config.cellEdgeWidth;
+  if (state.cellEdgeMeshEntity) state.cellEdgeMeshEntity.lineWidth = Config.cellEdgeWidth / 2  * state.DPI;
 }
 
 //-----------------------------------------------------------------------------
