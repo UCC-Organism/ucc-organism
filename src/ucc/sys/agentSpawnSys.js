@@ -72,17 +72,7 @@ function getAgentTypeForProgramme(programme) {
 function spawnAgents(state) {
   var color = Color.White;
 
-  var stairsNodes = state.map.selectedNodes.filter(function(node) {
-    return !node.neighbors.reduce(function(sameFloorSoFar, neighborNode) {
-      return sameFloorSoFar && (neighborNode.floor == node.floor);
-    }, true)
-  });
-
   var exitNodes = state.map.selectedNodes.filter(R.where({roomType:'exit'}));
-
-  if (!stairsNodes.length) {
-    stairsNodes = state.map.selectedNodes;
-  }
 
   //for each agent:
   //    if !spawned
