@@ -15,7 +15,7 @@ vec3 calcStrongDisplacement(vec3 pos) {
     vec3 c = vec3(strongDisplacePoints[i].xy, 0.0);
 
     float dist = distance(pos, c);
-    float maxDist = strongDisplacePoints[i].z;
+    float maxDist = strongDisplacePoints[i].z * 1.4;
     float distortionStrength = strongDisplacePoints[i].w;
 
     if (dist < maxDist) {
