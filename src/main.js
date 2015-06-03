@@ -54,6 +54,8 @@ var DebugText         = require('./typo/DebugText');
 var Vec3              = require('pex-geom').Vec3;
 var extend            = require('extend');
 
+var fx                = require('pex-fx');
+
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
@@ -526,15 +528,19 @@ sys.Window.create({
     /*console.time('displacePointUpdaterSys');      */displacePointUpdaterSys(state);     /*console.timeEnd('displacePointUpdaterSys');*/
 
     if (debug) console.timeEnd('updateSystems');
+
+    this.fakeClient.update(state);
+
+    state.map.dirty = false;
+  },
+  render: function() {
+    glu.clearColorAndDepth(Config.bgColor);
+
     if (debug) console.time('meshRendersys');
     if (debug) this.gl.finish();
     meshRendererSys(state, debug);
     if (debug) this.gl.finish();
     if (debug) console.timeEnd('meshRendersys');
-
-    this.fakeClient.update(state);
-
-    state.map.dirty = false;
   },
   draw: function() {
     if (debug) console.time('frame');
@@ -542,12 +548,18 @@ sys.Window.create({
 
     var agents = R.filter(R.where({ agent: true }), state.entities);
 
-    glu.clearColorAndDepth(Config.bgColor);
     glu.enableDepthReadAndWrite(true);
 
     if (state.map && state.map.selectedNodes) {
       try {
         this.updateSystems();
+        var color = fx().render({
+          drawFunc: this.render.bind(this),
+          depth: true,
+          width: this.width * state.DPI,
+          height: this.height * state.DPI
+        });
+        color.blit({ width: this.width, height: this.height });
       }
       catch(e) {
         log(e);
