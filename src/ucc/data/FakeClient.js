@@ -88,8 +88,8 @@ FakeClient.prototype.findRoomIds = function(state) {
   var allRooms = state.map.roomsById;
   var roomIds = [];
   for (var id in allRooms){
-    if (allRooms.hasOwnProperty(id) && allRooms[id].floor == state.map.currentFloor) {
-         roomIds.push(id);
+    if (allRooms.hasOwnProperty(id) && (allRooms[id].floor == state.map.currentFloor ||  state.map.currentFloor == -1)) {
+      roomIds.push(id);
     }
   }
   return roomIds;
@@ -99,8 +99,8 @@ FakeClient.prototype.findRoomIdsByType = function(state, type) {
   var allRooms = state.map.roomsById;
   var roomIds = [];
   for (var id in allRooms){
-    if (allRooms.hasOwnProperty(id) && allRooms[id].floor == state.map.currentFloor) {
-         if (allRooms[id].type == type) roomIds.push(id);
+    if (allRooms.hasOwnProperty(id) && (allRooms[id].floor == state.map.currentFloor ||  state.map.currentFloor == -1)) {
+      if (allRooms[id].type == type) roomIds.push(id);
     }
   }
   return roomIds;
@@ -111,11 +111,15 @@ FakeClient.prototype.genMorning = function(state) {
   if (!self.enabled) return;
 
   var roomIds = this.findRoomIds(state);
+
   var classroomIds = this.findRoomIdsByType(state, 'classroom');
 
   var studentProgrammes = R.pluck('programme', R.filter(R.where({ student: true }), R.values(Config.agentTypes)));
 
-  for (var i = 0; i < classroomIds.length; i++)
+  var numTeachers = Math.floor(0.1 * classroomIds.length);
+  
+
+  for (var i = 0; i < numTeachers; i++)
   {
     //add teacher
     AgentStore.all.push({
