@@ -10,7 +10,7 @@ attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
 
-#define N_WEAK_DISTORT_POINTS 60
+#define N_WEAK_DISTORT_POINTS 40
 #pragma glslify: import('./DisplacementWeak.glsl')
 #pragma glslify: import('./DisplacementStrong.glsl')
 

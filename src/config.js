@@ -237,7 +237,7 @@ var Config = {
   maxStudentAge: 40,
 
   maxWeakDistortPoints: 20,
-  maxWeakDistortPointsPlask: 50,
+  maxWeakDistortPointsPlask: 40,
   maxStrongDistortPoints: 10,
 
   numFluidParticles: 150,
@@ -249,8 +249,8 @@ var Config = {
   maxLasersPerTeacher: 20,
   allFloorsEnableLasers: false,
 
-  allFloorsEnergySpriteSize: 2,
-  allFloorsAgentSpriteSize: 10,
+  allFloorsEnergySpriteSize: 1,
+  allFloorsAgentSpriteSize: 20,
 
   energyPointsMaxPerPath: 50,
   energyAgentCountStrength: 1, //num particles per agent
