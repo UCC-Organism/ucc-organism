@@ -8,8 +8,8 @@ function agentTargetNodeUpdaterSys(state) {
   var agents = R.filter(R.where({ agent: R.identity }), state.entities);
   var agentsWithNoTarget = agents.filter(R.not(R.prop('targetNode')));
 
-  var exitNodes = state.map.selectedNodes.filter(R.where({roomType:'exit'}));
-  var toiletNodes = state.map.selectedNodes.filter(R.where({roomType:'toilet'}));
+  var exitNodes = state.map.getSelectedNodesByRoomType('exit');
+  var toiletNodes = state.map.getSelectedNodesByRoomType('toilet');
 
   agents.forEach(function(agent, idx) {
     if (agent.state.targetMode) {

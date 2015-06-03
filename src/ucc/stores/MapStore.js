@@ -113,6 +113,7 @@ var MapStore = {
     }
     log('setFloor', this.currentFloor)
     this.dirty = true;
+    this.caches = [];
   },
   setFocusRoom: function(roomId) {
     this.focusRoomId = roomId;
@@ -146,6 +147,12 @@ var MapStore = {
       }
     }
     return targetNode;
+  },
+  getSelectedNodesByRoomType: function(type) {
+    if (!this.caches[type]) {
+      this.caches[type] = this.selectedNodes.filter(R.where({roomType:type}));
+    }
+    return this.caches[type];
   }
 }
 

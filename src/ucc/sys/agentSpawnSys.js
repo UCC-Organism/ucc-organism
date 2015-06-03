@@ -72,7 +72,7 @@ function getAgentTypeForProgramme(programme) {
 function spawnAgents(state) {
   var color = Color.White;
 
-  var exitNodes = state.map.selectedNodes.filter(R.where({roomType:'exit'}));
+  var exitNodes = state.map.getSelectedNodesByRoomType('exit');
 
   //for each agent:
   //    if !spawned

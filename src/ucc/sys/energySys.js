@@ -36,7 +36,7 @@ function rebuildEnergyPaths(state) {
   var roomNodesPrType = {};
 
   for (var type in Config.roomTypes) {
-    var nodes = state.map.selectedNodes.filter(R.where({ roomType: type }))
+    var nodes = state.map.getSelectedNodesByRoomType(type);
     roomNodesPrType[type] = nodes;
   }
 
@@ -88,7 +88,7 @@ function rebuildEnergyPaths(state) {
     var nodes;
 
     if (room) {
-      nodes = state.map.selectedNodes.filter(R.where({ roomId: idOrType }))
+      nodes = state.map.getSelectedNodesByRoomType(idOrType);
       if (nodes) return nodes;
     }
 
