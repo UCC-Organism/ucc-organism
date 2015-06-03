@@ -59,7 +59,7 @@ var fx                = require('pex-fx');
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
-var debug = true;
+var debug = false;
 
 function timeStart(label) {
   if (debug) console.time(label);
