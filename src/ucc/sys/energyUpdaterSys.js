@@ -28,6 +28,10 @@ function energyUpdaterSys(state) {
 
     numTarget = clamp(numTarget, 0, Config.energyPointsMaxPerPath);
 
+    if (state.map.currentFloor == -1) {
+      numTarget /= 2;
+    }
+
     var num = entity.num || 0;
 
     if (num != numTarget) {
