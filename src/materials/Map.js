@@ -11,7 +11,7 @@ var MapHiResGLSL   = glslify(__dirname + '/MapHiRes.glsl', { transform: ['glslif
 
 function Map(uniforms, hires) {
   this.gl = Context.currentContext;
-  var program = new Program(hires ? MapGLSL : MapHiResGLSL);
+  var program = new Program(hires ? MapHiResGLSL : MapGLSL);
   var defaults = { pointSize: 1 };
   uniforms = merge(defaults, uniforms);
   Material.call(this, program, uniforms);
