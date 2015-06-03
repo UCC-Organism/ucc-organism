@@ -236,8 +236,8 @@ var Config = {
   minStudentAge: 18,
   maxStudentAge: 40,
 
-  maxWeakDistortPoints: 30,
-  maxWeakDistortPointsPlask: 60,
+  maxWeakDistortPoints: 20,
+  maxWeakDistortPointsPlask: 50,
   maxStrongDistortPoints: 10,
 
   numFluidParticles: 150,

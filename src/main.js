@@ -6,7 +6,8 @@ var color             = require('pex-color');
 var gui               = require('pex-gui');
 var R                 = require('ramda');
 var plask             = require('plask');
-var debug             = require('debug').enable('ucc/* ucc-data/*')
+//var debug             = require('debug').enable('ucc/* ucc-data/*')
+var debug             = require('debug').enable('ucc/main ucc/flufSys ucc/agentFlockingSys ucc-data/client')
 var log               = require('debug')('ucc/main');
 
 //CES
@@ -153,7 +154,7 @@ var GUI_OFFSET = 0;
 
 sys.Window.create({
   settings: {
-    position: { x: 0, y: 0 },
+    //position: { x: 0, y: 0 },
     width: Platform.isBrowser ? 1400 : plask.Window.screensInfo()[0].width * state.DPI,
     height: Platform.isBrowser ? 900 : plask.Window.screensInfo()[0].height * state.DPI,
     type: '3d',
