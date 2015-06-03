@@ -568,8 +568,9 @@ function rebuildCells(state) {
     }
   }
 
-  var adaptive = isWholeOrganism ? false : true;
-  var numSteps = isWholeOrganism ? 3 : 0;
+  var adaptive = isWholeOrganism ? true : true;
+  var numSteps = isWholeOrganism ? 2 : 0;
+  var precision = isWholeOrganism ? 0.002 : 0.002;
 
   voronoiCells.cells.forEach(function(cell, cellIndex) {
     var roomId = cellsRoomIds[cellIndex] || -1;
@@ -588,7 +589,7 @@ function rebuildCells(state) {
 
     var cellPoints = cell.map(function(i) { return voronoiCells.points[i] });
 
-    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, numSteps, adaptive, 0.002);
+    var splinePoints = GeomUtils.smoothCurve(cellPoints, 0.9, numSteps, adaptive, precision);
 
     var center = GeomUtils.centroid(splinePoints);
 
