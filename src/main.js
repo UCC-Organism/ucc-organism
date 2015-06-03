@@ -59,7 +59,15 @@ var fx                = require('pex-fx');
 var VK_LEFT  = Platform.isPlask ? 123 : 37;
 var VK_RIGHT = Platform.isPlask ? 124 : 39;
 
-var debug = false;
+var debug = true;
+
+function timeStart(label) {
+  if (debug) console.time(label);
+}
+
+function timeEnd(label) {
+  if (debug) console.timeEnd(label);
+}
 
 var state = {
   client_id: 'Unknown',
@@ -161,9 +169,9 @@ sys.Window.create({
     width: Platform.isBrowser ? 1400 : plask.Window.screensInfo()[0].width * state.DPI,
     height: Platform.isBrowser ? 900 : plask.Window.screensInfo()[0].height * state.DPI,
     type: '3d',
-    fullscreen: Platform.isBrowser ? true : true,
+    fullscreen: debug ? false : (Platform.isBrowser ? true : true),
     highdpi: state.DPI,
-    borderless: Platform.isBrowser ? false : true,
+    borderless: debug ? false : (Platform.isBrowser ? false : true),
   },
   init: function() {
     this.initGUI();
@@ -509,26 +517,26 @@ sys.Window.create({
   },
   updateSystems: function() {
     if (debug) console.log('---');
-    if (debug) console.time('updateSystems');
-    /*console.time('mapSys');                       */mapSys(state);                      /*console.timeEnd('mapSys');*/
-    /*console.time('trainSys');                     */trainSys(state);                    /*console.timeEnd('trainSys');*/
-    /*console.time('agentSpawnSys');                */agentSpawnSys(state);               /*console.timeEnd('agentSpawnSys');*/
-    /*console.time('agentTargetNodeUpdaterSys');    */agentTargetNodeUpdaterSys(state);   /*console.timeEnd('agentTargetNodeUpdaterSys');*/
-    /*console.time('agentKillSys');                 */agentKillSys(state);                /*console.timeEnd('agentKillSys');*/
-    /*console.time('roomInfoUpdaterSys');           */roomInfoUpdaterSys(state);          /*console.timeEnd('roomInfoUpdaterSys');*/
-    /*console.time('agentDebugInfoUpdaterSys');     */agentDebugInfoUpdaterSys(state);    /*console.timeEnd('agentDebugInfoUpdaterSys');*/
-    /*console.time('agentTargetNodeFollowerSys');   */agentTargetNodeFollowerSys(state);  /*console.timeEnd('agentTargetNodeFollowerSys');*/
-    /*console.time('agentBrownianMotionSys');       */agentBrownianMotionSys(state);      /*console.timeEnd('agentBrownianMotionSys');*/
-    /*console.time('agentPositionUpdaterSys');      */agentPositionUpdaterSys(state);     /*console.timeEnd('agentPositionUpdaterSys');*/
-    /*console.time('agentFlockingSys');             */agentFlockingSys(state);            /*console.timeEnd('agentFlockingSys');*/
-    /*console.time('agentPointSpriteUpdaterSys');   */agentPointSpriteUpdaterSys(state);  /*console.timeEnd('agentPointSpriteUpdaterSys');*/
-    /*console.time('energySys');                    */energySys(state);                   /*console.timeEnd('energySys');*/
-    /*console.time('energyUpdaterSys');             */energyUpdaterSys(state);            /*console.timeEnd('energyUpdaterSys');*/
-    /*console.time('energyPointSpriteUpdaterSys');  */energyPointSpriteUpdaterSys(state); /*console.timeEnd('energyPointSpriteUpdaterSys');*/
-    /*console.time('flufSys');                      */flufSys(state);                     /*console.timeEnd('flufSys');*/
-    /*console.time('displacePointUpdaterSys');      */displacePointUpdaterSys(state);     /*console.timeEnd('displacePointUpdaterSys');*/
+    timeStart('updateSystems');
+    timeStart('mapSys');                       mapSys(state);                      timeEnd('mapSys');
+    timeStart('trainSys');                     trainSys(state);                    timeEnd('trainSys');
+    timeStart('agentSpawnSys');                agentSpawnSys(state);               timeEnd('agentSpawnSys');
+    timeStart('agentTargetNodeUpdaterSys');    agentTargetNodeUpdaterSys(state);   timeEnd('agentTargetNodeUpdaterSys');
+    timeStart('agentKillSys');                 agentKillSys(state);                timeEnd('agentKillSys');
+    timeStart('roomInfoUpdaterSys');           roomInfoUpdaterSys(state);          timeEnd('roomInfoUpdaterSys');
+    timeStart('agentDebugInfoUpdaterSys');     agentDebugInfoUpdaterSys(state);    timeEnd('agentDebugInfoUpdaterSys');
+    timeStart('agentTargetNodeFollowerSys');   agentTargetNodeFollowerSys(state);  timeEnd('agentTargetNodeFollowerSys');
+    timeStart('agentBrownianMotionSys');       agentBrownianMotionSys(state);      timeEnd('agentBrownianMotionSys');
+    timeStart('agentPositionUpdaterSys');      agentPositionUpdaterSys(state);     timeEnd('agentPositionUpdaterSys');
+    timeStart('agentFlockingSys');             agentFlockingSys(state);            timeEnd('agentFlockingSys');
+    timeStart('agentPointSpriteUpdaterSys');   agentPointSpriteUpdaterSys(state);  timeEnd('agentPointSpriteUpdaterSys');
+    timeStart('energySys');                    energySys(state);                   timeEnd('energySys');
+    timeStart('energyUpdaterSys');             energyUpdaterSys(state);            timeEnd('energyUpdaterSys');
+    timeStart('energyPointSpriteUpdaterSys');  energyPointSpriteUpdaterSys(state); timeEnd('energyPointSpriteUpdaterSys');
+    timeStart('flufSys');                      flufSys(state);                     timeEnd('flufSys');
+    timeStart('displacePointUpdaterSys');      displacePointUpdaterSys(state);     timeEnd('displacePointUpdaterSys');
 
-    if (debug) console.timeEnd('updateSystems');
+    timeEnd('updateSystems');
 
     this.fakeClient.update(state);
 
@@ -537,14 +545,14 @@ sys.Window.create({
   render: function() {
     glu.clearColorAndDepth(Config.bgColor);
 
-    if (debug) console.time('meshRendersys');
+    timeStart('meshRendersys');
     if (debug) this.gl.finish();
     meshRendererSys(state, debug);
     if (debug) this.gl.finish();
-    if (debug) console.timeEnd('meshRendersys');
+    timeEnd('meshRendersys');
   },
   draw: function() {
-    if (debug) console.time('frame');
+    timeStart('frame');
     this.update();
 
     var agents = R.filter(R.where({ agent: true }), state.entities);
@@ -575,7 +583,7 @@ sys.Window.create({
     }
     this.gui.draw();
     if (debug) this.gl.finish();
-    if (debug) console.timeEnd('frame');
+    timeEnd('frame');
   }
 });
 
