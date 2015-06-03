@@ -167,7 +167,7 @@ sys.Window.create({
   },
   init: function() {
     state.DPI = 2;
-    this.settings.highdpi = 2;
+    this.settings.highdpi = 1;
     this.initGUI();
     log('MAX_VERTEX_UNIFORM_VECTORS ' + this.gl.getParameter(this.gl.MAX_VERTEX_UNIFORM_VECTORS));
     log('MAX_VERTEX_ATTRIBS ' + this.gl.getParameter(this.gl.MAX_VERTEX_ATTRIBS));
