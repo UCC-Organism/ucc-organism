@@ -728,7 +728,7 @@ function rebuildCells(state) {
     v.add(center)
   })
   var corridorBgMesh = new Mesh(corridorBg, new MapMaterial(), { faces: true })
-  corridorBgMesh.position.z = -0.001;
+  corridorBgMesh.position.z = -0.01;
   state.entities.unshift({ name: 'corridorBgMesh', map: true, cell: true, mesh: corridorBgMesh });
 
   log('rebuildMap', 'edgeMesh:', edgeMesh.geometry.vertices.length, 'cellMesh:', cellMesh.geometry.vertices.length, 'cellEdgeMesh:', cellEdgeMesh.geometry.vertices.length)
