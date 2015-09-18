@@ -11,8 +11,9 @@ var coreColor = [255, 0, 0, 255];
 //-----------------------------------------------------------------------------
 
 
-function SplCell(student, x, y, size) {
+function SplCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -26,6 +27,10 @@ function SplCell(student, x, y, size) {
 }
 
 SplCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -83,8 +88,9 @@ SplCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function PmuCell(student, x, y, size) {
+function PmuCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -98,6 +104,10 @@ function PmuCell(student, x, y, size) {
 }
 
 PmuCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -170,8 +180,9 @@ PmuCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function DipSCell(student, x, y, size) {
+function DipSCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -185,6 +196,10 @@ function DipSCell(student, x, y, size) {
 }
 
 DipSCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -261,8 +276,9 @@ DipSCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function DipLCell(student, x, y, size) {
+function DipLCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -276,6 +292,10 @@ function DipLCell(student, x, y, size) {
 }
 
 DipLCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -342,8 +362,9 @@ DipLCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function PaedCell(student, x, y, size) {
+function PaedCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -357,6 +378,10 @@ function PaedCell(student, x, y, size) {
 }
 
 PaedCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -431,8 +456,9 @@ PaedCell.prototype.draw = function(crayon) {
 //-----------------------------------------------------------------------------
 
 
-function DivCell(student, x, y, size) {
+function DivCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -446,6 +472,10 @@ function DivCell(student, x, y, size) {
 }
 
 DivCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -513,8 +543,9 @@ DivCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function FysCell(student, x, y, size) {
+function FysCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -528,6 +559,10 @@ function FysCell(student, x, y, size) {
 }
 
 FysCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
     var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -576,8 +611,9 @@ FysCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function SocCell(student, x, y, size) {
+function SocCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -591,6 +627,10 @@ function SocCell(student, x, y, size) {
 }
 
 SocCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -656,8 +696,9 @@ SocCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function TeacherCell(student, x, y, size) {
+function TeacherCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -671,6 +712,10 @@ function TeacherCell(student, x, y, size) {
 }
 
 TeacherCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -736,8 +781,9 @@ TeacherCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function AdminCell(student, x, y, size) {
+function AdminCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -751,6 +797,10 @@ function AdminCell(student, x, y, size) {
 }
 
 AdminCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var r = this.size * 0.4;
   var x = this.x;
   var y = this.y;
@@ -820,14 +870,13 @@ AdminCell.prototype.draw = function(crayon) {
       .stroke(coreColor)
       .line(x, y, x + dx, y + dy);
   }
-
-  crayon.restore();
 }
 
 //-----------------------------------------------------------------------------
 
-function JanitorCell(student, x, y, size) {
+function JanitorCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -841,6 +890,10 @@ function JanitorCell(student, x, y, size) {
 }
 
 JanitorCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var r = this.size * 0.3;
   var x = this.x;
   var y = this.y;
@@ -848,13 +901,13 @@ JanitorCell.prototype.draw = function(crayon) {
   var r4 = r + 4;
 
   crayon.fill(borderColor)
-    .roundRect(x - r6/8, y - r6/2, r6/4, r6, 6)
+    .roundRect(x - r6/8, y - r6/2, r6/4, r6, 2) //6
 
   crayon.fill(primaryColor)
-    .roundRect(x - r4/8, y - r4/2, r4/4, r4, 6)
+    .roundRect(x - r4/8, y - r4/2, r4/4, r4, 2) //6
 
   crayon.fill(fillColor)
-    .roundRect(x - r/8, y - r/2, r/4, r, 6);
+    .roundRect(x - r/8, y - r/2, r/4, r, 2); //6
 
   var numLegs = random.int(2, 5);
 
@@ -864,7 +917,7 @@ JanitorCell.prototype.draw = function(crayon) {
       .translate(x, y -r6/2)
       .rotate(90 - 45 - i/(numLegs-1)*90)
       .translate(0, -r6/2)
-      .roundRect(-r6/8, -r6/2, r6/4, r6, 8)
+      .roundRect(-r6/8, -r6/2, r6/4, r6, 3) //8
     crayon.restore();
 
     crayon.save();
@@ -872,7 +925,7 @@ JanitorCell.prototype.draw = function(crayon) {
       .translate(x, y -r6/2)
       .rotate(90 - 45 - i/(numLegs-1)*90)
       .translate(0, -r4)
-      .roundRect(-r4/8, 0, r4/4, r4*0.8, 6)
+      .roundRect(-r4/8, 0, r4/4, r4*0.8, 2) //6
     crayon.restore();
 
     crayon.save();
@@ -880,7 +933,7 @@ JanitorCell.prototype.draw = function(crayon) {
       .translate(x, y -r6/2)
       .rotate(90 - 45 - i/(numLegs-1)*90)
       .translate(0, -r)
-      .roundRect(-r/8, 0, r/4, r/2, 6)
+      .roundRect(-r/8, 0, r/4, r/2, 2) //6
     crayon.restore();
   }
 
@@ -890,7 +943,7 @@ JanitorCell.prototype.draw = function(crayon) {
       .translate(x, y +r6/4)
       .rotate(90 + 45 + i/(numLegs-1)*90)
       .translate(0, -r6/2)
-      .roundRect(-r6/8, -r6/2, r6/4, r6, 8)
+      .roundRect(-r6/8, -r6/2, r6/4, r6, 3) //6
     crayon.restore();
 
     crayon.save();
@@ -898,7 +951,7 @@ JanitorCell.prototype.draw = function(crayon) {
       .translate(x, y +r6/4)
       .rotate(90 + 45 + i/(numLegs-1)*90)
       .translate(0, -r4)
-      .roundRect(-r4/8, 0, r4/4, r4*0.8, 6)
+      .roundRect(-r4/8, 0, r4/4, r4*0.8, 2) //6
     crayon.restore();
 
     crayon.save();
@@ -906,15 +959,16 @@ JanitorCell.prototype.draw = function(crayon) {
       .translate(x, y +r6/4)
       .rotate(90 + 45 + i/(numLegs-1)*90)
       .translate(0, -r)
-      .roundRect(-r/8, 0, r/4, r/2, 6)
+      .roundRect(-r/8, 0, r/4, r/2, 2) //6
     crayon.restore();
   }
 }
 
 //-----------------------------------------------------------------------------
 
-function CookCell(student, x, y, size) {
+function CookCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -928,6 +982,10 @@ function CookCell(student, x, y, size) {
 }
 
 CookCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);
@@ -981,8 +1039,9 @@ CookCell.prototype.draw = function(crayon) {
 
 //-----------------------------------------------------------------------------
 
-function ResearcherCell(student, x, y, size) {
+function ResearcherCell(student, x, y, size, colors) {
   this.student = student;
+  this.colors = colors;
   this.x = x;
   this.y = y;
   this.vx = 0;
@@ -996,6 +1055,10 @@ function ResearcherCell(student, x, y, size) {
 }
 
 ResearcherCell.prototype.draw = function(crayon) {
+  if (this.colors) borderColor = this.colors[3];
+  if (this.colors) primaryColor = this.colors[1];
+  if (this.colors) fillColor = this.colors[0];
+
   var student = this.student;
   var seed = this.seed;
   random.seed(seed);

@@ -44,6 +44,11 @@ function matrixLayout(w, h, n, lineHeight) {
   }
 }
 
+function hex2rgb(hex) {
+  var c = Color.fromHex(hex);
+  return [ Math.floor(c.r * 255), Math.floor(c.g * 255), Math.floor(c.b * 255) ];
+}
+
 //-----------------------------------------------------------------------------
 
 Window.create({
@@ -58,6 +63,7 @@ Window.create({
   cells: [],
   programmeLabels: [],
   saveFrame: false,
+  savePDFFrame: true,
   init: function() {
     this.initScene();
     this.initStores();
@@ -134,6 +140,22 @@ Window.create({
       'Admin',
     ];
 
+    var cellColors = this.cellColors = [
+      [hex2rgb("#FF0000"), hex2rgb("#FFAA00"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#FFAA00"), hex2rgb("#FFFF00"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#FF00FF"), hex2rgb("#FFAAFF"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#00DDFF"), hex2rgb("#DAFFFF"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#F0F9F5"), hex2rgb("#F0F9F5"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#FF0000"), hex2rgb("#FFAA00"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#FF0000"), hex2rgb("#FFAA00"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#FF0000"), hex2rgb("#FFAA00"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#46DA00"), hex2rgb("#00FF53"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#32FFFB"), hex2rgb("#00C37B"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#7B5647"), hex2rgb("#7B5647"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#FF0000"), hex2rgb("#FFFF00"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ],
+      [hex2rgb("#0000FF"), hex2rgb("#00FFFF"), hex2rgb("#FFFFFF"), hex2rgb("#000000"), ]
+    ]
+
     function notEmpty(list) {
       return list.students.length > 0;
     }
@@ -148,7 +170,9 @@ Window.create({
       })
       students.forEach(function(student) {
         var pos = layout(index++);
-        this.cells.push(new CellType(student, pos.x, pos.y, pos.width*0.9))
+        var colors = null;
+        //var colors = cellColors[cellTypeIndex];
+        this.cells.push(new CellType(student, pos.x, pos.y, pos.width*0.9, colors))
       }.bind(this));
 
     }.bind(this));
@@ -168,6 +192,14 @@ Window.create({
   },
   draw: function() {
     random.seed(0);
+
+    if (this.savePDFFrame) {
+      //this.canvas = new plask.SkCanvas(this.width * 6, this.height * 6);
+      this.oldCanvas = this.canvas;
+      //this.canvas = plask.SkCanvas.createForPDF('agents.pdf', 595, 842, this.width * 6, this.height * 6);
+      this.canvas = plask.SkCanvas.createForPDF('agents.pdf', 842, 595, 842, 595);
+      this.crayon = new Crayons(this.canvas);
+    }
 
     if (this.pull) {
       this.cells.forEach(function(cell) {
@@ -201,9 +233,14 @@ Window.create({
       this.canvas.drawColor(255, 0,0, 0, this.paint.kClearMode);
     }
 
-    var layout = matrixLayout(this.width, this.height, 20, lineHeight);
+    var layout = matrixLayout(this.width*8, this.height*8, 20, lineHeight*8);
     //crayon.save();
-    //crayon.scale(1, 1);
+    //crayon.scale(1.5, 1.5);
+    this.canvas.save();
+    if (this.savePDFFrame) {
+      this.canvas.scale(0.4, 0.4)
+    }
+    //this.canvas.scale(6, 6)
     this.cells.forEach(function(cell, cellIndex) {
       cell.draw(this.crayon);
       var rect = layout(cellIndex);
@@ -219,9 +256,11 @@ Window.create({
       //  .line(x, y, x, y + h)
       //  .line(x + w, y, x + w, y + h)
     }.bind(this));
+    //crayon.restore();
+    this.canvas.restore();
 
 
-    if (!this.saveFrame) {
+    if (!this.saveFrame && !this.savePDFFrame) {
       this.programmeLabels.forEach(function(label, i) {
         var x = 24;
         var y = lineHeight * this.width/20 * (i + 1);
@@ -233,6 +272,13 @@ Window.create({
       this.saveFrame = false;
       this.canvas.writeImage('png', Date.now() + '.png');
       this.canvas.writeImage('png', '../../../assets/agents_5.png');
+    }
+
+    if (this.savePDFFrame) {
+      this.canvas.writePDF();
+      this.canvas = this.oldCanvas;
+      this.oldCanvas = null;
+      this.crayon = new Crayons(this.canvas);
     }
 
     //crayon.restore();
