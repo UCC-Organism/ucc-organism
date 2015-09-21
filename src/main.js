@@ -77,6 +77,7 @@ var state = {
 
   //data
   liveData: false,
+  generatedDataMode: null,
 
   //scene
   initFloor: Config.floorId.C_2,
@@ -367,6 +368,10 @@ sys.Window.create({
         case 'n': state.showNodes = !state.showNodes; break;
         case 'f': Time.verbose = !Time.verbose; break;
         case 't': state.showAgentTargets = !state.showAgentTargets; break;
+        case 'w':
+          this.killAllAgents();
+          state.generatedDataMode = 'showcase';
+          break;
       }
     }.bind(this));
   },
@@ -382,8 +387,7 @@ sys.Window.create({
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
 
     agents.forEach(function(agent) {
-      agent.state.entity = null;
-      state.entities.splice(state.entities.indexOf(agent), 1);
+      agent.state.mode = AgentModes.Dead;
     })
   },
   update: function() {

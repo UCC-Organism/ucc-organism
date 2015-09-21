@@ -70,18 +70,32 @@ function FakeClient(timeSpeed, state) {
 }
 
 FakeClient.prototype.update = function(state) {
-  if (!state.map.dirty) return;
+  var exit = false;
+  if (!state.map.dirty) {
+    exit = true;
+  }
+  if (state.generatedDataMode != null) {
+    exit = false;
+  }
+
+  if (exit) return;
 
   this.clearTimers();
 
-  if (state.map.currentFloor == Config.floorId.All) { this.genMorning(state); }
-  if (state.map.currentFloor == Config.floorId.A_0) { this.genMorning(state); }
-  if (state.map.currentFloor == Config.floorId.A_1) { this.genMorning(state); }
-  if (state.map.currentFloor == Config.floorId.B_0) { this.genMorning(state); }
-  if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
-  if (state.map.currentFloor == Config.floorId.C_0) { this.genMorning(state); }
-  if (state.map.currentFloor == Config.floorId.C_1) { this.genOneEachClassRoom(state); }
-  if (state.map.currentFloor == Config.floorId.C_2) { this.genC2(state); }
+  if (state.generatedDataMode == 'showcase') {
+    this.genShowcase(state);
+    state.generatedDataMode = null;
+  }
+  else {
+    if (state.map.currentFloor == Config.floorId.All) { this.genMorning(state); }
+    if (state.map.currentFloor == Config.floorId.A_0) { this.genMorning(state); }
+    if (state.map.currentFloor == Config.floorId.A_1) { this.genMorning(state); }
+    if (state.map.currentFloor == Config.floorId.B_0) { this.genMorning(state); }
+    if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
+    if (state.map.currentFloor == Config.floorId.C_0) { this.genMorning(state); }
+    if (state.map.currentFloor == Config.floorId.C_1) { this.genOneEachClassRoom(state); }
+    if (state.map.currentFloor == Config.floorId.C_2) { this.genC2(state); }
+  }
 }
 
 FakeClient.prototype.findRoomIds = function(state) {
@@ -117,7 +131,6 @@ FakeClient.prototype.genMorning = function(state) {
   var studentProgrammes = R.pluck('programme', R.filter(R.where({ student: true }), R.values(Config.agentTypes)));
 
   var numTeachers = Math.floor(0.1 * classroomIds.length);
-  
 
   for (var i = 0; i < numTeachers; i++)
   {
@@ -373,6 +386,37 @@ FakeClient.prototype.genStudents = function() {
       agent.targetLocation = 'C.216';
     })
   }, 25000 / this.timeSpeed))
+}
+
+//generates agents of each type in separate rooms
+FakeClient.prototype.genShowcase = function(state) {
+  console.log('genShowcase', this.enabled, AgentStore.all.length)
+  var self = this;
+  if (!self.enabled) return;
+
+  random.seed(0);
+
+  var types = Object.keys(Config.agentTypes);
+
+  var rooms = state.map.selectedNodes.filter(function(node) {
+      return node.roomType && node.roomType != 'exit';
+  })
+
+  var id = 0;
+  types.forEach(function(type, typeIndex) {
+    for(var i=0; i<5; i++) {
+      AgentStore.all.push({
+        id: 'agent' + id++,
+        programme: Config.agentTypes[type].programme,
+        end: "2018-01-31 00:00:00.0000000",
+        gender: random.int(0, 2),
+        age: random.int(20, 30),
+        targetMode: AgentModes.Showcase,
+        targetLocation: rooms[typeIndex].roomId,
+        spawnNode: rooms[typeIndex].neighbors[i%rooms[typeIndex].neighbors.length]
+      })
+    }
+  })
 }
 
 module.exports = FakeClient;

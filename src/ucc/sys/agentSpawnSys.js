@@ -109,6 +109,11 @@ function spawnAgents(state) {
           missingRooms.push(agent.targetLocation);
           return;
         }
+        if (agent.targetMode == AgentModes.Showcase) {
+          spawnNode = state.map.getSelectedNodeByRoomId(agent.targetLocation);
+          spawnNode = random.element(spawnNode.neighbors);
+          position = spawnNode.position;
+        }
 
         if ((room.floor == state.map.currentFloor) || (state.map.currentFloor == -1)) {
           //position = R.find(R.where({ roomId: room.id }), state.map.selectedNodes).position;
@@ -116,6 +121,10 @@ function spawnAgents(state) {
           agent.entity.type = getAgentTypeForProgramme(agent.programme);
           agent.entity.typeIndex = R.keys(Config.agentTypes).indexOf(agent.entity.type);
           agent.entity.color = Color.White.clone();
+          if (agent.targetMode == AgentModes.Showcase) {
+            agent.entity.scale = 1;
+            agent.entity.life = 1;
+          }
 
           if (Config.agentFillColorBasedOnAccentColor)
           {

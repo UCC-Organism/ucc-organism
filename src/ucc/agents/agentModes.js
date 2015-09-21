@@ -8,5 +8,6 @@ module.exports = {
   Lunch: 'lunch',
   Eating: 'eating',
   Closet: 'closet',
-  Dead: 'dead'
+  Dead: 'dead',
+  Showcase: 'showcase'
 }
