@@ -95,7 +95,7 @@ function flufSys(state) {
     {
       var c = accentColors[entityIndex];
       c = new Color(c.r, c.g, c.b, c.a);
-      c.a = .5;
+      c.a = 0.5;
       fillColors[entityIndex] = c;
     }
 
