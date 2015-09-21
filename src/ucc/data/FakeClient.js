@@ -202,6 +202,7 @@ FakeClient.prototype.genMorning = function(state) {
 }
 
 FakeClient.prototype.genRandom = function(state) {
+  console.log('FakeClient.genRandom');
   var self = this;
   if (!self.enabled) return;
 
@@ -229,7 +230,6 @@ FakeClient.prototype.genRandom = function(state) {
   var numGroups = random.int(3, 10)
 
   var total = 0;
-  console.log('FakeClient.genRandom');
   R.range(0, numGroups).forEach(function(g) {
     var classroom = random.element(classroomIds);
     var programme = random.element(studentProgrammes);
@@ -299,7 +299,7 @@ FakeClient.prototype.genRandom = function(state) {
   self.timers.push(setTimeout(function() {
     console.log('FakeClient.genRandom restart');
     this.clearTimers();
-    this.genRandom();
+    this.genRandom(state);
   }.bind(this), 110000 / this.timeSpeed));
 }
 
