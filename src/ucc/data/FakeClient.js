@@ -87,14 +87,15 @@ FakeClient.prototype.update = function(state) {
     state.generatedDataMode = null;
   }
   else {
-    if (state.map.currentFloor == Config.floorId.All) { this.genMorning(state); }
-    if (state.map.currentFloor == Config.floorId.A_0) { this.genMorning(state); }
-    if (state.map.currentFloor == Config.floorId.A_1) { this.genMorning(state); }
-    if (state.map.currentFloor == Config.floorId.B_0) { this.genMorning(state); }
-    if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
-    if (state.map.currentFloor == Config.floorId.C_0) { this.genMorning(state); }
-    if (state.map.currentFloor == Config.floorId.C_1) { this.genOneEachClassRoom(state); }
-    if (state.map.currentFloor == Config.floorId.C_2) { this.genC2(state); }
+    this.genRandom(state);
+    //if (state.map.currentFloor == Config.floorId.All) { this.genMorning(state); }
+    //if (state.map.currentFloor == Config.floorId.A_0) { this.genMorning(state); }
+    //if (state.map.currentFloor == Config.floorId.A_1) { this.genMorning(state); }
+    //if (state.map.currentFloor == Config.floorId.B_0) { this.genMorning(state); }
+    //if (state.map.currentFloor == Config.floorId.B_1) { this.genB2(state); }
+    //if (state.map.currentFloor == Config.floorId.C_0) { this.genMorning(state); }
+    //if (state.map.currentFloor == Config.floorId.C_1) { this.genOneEachClassRoom(state); }
+    //if (state.map.currentFloor == Config.floorId.C_2) { this.genC2(state); }
   }
 }
 
@@ -198,6 +199,108 @@ FakeClient.prototype.genMorning = function(state) {
       agent.targetLocation = '';
     })
   }, 100000 / this.timeSpeed));
+}
+
+FakeClient.prototype.genRandom = function(state) {
+  var self = this;
+  if (!self.enabled) return;
+
+  var roomIds = this.findRoomIds(state);
+
+  var classroomIds = [];
+  var rooms = state.map.selectedNodes.filter(function(node) {
+      return node.roomType && node.roomType != 'exit';
+  })
+
+  //increase room probability
+  for(var i=0; i<5; i++) {
+    rooms.forEach(function(node) {
+      if (node.roomType == 'classroom') {
+        classroomIds.push(node.roomId);
+      }
+      else if (node.roomId && i == 0) {
+        classroomIds.push(node.roomId);
+      }
+    });
+  }
+
+  var studentProgrammes = R.pluck('programme', R.filter(R.where({ student: true }), R.values(Config.agentTypes)));
+
+  var numGroups = random.int(3, 10)
+
+  var total = 0;
+  console.log('FakeClient.genRandom');
+  R.range(0, numGroups).forEach(function(g) {
+    var classroom = random.element(classroomIds);
+    var programme = random.element(studentProgrammes);
+    AgentStore.all.push({
+      id: 'teacher' + g,
+      programme: 'Teacher',
+      end: "2018-01-31 00:00:00.0000000",
+      gender: random.int(0, 2),
+      age: 25,
+      targetMode: AgentModes.Classroom,
+      targetLocation: classroom
+    })
+    total++;
+
+    for (var i = 0; i < random.int(10, 20); i++){
+      var delay = (random.int(10000)) / this.timeSpeed;
+      self.timers.push(setTimeout(function()
+      {
+        random.seed(Date.now());
+        AgentStore.all.push({
+          id: 'student' + i,
+          programme: programme,
+          end: "2018-01-31 00:00:00.0000000",
+          gender: random.int(0,2),
+          age: random.int(20, 30),
+          targetMode: AgentModes.Roaming,
+          targetLocation: classroom,
+          seed: g
+        });
+      }, delay));
+    }
+  }.bind(this))
+
+
+  // go to classroom
+  self.timers.push(setTimeout(function() {
+    if (!self.enabled) return;
+    log("go to classroom");
+
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Classroom;
+      random.seed(agent.seed);
+      agent.targetLocation = random.element(classroomIds);
+    })
+  }, 10000 / this.timeSpeed));
+
+  // go to lunch
+  self.timers.push(setTimeout(function() {
+    if (!self.enabled) return;
+    log("go to lunch");
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Lunch;
+      agent.targetLocation = 'Kantine';
+    })
+  }, 60000 / this.timeSpeed));
+
+  // go home
+  self.timers.push(setTimeout(function() {
+    if (!self.enabled) return;
+    log("go home");
+    AgentStore.all.forEach(function(agent) {
+      agent.targetMode = AgentModes.Away;
+      agent.targetLocation = '';
+    })
+  }, 100000 / this.timeSpeed));
+
+  self.timers.push(setTimeout(function() {
+    console.log('FakeClient.genRandom restart');
+    this.clearTimers();
+    this.genRandom();
+  }.bind(this), 110000 / this.timeSpeed));
 }
 
 FakeClient.prototype.clearTimers = function()
@@ -390,7 +493,7 @@ FakeClient.prototype.genStudents = function() {
 
 //generates agents of each type in separate rooms
 FakeClient.prototype.genShowcase = function(state) {
-  console.log('genShowcase', this.enabled, AgentStore.all.length)
+  console.log('FakeClient.genShowcase', this.enabled, AgentStore.all.length)
   var self = this;
   if (!self.enabled) return;
 
