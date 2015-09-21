@@ -14,6 +14,9 @@ function agentKillSys(state) {
         agent.state.entity = null;
         var idx = state.entities.indexOf(agent);
         state.entities.splice(idx, 1);
+
+        var agentStateIdx = state.agents.all.indexOf(agent.state);
+        state.agents.all.splice(agentStateIdx, 1);
       }
     }
     else if (agent.life < 1) {
