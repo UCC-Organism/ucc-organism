@@ -11,6 +11,7 @@ function Client(serverUrl) {
   log(serverUrl);
   this.enabled = true;
   this.serverUrl = serverUrl;
+  this.online = undefined;
 }
 
 Client.prototype.getJSON = function(url) {
@@ -30,10 +31,12 @@ Client.prototype.checkServerConnection = function() {
   .end(function(err, res){
      if (err) {
       log("ERR Server is NOT available. Reconnecting in 10s...");
+      this.online = false;
       setTimeout(this.checkServerConnection.bind(this), 10000)
      }
      else {
       log("Server is available. Connecting...");
+      this.online = true;
       this.subscribeToEvents();
      }
   }.bind(this));

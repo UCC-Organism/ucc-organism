@@ -7,7 +7,7 @@ var gui               = require('pex-gui');
 var R                 = require('ramda');
 var plask             = require('plask');
 //var debug             = require('debug').enable('ucc/* ucc-data/*')
-var debug             = require('debug').enable('ucc/main ucc/flufSys ucc/agentFlockingSys ucc-data/client')
+var debug             = require('debug').enable('ucc/main ucc/flufSys ucc/agentFlockingSys ucc-data/client ucc-data/fake-client')
 var log               = require('debug')('ucc/main');
 
 //CES
@@ -398,6 +398,15 @@ sys.Window.create({
     if (this.client) {
       this.client.enabled = state.liveData;
       this.fakeClient.enabled = !state.liveData;
+
+      if (state.liveData && this.client.enabled) {
+        if (this.client.online === false) {
+          this.fakeClient.enabled = true;
+        }
+        else {
+          this.fakeClient.enabled = false;
+        }
+      }
     }
     else {
       if (state.liveData && !this.client && Config.serverUrl) {

@@ -6,7 +6,7 @@ var AgentStore = require('../stores/AgentStore');
 var AgentModes = require('../agents/agentModes');
 var Config = require('../../config');
 var random = require('pex-random');
-var log = require('debug')('ucc-data/fakeClient');
+var log = require('debug')('ucc-data/fake-client');
 
 var students = [
   "student663",
@@ -62,6 +62,7 @@ var rooms = [
 ];
 
 function FakeClient(timeSpeed, state) {
+  this.prevEnabled = null;
   this.enabled = true;
   this.timeSpeed = timeSpeed;
   this.timers = [];
@@ -78,9 +79,25 @@ FakeClient.prototype.update = function(state) {
     exit = false;
   }
 
+  if (this.prevEnabled != this.enabled) {
+    if (this.enabled) {
+      log('waking up');
+      exit = false;
+    }
+    else {
+      log('going to sleep');
+      this.clearTimers();
+      exit = true;
+    }
+  }
+
+  this.prevEnabled = this.enabled
+
   if (exit) return;
 
   this.clearTimers();
+
+
 
   if (state.generatedDataMode == 'showcase') {
     this.genShowcase(state);
@@ -202,7 +219,7 @@ FakeClient.prototype.genMorning = function(state) {
 }
 
 FakeClient.prototype.genRandom = function(state) {
-  console.log('FakeClient.genRandom');
+  log('genRandom');
   var self = this;
   if (!self.enabled) return;
 
@@ -297,7 +314,7 @@ FakeClient.prototype.genRandom = function(state) {
   }, 100000 / this.timeSpeed));
 
   self.timers.push(setTimeout(function() {
-    console.log('FakeClient.genRandom restart');
+    log('FakeClient.genRandom restart');
     this.clearTimers();
     this.genRandom(state);
   }.bind(this), 110000 / this.timeSpeed));
@@ -493,7 +510,7 @@ FakeClient.prototype.genStudents = function() {
 
 //generates agents of each type in separate rooms
 FakeClient.prototype.genShowcase = function(state) {
-  console.log('FakeClient.genShowcase', this.enabled, AgentStore.all.length)
+  log('FakeClient.genShowcase', this.enabled, AgentStore.all.length)
   var self = this;
   if (!self.enabled) return;
 
