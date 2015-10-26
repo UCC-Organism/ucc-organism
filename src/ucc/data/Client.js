@@ -103,7 +103,8 @@ Client.prototype.onEvent = function(e) {
   e.agents.forEach(function(agentId) {
     var agent = AgentStore.getAgentById(agentId);
     if (!agent) {
-      //log('WARN', 'Client.onEvent agent not found!', agentId);
+      // BUG/TODO there might be events with agents, that have not been present in current-state before
+      log('WARN', 'Client.onEvent agent not found!', agentId);
       return;
     }
     if (e.description == 'away') {
