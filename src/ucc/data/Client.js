@@ -75,11 +75,11 @@ Client.prototype.updateCurrentState = function() {
         id: agentId
       }
       if (agentId.match(/^student/)) { agent.type = 'student'; };
-      if (agentId.match(/^teacher/)) { agent.type = 'teacher'; agent.programme == 'Teacher'; }
-      if (agentId.match(/^researcher/)) { agent.type = 'researcher'; agent.programme == 'Researcher'; }
-      if (agentId.match(/^janitor/)) { agent.type = 'janitor'; agent.programme == 'Janitor'; }
-      if (agentId.match(/^cook/)) { agent.type = 'cook'; agent.programme == 'Cook'; }
-      if (agentId.match(/^admin/)) { agent.type = 'admin'; agent.programme == 'Admin'; }
+      if (agentId.match(/^teacher/)) { agent.type = 'teacher'; agent.programme = 'Teacher'; }
+      if (agentId.match(/^researcher/)) { agent.type = 'researcher'; agent.programme = 'Researcher'; }
+      if (agentId.match(/^janitor/)) { agent.type = 'janitor'; agent.programme = 'Janitor'; }
+      if (agentId.match(/^cook/)) { agent.type = 'cook'; agent.programme = 'Cook'; }
+      if (agentId.match(/^admin/)) { agent.type = 'admin'; agent.programme = 'Admin'; }
 
       if (agentState.description == 'away') {
         agent.targetMode = AgentModes.Away;
