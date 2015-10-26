@@ -74,6 +74,7 @@ Client.prototype.updateCurrentState = function() {
       var agent = {
         id: agentId
       }
+      // TODO: this should maybe be moved/refactored into agentSpawnSys.js, - and actually shouldn't be a heuristic on name, but use the server-supplied type of agent..
       if (agentId.match(/^student/)) { agent.type = 'student'; };
       if (agentId.match(/^teacher/)) { agent.type = 'teacher'; agent.programme = 'Teacher'; }
       if (agentId.match(/^researcher/)) { agent.type = 'researcher'; agent.programme = 'Researcher'; }
@@ -103,9 +104,19 @@ Client.prototype.onEvent = function(e) {
   e.agents.forEach(function(agentId) {
     var agent = AgentStore.getAgentById(agentId);
     if (!agent) {
-      // BUG/TODO there might be events with agents, that have not been present in current-state before
-      log('WARN', 'Client.onEvent agent not found!', agentId);
-      return;
+      // This if-branch was originally
+      //
+      //     //log('WARN', 'Client.onEvent agent not found!', agentId);
+      //     return;
+      //
+      // which led to missing agents, as events might contain links to new agents,
+      // so I have replaced it with:
+      
+      agent = { id: agentId };
+      AgentStore.all.push(agent);
+
+      // and then I believe that agentSpawnSys.js will load/add
+      // agent information from the api-server?
     }
     if (e.description == 'away') {
       //log('Client.onEvent', agentId, 'is going away')
