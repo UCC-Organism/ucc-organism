@@ -128,6 +128,7 @@ Client.prototype.onEvent = function(e) {
     }
     else if (e.description == 'random toilet') {
       agent.targetMode = AgentModes.Toilet;
+      // BUG/TODO: is location e.location(=="random toilet" or should it be "toilet"?)
       agent.targetLocation = e.location;
     }
     else if (e.description == 'random lunch') {
