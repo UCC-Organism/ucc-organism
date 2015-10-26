@@ -8,7 +8,7 @@ var Color = color.Color;
 var merge = require('merge');
 var fs = require('fs');
 
-var SDFGLSL = fs.readFileSync(__dirname + '/SDF.glsl', 'utf8');
+var SDFGLSL = fs.readFileSync(__dirname + '/sdf.glsl', 'utf8');
 
 function SDF(uniforms) {
   this.gl = Context.currentContext;

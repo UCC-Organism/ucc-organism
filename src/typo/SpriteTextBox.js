@@ -7,7 +7,7 @@ var find = require('ramda').find;
 var where = require('ramda').where;
 var wordwrap = require('word-wrapper');
 
-var SDF = require('./materials/SDF');
+var SDF = require('./materials/sdf');
 
 function SpriteTextBox(text, opts) {
   this.text = text;
