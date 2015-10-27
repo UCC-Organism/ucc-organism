@@ -7,7 +7,7 @@ var gui               = require('pex-gui');
 var R                 = require('ramda');
 var plask             = require('plask');
 //var debug             = require('debug').enable('ucc/* ucc-data/*')
-var debug             = require('debug').enable('ucc/main ucc/flufSys ucc/agentFlockingSys ucc-data/client ucc-data/fake-client')
+var debug             = require('debug').enable('ucc/main ucc/flufSys ucc/agentFlockingSys ucc-data/client ucc-data/fake-client ucc/agentSpawnSys')
 var log               = require('debug')('ucc/main');
 
 //CES
@@ -68,6 +68,34 @@ function timeStart(label) {
 function timeEnd(label) {
   if (debug) console.timeEnd(label);
 }
+
+var QueryString = function () {
+  // This function is anonymous, is executed immediately and
+  // the return value is assigned to QueryString!
+  var query_string = {};
+  if (Platform.isPlask) {
+      return query_string;
+  }
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+        // If first entry with this name
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+        // If second entry with this name
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+        // If third or later entry with this name
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  }
+    return query_string;
+}();
+
+console.log('QueryString', QueryString);
 
 var state = {
   client_id: 'Unknown',
@@ -138,6 +166,11 @@ catch(e) {
   state.new_client_id = Platform.isPlask ? '0' : '0';
   state.liveData = 0;
 
+  if (QueryString['serverUrl']) {
+      Config.serverUrl = QueryString['serverUrl'];
+      state.liveData = 1;
+  }
+
   if (Platform.isPlask) {
     var fs = require('fs');
     var path = require('path');
@@ -170,7 +203,7 @@ sys.Window.create({
     width: Platform.isBrowser ? 1400 : plask.Window.screensInfo()[0].width * state.DPI,
     height: Platform.isBrowser ? 900 : plask.Window.screensInfo()[0].height * state.DPI,
     type: '3d',
-    fullscreen: debug ? false : (Platform.isBrowser ? true : true),
+    //fullscreen: debug ? false : (Platform.isBrowser ? true : true),
     highdpi: state.DPI,
     borderless: debug ? false : (Platform.isBrowser ? false : true),
   },
