@@ -31,7 +31,7 @@ function agentDebugInfoUpdaterSys(state) {
   if (state.showLabels) {
     var agents = R.filter(R.where({ agent: R.identity }), state.entities);
     agents.forEach(function(agent) {
-      state.debugText.drawText(agent.type + '/' + agent.state.mode, agent.position);
+      //state.debugText.drawText(agent.type + '/' + agent.state.mode, agent.position);
     });
   }
 
