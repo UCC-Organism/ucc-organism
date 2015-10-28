@@ -65,85 +65,37 @@ Client.prototype.updateCurrentState = function() {
       setTimeout(this.updateCurrentState.bind(this), 500);
       return;
     }
-    //log('Client.updateCurrentState agents:', agentIds.length);
-    //log('Client.updateCurrentState', agentsState[agentIds[0]]);
 
     AgentStore.all = [];
     agentIds.forEach(function(agentId) {
-      var agentState = agentsState[agentId];
-      var agent = {
-        id: agentId
-      }
-      // TODO: this should maybe be moved/refactored into agentSpawnSys.js, - and actually shouldn't be a heuristic on name, but use the server-supplied type of agent..
-      if (agentId.match(/^student/)) { agent.type = 'student'; };
-      if (agentId.match(/^teacher/)) { agent.type = 'teacher'; agent.programme = 'Teacher'; }
-      if (agentId.match(/^researcher/)) { agent.type = 'researcher'; agent.programme = 'Researcher'; }
-      if (agentId.match(/^janitor/)) { agent.type = 'janitor'; agent.programme = 'Janitor'; }
-      if (agentId.match(/^cook/)) { agent.type = 'cook'; agent.programme = 'Cook'; }
-      if (agentId.match(/^admin/)) { agent.type = 'admin'; agent.programme = 'Admin'; }
-
-      if (agentState.description == 'away') {
-        agent.targetMode = AgentModes.Away;
-      }
-      else if (agentState.location) {
-        agent.targetMode = AgentModes.Classroom;
-        agent.targetLocation = agentState.location;
-      }
-
-      //if (agent.)
-      AgentStore.all.push(agent);
+      applyAgentActivity(agentId, agentsState[agentId]);
     })
-
-    //log('Client.updateCurrentState', AgentStore.all.length);
   }.bind(this));
 }
+
+function applyAgentActivity(agentId, activity) {
+  var agent = AgentStore.getAgentById(agentId);
+  if (!agent) {
+    agent = { id: agentId };
+    AgentStore.all.push(agent);
+  }
+  if(activity.location) {
+    agent.targetLocation = activity.location;
+  }
+  switch (e.description) {
+    case "away":          break;
+    case "roaming":       agent.targetMode = AgentModes.Roaming; break;
+    case "random toilet": agent.targetMode = AgentModes.Toilet; break;
+    case "random lunch":  agent.targetMode = AgentModes.Lunch;  break;
+    default:              if (activity.location) agent.targetMode = AgentModes.Classroom
+  }
+};
 
 Client.prototype.onEvent = function(e) {
   if (!this.enabled) return;
   //log('Client.onEvent', e.description);
   e.agents.forEach(function(agentId) {
-    var agent = AgentStore.getAgentById(agentId);
-    if (!agent) {
-      // This if-branch was originally
-      //
-      //     //log('WARN', 'Client.onEvent agent not found!', agentId);
-      //     return;
-      //
-      // which led to missing agents, as events might contain links to new agents,
-      // so I have replaced it with:
-      
-      agent = { id: agentId };
-      AgentStore.all.push(agent);
-
-      // and then I believe that agentSpawnSys.js will load/add
-      // agent information from the api-server?
-    }
-    if (e.description == 'away') {
-      //log('Client.onEvent', agentId, 'is going away')
-      agent.targetMode = AgentModes.Away;
-    }
-    else if (e.description == 'roaming') {
-      //log('Client.onEvent', agentId, 'is going roaming')
-      agent.targetMode = AgentModes.Roaming;
-    }
-    else if (e.description == 'random toilet') {
-      agent.targetMode = AgentModes.Toilet;
-      // BUG/TODO: is location e.location(=="random toilet" or should it be "toilet"?)
-      agent.targetLocation = e.location;
-    }
-    else if (e.description == 'random lunch') {
-      agent.targetMode = AgentModes.Lunch;
-      agent.targetLocation = e.location;
-      //log(e);
-    }
-    else if (e.location) {
-      //log('Client.onEvent', agentId, 'is going from', agent.targetLocation, 'to', e.location);
-      agent.targetMode = AgentModes.Classroom;
-      agent.targetLocation = e.location;
-    }
-    //else {
-    //  log('Client.onEvent', agentId, e);
-    //}
+    applyAgentActivity(agentId, e);
   })
 }
 

@@ -91,9 +91,15 @@ function spawnAgents(state) {
           if (state.client && state.client.enabled) {
             setTimeout(function() {
               state.client.getAgentInfo(agent.id).then(function(agentInfo) {
+                agent.type = agentInfo.kind;
                 agent.gender = agentInfo.gender;
                 agent.age = agentInfo.age || 20;
-                agent.programme = agentInfo.programme || "no programme"; // BUG/TODO - should probably be something else than no-programme, - apparently the frontend has special encoding of type of agent within programme, instead of using the agentInfo.type itself.
+                agent.programme =
+                  ({teacher: "Teacher",
+                    cook: "Cook",
+                    researcher: "Researcher",
+                    janitor: "Janitor",
+                    admin: "Admin"})[agentInfo.kind] || agentInfo.programme;
               })
             }, random.int(100, 5000));
           }
