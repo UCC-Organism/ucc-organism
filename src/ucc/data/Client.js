@@ -82,7 +82,7 @@ function applyAgentActivity(agentId, activity) {
   if(activity.location) {
     agent.targetLocation = activity.location;
   }
-  switch (e.description) {
+  switch (activity.description) {
     case "away":          break;
     case "roaming":       agent.targetMode = AgentModes.Roaming; break;
     case "random toilet": agent.targetMode = AgentModes.Toilet; break;
