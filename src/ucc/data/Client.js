@@ -89,7 +89,7 @@ function applyAgentActivity(agentId, activity) {
     case "random lunch":  agent.targetMode = AgentModes.Lunch;  break;
     default:              if (activity.location) agent.targetMode = AgentModes.Classroom
   }
-};
+}
 
 Client.prototype.onEvent = function(e) {
   if (!this.enabled) return;
