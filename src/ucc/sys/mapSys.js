@@ -625,10 +625,10 @@ function rebuildCells(state) {
         cellEdgeColor = Config.roomTypes[roomType].edgeColor;
       }
 
-      if (roomId == state.map.focusRoomId) {
-        cellCenterColor = Color.Red;
-        cellColor = Color.Red;
-      }
+      //if (roomId == state.map.focusRoomId) {
+      //  cellCenterColor = Color.Red;
+      //  cellColor = Color.Red;
+      //}
 
       var c = Color.fromHSL(0, 1, 0.5);
       if (focusRoomCenter) {
