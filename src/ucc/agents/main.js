@@ -162,7 +162,7 @@ Window.create({
 
     var groupIndex = 0;
     cellTypes.forEach(function(CellType, cellTypeIndex) {
-      students = R.range(0, 20).map(function() {
+      var students = R.range(0, 20).map(function() {
         return {
           age: 25,
           gender: 0

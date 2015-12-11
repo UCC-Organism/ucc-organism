@@ -66,7 +66,7 @@ function agentFlockingSys(state) {
     var agent = agents[i];
 
     for(var j=i+1; j<agents.length; j++) {
-      anotherAgent = agents[j];
+      var anotherAgent = agents[j];
       var distSqr = agent.position.squareDistance(anotherAgent.position);
       if (distSqr < repulsionDistSqr) {
         var dist = Math.sqrt(distSqr);

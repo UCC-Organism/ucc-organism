@@ -102,7 +102,7 @@ Spline3D.prototype.getPointAt = function (d) {
   if (imin < 0) imin = 0;
   if (imin > this.accumulatedRatios.length - 1) imin = this.accumulatedRatios.length - 1;
 
-  k = this.accumulatedRatios[imin];
+  var k = this.accumulatedRatios[imin];
   return this.getPoint(k);
 };
 
