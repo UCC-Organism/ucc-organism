@@ -63,7 +63,7 @@ Window.create({
   cells: [],
   programmeLabels: [],
   saveFrame: false,
-  savePDFFrame: true,
+  savePDFFrame: false,
   init: function() {
     this.initScene();
     this.initStores();
