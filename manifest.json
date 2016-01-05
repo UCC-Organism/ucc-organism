@@ -1,6 +1,6 @@
 {
   "name": "ucc_organism",
-  "version": "2016010102",
+  "version": "2016010104",
   "app": {
     "launch":{
       "local_path": "index.html"
