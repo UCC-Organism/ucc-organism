@@ -28,8 +28,14 @@ npm run watch
 
 ```
 cd /Users/vorg/Dev/crosswalk-odroid/
-python make_apk.py --enable-auto-update --enable-remote-debugging --package=dk.ucc.organism --manifest=/Users/vorg/Workspace/var-uccorganism/ucc-organism/build/manifest.json
+python make_apk.py --enable-auto-update --enable-remote-debugging --manifest=/Users/vorg/Workspace/var-uccorganism/ucc-organism/build/manifest.json --extensions=extensions/ucc_extension
 ```
+
+# Uploading to ODroid
+
+ssh root@192.168.0.19
+cd /sdcard/Downloads
+pm install ucc_organism-2016010103.apk
 
 # Data
 
