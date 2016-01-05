@@ -203,7 +203,7 @@ sys.Window.create({
     width: Platform.isBrowser ? 1400 : plask.Window.screensInfo()[0].width * state.DPI,
     height: Platform.isBrowser ? 900 : plask.Window.screensInfo()[0].height * state.DPI,
     type: '3d',
-    //fullscreen: debug ? false : (Platform.isBrowser ? true : true),
+    fullscreen: debug ? false : (Platform.isBrowser ? true : true),
     highdpi: state.DPI,
     borderless: debug ? false : (Platform.isBrowser ? false : true),
   },
